@@ -1,0 +1,8 @@
+<menu xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    tools:context="com.Project100Pi.themusicplayer.PlayActivity" >
+
+    <item android:id="@+id/nowPlayingListImage" android:showAsAction="always" android:icon="@drawable/now_play_list" android:title="Now Playing List"></item>
+    <item android:id="@+id/equalizerImage" android:showAsAction="never" android:icon="@drawable/equalizer" android:title="Equalizer"></item>
+    <item android:id="@+id/timerImage" android:showAsAction="never" android:icon="@drawable/timer" android:title="Sleep Timer"></item>
+</menu>

@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <string name="app_name">THE Music Player</string>
+    <string name="hello_world">Hello world!</string>
+    <string name="action_settings">Settings</string>
+    <string name="title_activity_first_fragment">FirstFragment</string>
+    <string name="title_activity_second_fragment">SecondFragment</string>
+    <string name="title_activity_third_fragment">ThirdFragment</string>
+    <string name="title_activity_display_alb_art">DisplayAlbArt</string>
+    <string name="title_activity_play">PlayActivity</string>
+    <string name="title_activity_now_playing_list">NowPlayingListActivity</string>
+    <string name="title_activity_fourth_fragment">FourthFragment</string>
+    <string name="title_activity_songs_under">SongsUnder</string>
+    <string name="title_activity_playlist_under">PlaylistUnder</string>
+    <string name="title_activity_songs_under_test">SongsUnderTest</string>
+    <string name="title_activity_search_result_test">SearchResultTestActivity</string>
+
+</resources>

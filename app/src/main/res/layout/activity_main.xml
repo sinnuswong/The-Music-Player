@@ -1,0 +1,38 @@
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    xmlns:android1="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context="com.Project100Pi.themusicplayer.MainActivity" >
+
+    <LinearLayout
+        android1:id="@+id/viewpager_container"
+        android1:layout_width="match_parent"
+        android1:layout_height="fill_parent"
+        android1:orientation="vertical" >
+
+        <Button
+            android1:id="@+id/nowPlay"
+            style="?android:attr/buttonStyleSmall"
+            android1:layout_width="wrap_content"
+            android1:layout_height="wrap_content"
+            android1:text="Now Playing" />
+
+        <com.Project100Pi.themusicplayer.SlidingTabLayout
+            android1:id="@+id/pager_tab_strip"
+            android1:layout_width="match_parent"
+            android1:layout_height="wrap_content"
+            android1:background="#009795" >
+        </com.Project100Pi.themusicplayer.SlidingTabLayout>
+
+        <android.support.v4.view.ViewPager
+            xmlns:android="http://schemas.android.com/apk/res/android"
+            xmlns:app="http://schemas.android.com/apk/res-auto"
+            android1:id="@+id/viewPager"
+            android1:layout_width="match_parent"
+            android1:layout_height="wrap_content" >
+        </android.support.v4.view.ViewPager>
+
+    </LinearLayout>
+
+</RelativeLayout>

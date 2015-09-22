@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/card_container"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:gravity="top" >
+
+    <it.gmariotti.cardslib.library.view.CardView
+        xmlns:card="http://schemas.android.com/apk/res-auto"
+        android:id="@+id/list_cardId"
+        style="@style/list_card.base"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_weight="0.1"
+        android:clickable="true"
+        card:card_layout_resourceID="@layout/card_layout_test" >
+    </it.gmariotti.cardslib.library.view.CardView>
+
+    <ImageView
+        android:id="@+id/overflow_button"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentRight="true"
+        android:layout_alignParentTop="false"
+        android:layout_weight="0.9"
+        android:src="@drawable/ic_more_vert_grey600_24dp"
+        android:layout_centerVertical="true"
+        android:layout_marginRight="5dp" />
+
+</RelativeLayout>

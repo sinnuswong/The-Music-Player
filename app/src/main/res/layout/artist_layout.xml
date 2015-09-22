@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+                    android:layout_width="match_parent"
+                    android:orientation="horizontal"
+                    android:layout_height="wrap_content">
+
+        <!-- Use same ID to use built-in features -->
+
+        <TextView
+            android:id="@+id/artist_album_total"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="10dp"
+            android:layout_marginTop="5dp"
+            android:text="0 ALBUMS"
+            android:textColor="#C1C1C1"
+            android:layout_weight="0.25" />
+
+        <TextView
+            android:id="@+id/artist_total"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignBottom="@+id/artist_album_total"
+            android:layout_alignParentRight="true"
+            android:layout_alignTop="@+id/artist_album_total"
+            android:layout_marginRight="50dp"
+            android:text="0 TRACKS"
+            android:textColor="#C1C1C1"
+            android:layout_weight="0"
+            android:layout_marginTop="-5dp" />
+
+    </LinearLayout>

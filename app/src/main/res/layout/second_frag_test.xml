@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
+    <android.support.v7.widget.RecyclerView
+        xmlns:android="http://schemas.android.com/apk/res/android"
+        android:id="@+id/secondFragRecycler"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"/>
+    <com.Project100Pi.themusicplayer.FastScroller
+        android:id="@+id/secondfastscroller"
+        android:layout_width="wrap_content"
+        android:layout_height="match_parent"
+        android:layout_alignTop="@id/firstFragRecycler"
+        android:layout_alignBottom="@id/firstFragRecycler"
+        android:layout_alignParentEnd="true"
+        android:layout_alignParentRight="true"
+        tools:ignore="RtlCompat"/>
+</RelativeLayout>

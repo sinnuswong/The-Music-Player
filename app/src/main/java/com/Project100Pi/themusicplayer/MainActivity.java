@@ -244,7 +244,7 @@ import it.gmariotti.cardslib.library.view.listener.SwipeOnScrollListener;
     public boolean onOptionsItemSelected(MenuItem item) {
 switch (item.getItemId()) {
 case R.id.action_search:
-	Intent intent=new Intent(MainActivity.this,SearchResultTestActivity.class);
+	Intent intent=new Intent(MainActivity.this,SearchResultsActivity.class);
  startActivity(intent);
   break;
 

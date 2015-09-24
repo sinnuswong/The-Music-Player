@@ -128,7 +128,7 @@ public class SearchResultsActivity extends Activity {
      					// TODO Auto-generated method stub
             			 int clickPos = Integer.parseInt(card.getId());
             			 Long id = Long.parseLong(albumIdRes.get(clickPos));
- 						Intent intent=new Intent(SearchResultsActivity.this,SongsUnder.class);
+ 						Intent intent=new Intent(SearchResultsActivity.this,SongsUnderTest.class);
  		            intent.putExtra("X","Album");
  		            intent.putExtra("id", id);
  		            startActivity(intent);  
@@ -146,7 +146,7 @@ public class SearchResultsActivity extends Activity {
      					// TODO Auto-generated method stub
             			 int clickPos = Integer.parseInt(card.getId());
             				Long id = Long.parseLong(artistIdRes.get(clickPos-albumRes.size()));
-    						Intent intent=new Intent(SearchResultsActivity.this,SongsUnder.class);
+    						Intent intent=new Intent(SearchResultsActivity.this,SongsUnderTest.class);
     		            intent.putExtra("X","Artist");
     		            intent.putExtra("id", id);
     		            startActivity(intent);  

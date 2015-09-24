@@ -21,12 +21,12 @@
     style="@style/card_section_container"
     android:layout_width="match_parent"
     android:layout_height="60dp"
-    android:background="#009795" >
+    android:background="#be4d56" >
 
     <TextView
         android:id="@+id/carddemo_section_gplay_title"
         style="@style/card_section_title"
         android:textStyle="italic"
-        />
+        android:textColor="#FFF" />
 
 </RelativeLayout>

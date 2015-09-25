@@ -27,7 +27,7 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 public class NowPlayingListActivity extends Activity {
-	
+	/*
 	int playlistLength ;
 	CardDragDropArrayAdapter mCardArrayAdapter = null;
 	 ArrayList<Card> cards=null;
@@ -42,11 +42,11 @@ public class NowPlayingListActivity extends Activity {
 	private void playSelSong(Long songId){
 	
 		PlayActivity.getPlaySongInfo(getApplicationContext(),songId);
-		MainActivity.currSongInfo.currPlayPos = MainActivity.currSongInfo.nowPlayingList.indexOf(songId);
+		songInfoObj.currPlayPos = songInfoObj.nowPlayingList.indexOf(songId);
 		MainActivity.mp.reset();
 		
 		try {
-			MainActivity.mp.setDataSource(MainActivity.currSongInfo.playPath);
+			MainActivity.mp.setDataSource(songInfoObj.playPath);
 			MainActivity.mp.prepare();
 		} catch (IllegalArgumentException e) {
 			// TODO Auto-generated catch block
@@ -65,20 +65,20 @@ public class NowPlayingListActivity extends Activity {
 	
 	private void populateCards(){
 		cards = new ArrayList<Card>();
-		 playlistLength = MainActivity.currSongInfo.nowPlayingList.size();
+		 playlistLength = songInfoObj.nowPlayingList.size();
 		 for(int i=0;i<playlistLength;i++){
 	      //Create a Card
 	      Card card = new Card(this);
 
 	      //Card must have a stable Id.
-	       card.setId(MainActivity.currSongInfo.nowPlayingList.get(i));
+	       card.setId(songInfoObj.nowPlayingList.get(i));
 
 	      //Create a CardHeader
 	      CardHeader header = new CardHeader(this);
 	
 	      //Add Header to card
 	      card.addCardHeader(header);
-	      header.setTitle(FirstFragment.idToName.get(Long.parseLong(MainActivity.currSongInfo.nowPlayingList.get(i))));
+	      header.setTitle(FirstFragment.idToName.get(Long.parseLong(songInfoObj.nowPlayingList.get(i))));
 	 	 
 	     card.setInnerLayout(R.layout.track_layout);
 	    
@@ -135,7 +135,7 @@ public class NowPlayingListActivity extends Activity {
 					            CardListDragDropView myListView=(CardListDragDropView) parentRow.getParent().getParent();
 					            final int currPosition=myListView.getPositionForView(parentRow);
 					            final String songName= cards.get(currPosition).getCardHeader().getTitle();
-					             final Long selectedId=Long.parseLong(MainActivity.currSongInfo.nowPlayingList.get(currPosition));
+					             final Long selectedId=Long.parseLong(songInfoObj.nowPlayingList.get(currPosition));
 					             final ArrayList<String> selectedIdList=new ArrayList<String>();
 					             selectedIdList.add(selectedId.toString()); // created to send the ArrayList to UtilFunctions.deletePopUp
 					             final ArrayList<String> selSongNameList = new ArrayList<String>();
@@ -179,9 +179,9 @@ public class NowPlayingListActivity extends Activity {
 			            			    	   UtilFunctions.deletePopUp(getContext(),NowPlayingListActivity.this, selectedIdList, "Are you sure you want to delete the selected song?","Song deleted");
 			            			    	   break;
 			            			       case R.id.now_play_remove_from_queue:
-			            			    	   MainActivity.currSongInfo.nowPlayingList.remove(selectedId.toString());
-			            			    	   MainActivity.currSongInfo.initialPlayingList.remove(selectedId.toString());
-			            			    	   if(MainActivity.currSongInfo.currPlayPos == currPosition){
+			            			    	   songInfoObj.nowPlayingList.remove(selectedId.toString());
+			            			    	   songInfoObj.initialPlayingList.remove(selectedId.toString());
+			            			    	   if(songInfoObj.currPlayPos == currPosition){
 			            			    		   MainActivity.mp.reset();
 			            			    	   }
 			            			    	   Toast.makeText(NowPlayingListActivity.this,songName +" is removed from the Queue",Toast.LENGTH_SHORT).show();
@@ -216,20 +216,20 @@ public class NowPlayingListActivity extends Activity {
 			      public void onItemMoved(int originalPosition, int newPosition) {
 			          Card card = mCardArrayAdapter.getItem(newPosition);
 			          Toast.makeText(NowPlayingListActivity.this,"Card "+card.getId() + " moved to position " + newPosition, Toast.LENGTH_SHORT ).show();
-			          MainActivity.currSongInfo.nowPlayingList.clear();
+			          songInfoObj.nowPlayingList.clear();
 			         
 			          for(int i=0;i<playlistLength;i++)
 			          {
 			        	  Card tempcard=mCardArrayAdapter.getItem(i);
-			        	  MainActivity.currSongInfo.nowPlayingList.add(tempcard.getId());
+			        	  songInfoObj.nowPlayingList.add(tempcard.getId());
 			        	  
 			         }
-			         MainActivity.currSongInfo.currPlayPos= MainActivity.currSongInfo.nowPlayingList.indexOf(MainActivity.currSongInfo.songId.toString());
+			         songInfoObj.currPlayPos= songInfoObj.nowPlayingList.indexOf(songInfoObj.songId.toString());
 			        // populateCards();
 			      }
 			   });
 			  
 	}
-	
+	*/
 }
 

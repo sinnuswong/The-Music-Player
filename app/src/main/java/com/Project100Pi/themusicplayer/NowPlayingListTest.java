@@ -31,12 +31,12 @@ public class NowPlayingListTest extends Activity {
         firstFragRecycler.setLayoutManager(llm);
         MainActivity.idList = new ArrayList<String>();
         tracks = new ArrayList<TrackObject>();
-        int nowPlayingSize = MainActivity.currSongInfo.nowPlayingList.size();
+        int nowPlayingSize = songInfoObj.nowPlayingList.size();
         for(int i=0;i<nowPlayingSize;i++){
-            tracks.add(MainActivity.idToTrackObj.get(Long.parseLong(MainActivity.currSongInfo.nowPlayingList.get(i))));
+            tracks.add(MainActivity.idToTrackObj.get(Long.parseLong(songInfoObj.nowPlayingList.get(i))));
         }
 
-        tra = new NowPlayingRecyclerAdapter(tracks,MainActivity.currSongInfo.nowPlayingList,NowPlayingListTest.this);
+        tra = new NowPlayingRecyclerAdapter(tracks,songInfoObj.nowPlayingList,NowPlayingListTest.this);
         firstFragRecycler.setAdapter(tra);
         firstFragRecycler.setItemAnimator(new DefaultItemAnimator());
 

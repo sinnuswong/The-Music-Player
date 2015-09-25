@@ -244,8 +244,8 @@ public class PlaylistUnder extends Activity {
 		            			    	   break;
 		            			       case R.id.playlist_remove_from_playlist:
 		            			    	   UtilFunctions.deletePlaylistTracks(PlaylistUnder.this, PlaylistUnder.this.id, selectedId);
-		            			    	   if(MainActivity.currSongInfo.currPlayPos == currPosition){
-		            			    		   MainActivity.mp.reset();
+		            			    	   if(songInfoObj.currPlayPos == currPosition){
+		            			    		   PlayHelperFunctions.mp.reset();
 		            			    	   }
 		            			    	   Toast.makeText(PlaylistUnder.this,songName +" is removed from this PlayList",Toast.LENGTH_SHORT).show();
 		            			    	   break;
@@ -283,7 +283,7 @@ public class PlaylistUnder extends Activity {
 			          String songName=XList.get(originalPosition);
 			         long audioId=Long.parseLong(card.getId());
 			        //  Toast.makeText(PlaylistUnder.this,"Card "+card.getId() + " moved to position " + newPosition, Toast.LENGTH_SHORT ).show();
-			         // MainActivity.currSongInfo.nowPlayingList.clear();
+			         // songInfoObj.nowPlayingList.clear();
 			          // cards.clear();
 			         /*   XList.clear();
 			         

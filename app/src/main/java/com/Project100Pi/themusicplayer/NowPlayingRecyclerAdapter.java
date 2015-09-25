@@ -26,25 +26,25 @@ public class NowPlayingRecyclerAdapter extends SelectableAdapter<NowPlayingRecyc
     @Override
     public void onItemMove(int fromPosition, int toPosition) {
         TrackObject prev = tracks.remove(fromPosition);
-        String prevStr = MainActivity.currSongInfo.nowPlayingList.remove(fromPosition);
+        String prevStr = songInfoObj.nowPlayingList.remove(fromPosition);
         tracks.add(toPosition,prev);
-        MainActivity.currSongInfo.nowPlayingList.add(toPosition,prevStr);
-        MainActivity.currSongInfo.currPlayPos= MainActivity.currSongInfo.nowPlayingList.indexOf(MainActivity.currSongInfo.songId.toString());
+        songInfoObj.nowPlayingList.add(toPosition,prevStr);
+        songInfoObj.currPlayPos= songInfoObj.nowPlayingList.indexOf(songInfoObj.songId.toString());
         notifyItemMoved(fromPosition, toPosition);
     }
 
     @Override
     public void onItemDismiss(int position) {
-        MainActivity.currSongInfo.nowPlayingList.remove(tracks.get(position).getTrackId().toString());
-        MainActivity.currSongInfo.initialPlayingList.remove(tracks.get(position).getTrackId().toString());
+        songInfoObj.nowPlayingList.remove(tracks.get(position).getTrackId().toString());
+        songInfoObj.initialPlayingList.remove(tracks.get(position).getTrackId().toString());
         tracks.remove(position);
-        if(MainActivity.currSongInfo.currPlayPos == position){
-            MainActivity.mp.reset();
-            MainActivity.currSongInfo.currPlayPos = (MainActivity.currSongInfo.currPlayPos) % MainActivity.currSongInfo.nowPlayingList.size();
-            PlayActivity.getPlaySongInfo(mactivity,Long.parseLong(MainActivity.currSongInfo.nowPlayingList.get(MainActivity.currSongInfo.currPlayPos)));
+        if(songInfoObj.currPlayPos == position){
+            PlayHelperFunctions.mp.reset();
+            songInfoObj.currPlayPos = (songInfoObj.currPlayPos) % songInfoObj.nowPlayingList.size();
+            PlayHelperFunctions.getPlaySongInfo(Long.parseLong(songInfoObj.nowPlayingList.get(songInfoObj.currPlayPos)));
             try {
-                MainActivity.mp.setDataSource(MainActivity.currSongInfo.playPath);
-                MainActivity.mp.prepare();
+                PlayHelperFunctions.mp.setDataSource(songInfoObj.playPath);
+                PlayHelperFunctions.mp.prepare();
             } catch (Exception e) {
                 // TODO Auto-generated catch block
                 e.printStackTrace();

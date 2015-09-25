@@ -54,7 +54,7 @@ import it.gmariotti.cardslib.library.view.listener.SwipeOnScrollListener;
 
      public class MainActivity extends AppCompatActivity {
 
-         int mediaPos,mediaMax;
+
 	String titles[] = {"Tracks","Albums","Artists","Genres","Playlists","Folders"};
          public static ArrayList<String> idList = null;
          public static HashMap<String, String> pathToIdInfo  = null;
@@ -69,16 +69,14 @@ import it.gmariotti.cardslib.library.view.listener.SwipeOnScrollListener;
          */
 
 
-
 	static String albumViewOption = "List";
-	static MediaPlayer mp = new MediaPlayer();
+
 	static Boolean isNowPlayEmpty = true;
-	static Boolean isSongPlaying =  false;
-	static Handler handler = new Handler();
+
+
          static boolean isLongClickOn = false;
          static RelativeLayout mainNowPlaying = null;
          static int viewPagerHeight;
-         SeekBar frontSeekbar;
          static Toolbar mToolbar;
          static int mActionBarSize;
 
@@ -93,6 +91,8 @@ import it.gmariotti.cardslib.library.view.listener.SwipeOnScrollListener;
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main_test);
+        CursorClass.mContext = getApplicationContext();
+        PlayHelperFunctions.mContext = getApplicationContext();
         setUpToolBar();
 
         final TypedArray styledAttributes = getApplicationContext().getTheme().obtainStyledAttributes(
@@ -106,7 +106,7 @@ import it.gmariotti.cardslib.library.view.listener.SwipeOnScrollListener;
             public void onClick(View v) {
 
 
-                if (MainActivity.isSongPlaying) {
+                if (PlayHelperFunctions.isSongPlaying) {
                     pauseMusicPlayer();
                 } else {
                     startMusicPlayer();
@@ -116,11 +116,13 @@ import it.gmariotti.cardslib.library.view.listener.SwipeOnScrollListener;
             }
         });
         idToTrackObj = new HashMap<Long,TrackObject>();
-        if(songInfoObj.album==null && songInfoObj.album.length()>0){
+        if(songInfoObj.album==null){
         //songInfoObj = new songInfoObj();
         try{
         UtilFunctions.loadPreference(getApplicationContext());
         isNowPlayEmpty = false;
+        PlayHelperFunctions.isSongPlaying = false;
+            PlayHelperFunctions.audioPlayer((String)PlayHelperFunctions.setPlaySongInfo(Long.parseLong(songInfoObj.nowPlayingList.get(songInfoObj.currPlayPos))),songInfoObj.playerPostion);
         }
         catch(Exception e){
         	Log.i("shared preference", "load failed");
@@ -128,30 +130,30 @@ import it.gmariotti.cardslib.library.view.listener.SwipeOnScrollListener;
         }
         }
 
-      //  frontSeekbar.getThumb().setColorFilter(0x22BE4D56, PorterDuff.Mode.MULTIPLY);
-        frontSeekbar.setOnSeekBarChangeListener(new OnSeekBarChangeListener() {
+      //  PlayHelperFunctions.seekbar.getThumb().setColorFilter(0x22BE4D56, PorterDuff.Mode.MULTIPLY);
+        PlayHelperFunctions.seekbar.setOnSeekBarChangeListener(new OnSeekBarChangeListener() {
 
 
             @Override
             public void onStartTrackingTouch(SeekBar seekBar) {
                 // TODO Auto-generated method stub
-                Toast.makeText(getApplicationContext(), "Started tracking seekbar", Toast.LENGTH_SHORT).show();
-                MainActivity.handler.removeCallbacks(moveSeekBarThread);
+                Toast.makeText(getApplicationContext(), "Started tracking PlayHelperFunctions.seekbar", Toast.LENGTH_SHORT).show();
+                PlayHelperFunctions.handler.removeCallbacks(PlayHelperFunctions.moveSeekBarThread);
 
             }
 
             public void onStopTrackingTouch(SeekBar seekBar) {
                 // TODO Auto-generated method stub
-                MainActivity.handler.removeCallbacks(moveSeekBarThread);
-                int totalDuration = MainActivity.mp.getDuration();
+                PlayHelperFunctions.handler.removeCallbacks(PlayHelperFunctions.moveSeekBarThread);
+                int totalDuration = PlayHelperFunctions.mp.getDuration();
                 //  int currentPosition = utils.progressToTimer(seekBar.getProgress(), totalDuration);
 
                 // forward or backward to certain seconds
-                MainActivity.mp.seekTo(seekBar.getProgress());
+                PlayHelperFunctions.mp.seekTo(seekBar.getProgress());
 
                 // update timer progress again
 
-                MainActivity.handler.postDelayed(moveSeekBarThread, 100);
+                PlayHelperFunctions.handler.postDelayed(PlayHelperFunctions.moveSeekBarThread, 100);
 
             }
 
@@ -199,8 +201,8 @@ import it.gmariotti.cardslib.library.view.listener.SwipeOnScrollListener;
         setUpFloatingActionButton();
 
 
-        //seekbar = (SeekBar) findViewById(R.id.front_seekbar);
-        //seekbar.setProgress(50);
+        //PlayHelperFunctions.seekbar = (SeekBar) findViewById(R.id.front_PlayHelperFunctions.seekbar);
+        //PlayHelperFunctions.seekbar.setProgress(50);
 
 
         /*
@@ -232,7 +234,7 @@ import it.gmariotti.cardslib.library.view.listener.SwipeOnScrollListener;
     public boolean onOptionsItemSelected(MenuItem item) {
 switch (item.getItemId()) {
 case R.id.action_search:
-	Intent intent=new Intent(MainActivity.this,SearchResultTestActivity.class);
+	Intent intent=new Intent(MainActivity.this,SearchResultsActivity.class);
  startActivity(intent);
   break;
 
@@ -296,13 +298,13 @@ protected void onDestroy() {
              if(frontPlay.isShowPlay){
                  frontPlay.toggle();
              }
-             if(!MainActivity.isSongPlaying){
+             if(!PlayHelperFunctions.isSongPlaying){
                 frontPlay.toggle();
              }
 
              try {
-             Cursor cursor = CursorClass.playSongCursor(getApplicationContext(),songInfoObj.songId);
-             PlayActivity.setMainActivityCurrsongInfoFromCursor(getApplicationContext(),songInfoObj.songId,cursor);
+             Cursor cursor = CursorClass.playSongCursor(songInfoObj.songId);
+             PlayHelperFunctions.setMainActivityCurrsongInfoFromCursor(songInfoObj.songId,cursor);
             /* cursor.moveToFirst();
                  
             Long albumId = cursor.getLong(3);
@@ -320,12 +322,6 @@ protected void onDestroy() {
                     //Load the first song in tracks info
                     return;
                 }
-
-             try {
-                 audioPlayer(songInfoObj.playPath, songInfoObj.playerPostion);
-             } catch (IOException e) {
-                 e.printStackTrace();
-             }
 
          }
 
@@ -718,102 +714,11 @@ protected void onDestroy() {
          @Override
          protected void onResume() {
              super.onResume();
+             setUpNowPlayingToolBar();
              updateFrontNowPlaying();
          }
-
-         public void audioPlayer(String path,final int playerPos) throws IOException {
-             if (MainActivity.mp != null) {
-                 MainActivity.mp.reset();
-             }
-
-             MainActivity.mp.setOnCompletionListener(new MediaPlayer.OnCompletionListener() {
-
-                 @Override
-                 public void onCompletion(MediaPlayer mp) {
-                     //mp.reset();
-                     if(songInfoObj.isRepeat ==0){
-                         songInfoObj.currPlayPos = (songInfoObj.currPlayPos+1);
-                         if(songInfoObj.currPlayPos == songInfoObj.nowPlayingList.size()){
-
-                             songInfoObj.currPlayPos--;
-                             return;
-                         }
-                     }else if(songInfoObj.isRepeat == 1){
-                         songInfoObj.currPlayPos = (songInfoObj.currPlayPos+1)%songInfoObj.nowPlayingList.size();
-
-                     }
-
-
-                     try {
-                         mp.reset();
-                         audioPlayer((String)PlayActivity.getPlaySongInfo(getApplicationContext(), Long.parseLong(songInfoObj.nowPlayingList.get(songInfoObj.currPlayPos))),1);
-                     } catch (IOException e) {
-                         // TODO Auto-generated catch block
-                         e.printStackTrace();
-
-                     }
-
-
-                 }
-
-             });
-
-             try {
-                 // mp.setDataSource();
-                 MainActivity.mp.setDataSource(path);
-             } catch (IllegalArgumentException e) {
-                 // TODO Auto-generated catch block
-                 //mp.reset();
-                 e.printStackTrace();
-             } catch (IllegalStateException e) {
-                 // TODO Auto-generated catch block
-                 e.printStackTrace();
-             } catch (IOException e) {
-                 // TODO Auto-generated catch block
-                 e.printStackTrace();
-             }
-             try {
-                 MainActivity.mp.prepare();
-             } catch (IllegalStateException e) {
-                 // TODO Auto-generated catch block
-                 e.printStackTrace();
-             }
-             MainActivity.mp.setOnPreparedListener(new MediaPlayer.OnPreparedListener() {
-                 @Override
-                 public void onPrepared(MediaPlayer mp) {
-                     MainActivity.mp.seekTo(playerPos);
-                     if (MainActivity.isSongPlaying) {
-                         MainActivity.mp.start();
-                         PlayActivity.floatingLyricIntent(getApplicationContext(), (long) playerPos, true);
-                     }
-
-
-                 }
-             });
-             mediaPos =MainActivity.mp.getCurrentPosition();
-             mediaMax = MainActivity.mp.getDuration();
-             MainActivity.handler.removeCallbacks(moveSeekBarThread);
-             MainActivity.handler.postDelayed(moveSeekBarThread, 100); //cal the thread after 100 milliseconds
-
-         }
-
-         Runnable moveSeekBarThread = new Runnable() {
-             public void run() {
-
-                 Integer mediaPos_new = MainActivity.mp.getCurrentPosition();
-                 int mediaMax_new = MainActivity.mp.getDuration();
-                 songInfoObj.playerPostion = mediaPos_new;
-                 frontSeekbar.setMax(mediaMax_new);
-                 frontSeekbar.setProgress(mediaPos_new);
-                 if(MainActivity.mp.isPlaying()){
-                   //  runningTime.setText(UtilFunctions.convertSecondsToHMmSs(mediaPos_new));
-                 }
-                 MainActivity.handler.postDelayed(this, 1000); //Looping the thread after 1 second
-                 // seconds
-
-
-             }
-         };
+         
+        
 
          public void setUpToolBar()
          {
@@ -830,7 +735,7 @@ protected void onDestroy() {
              frontTitle = (TextView) findViewById(R.id.front_title);
              frontAlbum = (TextView) findViewById(R.id.front_album);
              frontPlay = (PlayPauseView) findViewById(R.id.front_play_Pause);
-             frontSeekbar = (SeekBar) findViewById(R.id.front_seekbar);
+             PlayHelperFunctions.seekbar = (SeekBar) findViewById(R.id.front_seekbar);
              frontPlay.setPauseBackgroundColor(Color.parseColor("#00FFFFFF"));
              frontPlay.setPlayBackgroundColor(Color.parseColor("#00FFFFFF"));
              frontPlay.setBackgroundColor(Color.parseColor("#00FFFFFF"));
@@ -839,16 +744,16 @@ protected void onDestroy() {
 
          public void pauseMusicPlayer()
          {
-             MainActivity.mp.pause();
-             MainActivity.isSongPlaying = false;
-             PlayActivity.floatingLyricIntent(getApplicationContext(), (long) MainActivity.mp.getCurrentPosition(), false);
+             PlayHelperFunctions.mp.pause();
+             PlayHelperFunctions.isSongPlaying = false;
+             PlayHelperFunctions.floatingLyricIntent(getApplicationContext(), (long) PlayHelperFunctions.mp.getCurrentPosition(), false);
          }
 
          public void startMusicPlayer()
          {
-             MainActivity.mp.start();
-             MainActivity.isSongPlaying = true;
-             PlayActivity.floatingLyricIntent(getApplicationContext(), (long) MainActivity.mp.getCurrentPosition(), true);
+             PlayHelperFunctions.mp.start();
+             PlayHelperFunctions.isSongPlaying = true;
+             PlayHelperFunctions.floatingLyricIntent(getApplicationContext(), (long) PlayHelperFunctions.mp.getCurrentPosition(), true);
          }
 
          public void setUpViewPager()

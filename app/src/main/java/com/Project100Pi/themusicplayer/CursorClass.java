@@ -12,8 +12,10 @@ import android.provider.MediaStore.Audio.AudioColumns;
 
 
 public class CursorClass {
+
+	public static Context mContext;
 	
-	public static Cursor playSongCursor(Context context,Long id){
+	public static Cursor playSongCursor(Long id){
 		 String projection[] = { MediaStore.Audio.Media.DATA,
 					MediaStore.Audio.Media.ARTIST,
 					MediaStore.Audio.Media.ALBUM,
@@ -23,7 +25,7 @@ public class CursorClass {
 				 	MediaStore.Audio.Media._ID
       };
 
-		 Cursor cursor = context.getContentResolver().query(
+		 Cursor cursor = mContext.getContentResolver().query(
 	        	    MediaStore.Audio.Media.EXTERNAL_CONTENT_URI, 
 	        	    projection, 
 	        	    MediaStore.Audio.Media._ID + " LIKE \"" + id + "\"", 
@@ -32,14 +34,14 @@ public class CursorClass {
 		 return cursor;
 	 }
 	
-	public static Bitmap albumArtCursor(Context context,Long albumId){
+	public static Bitmap albumArtCursor(Long albumId){
 		
 		final Uri ART_CONTENT_URI = Uri.parse("content://media/external/audio/albumart");
         Uri albumArtUri = ContentUris.withAppendedId(ART_CONTENT_URI, albumId);
 
         Bitmap bitmap = null;
         try {
-            bitmap = MediaStore.Images.Media.getBitmap(context.getContentResolver(), albumArtUri);
+            bitmap = MediaStore.Images.Media.getBitmap(mContext.getContentResolver(), albumArtUri);
            
         } catch (Exception exception) {
             // log error

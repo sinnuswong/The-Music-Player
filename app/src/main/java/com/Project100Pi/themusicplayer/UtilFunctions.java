@@ -305,8 +305,8 @@ public class UtilFunctions {
 	public static void playSongsNext (Activity activity,ArrayList<String> selSongIdList){
 		int size = selSongIdList.size();
 		for (int i=0;i<size;i++){
-   		 MainActivity.currSongInfo.nowPlayingList.add(MainActivity.currSongInfo.currPlayPos+i+1,selSongIdList.get(i));
-	    		MainActivity.currSongInfo.initialPlayingList.add(MainActivity.currSongInfo.currPlayPos+i+1,selSongIdList.get(i));
+   		 songInfoObj.nowPlayingList.add(songInfoObj.currPlayPos+i+1,selSongIdList.get(i));
+	    		songInfoObj.initialPlayingList.add(songInfoObj.currPlayPos+i+1,selSongIdList.get(i));
 	    		// Shuffle may create a problem
    		}
 		 Toast.makeText(activity, size +" song(s) will be played next", Toast.LENGTH_LONG).show();
@@ -314,8 +314,8 @@ public class UtilFunctions {
 	public static void addToQueueSongs (Activity activity,ArrayList<String> selSongIdList){
 		int size = selSongIdList.size();
 		for (int i=0;i<size;i++){
-      		 MainActivity.currSongInfo.nowPlayingList.add(selSongIdList.get(i));
-		    		MainActivity.currSongInfo.initialPlayingList.add(selSongIdList.get(i));
+      		 songInfoObj.nowPlayingList.add(selSongIdList.get(i));
+		    		songInfoObj.initialPlayingList.add(selSongIdList.get(i));
 		    		// Shuffle may create a problem
       		}
 		   Toast.makeText(activity, size +" song(s) added to the Queue", Toast.LENGTH_LONG).show();
@@ -584,18 +584,18 @@ public class UtilFunctions {
 	    SharedPreferences.tinyDB tinyDB = sharedPreferences.edit();
 	    Set<String> nowPlayingSet = new LinkedHashSet<String>();
 	    Set<String> initialNowPlayingSet = new LinkedHashSet<String>();
-	    nowPlayingSet.addAll(MainActivity.currSongInfo.nowPlayingList);
-	    initialNowPlayingSet.addAll(MainActivity.currSongInfo.initialPlayingList);
+	    nowPlayingSet.addAll(songInfoObj.nowPlayingList);
+	    initialNowPlayingSet.addAll(songInfoObj.initialPlayingList);
 	    tinyDB.putStringSet("nowPlayingList",nowPlayingSet);
 	    tinyDB.putStringSet("initalNowPlayingList",initialNowPlayingSet);
 	    */
-	 	tinyDB.putListString("nowPlayingList", MainActivity.currSongInfo.nowPlayingList);
-	 	tinyDB.putListString("initialNowPlayingList", MainActivity.currSongInfo.initialPlayingList);
-	    tinyDB.putInt("isRepeat", MainActivity.currSongInfo.isRepeat);
-	    tinyDB.putBoolean("shuffled",MainActivity.currSongInfo.shuffled);
-	    tinyDB.putInt("currPlayPos",MainActivity.currSongInfo.currPlayPos);
-	    tinyDB.putLong("songId", MainActivity.currSongInfo.songId);
-	    tinyDB.putInt("playerPosition", MainActivity.mp.getCurrentPosition());
+	 	tinyDB.putListString("nowPlayingList", songInfoObj.nowPlayingList);
+	 	tinyDB.putListString("initialNowPlayingList", songInfoObj.initialPlayingList);
+	    tinyDB.putInt("isRepeat", songInfoObj.isRepeat);
+	    tinyDB.putBoolean("shuffled",songInfoObj.shuffled);
+	    tinyDB.putInt("currPlayPos",songInfoObj.currPlayPos);
+	    tinyDB.putLong("songId", songInfoObj.songId);
+	    tinyDB.putInt("playerPosition", PlayHelperFunctions.mp.getCurrentPosition());
 
 	   Log.i("shared Preference", "Saved Preference Success");
 	   
@@ -610,21 +610,21 @@ public class UtilFunctions {
 	Set<String> empSet = new LinkedHashSet<String>();
 	 nowPlayingSet = sharedPreferences.getStringSet("nowPlayingList", empSet);
 	 for(String s : nowPlayingSet){
-		 MainActivity.currSongInfo.nowPlayingList.add(s);
+		 songInfoObj.nowPlayingList.add(s);
 	 }
 	 Set<String> initialNowPlayingSet = new HashSet<String>();
 	 initialNowPlayingSet = sharedPreferences.getStringSet("initialNowPlayingList", empSet);
 	 for(String s:initialNowPlayingSet){
-		 MainActivity.currSongInfo.initialPlayingList.add(s);
+		 songInfoObj.initialPlayingList.add(s);
 	 }
 	 */
-	 MainActivity.currSongInfo.isRepeat=tinyDB.getInt("isRepeat", 0);
-	 MainActivity.currSongInfo.shuffled=tinyDB.getBoolean("shuffled", false);
-	 MainActivity.currSongInfo.currPlayPos=tinyDB.getInt("currPlayPos", 0);
-	 MainActivity.currSongInfo.songId=tinyDB.getLong("songId",0L);
-	 MainActivity.currSongInfo.playerPostion=tinyDB.getInt("playerPosition", 0);
-	 MainActivity.currSongInfo.initialPlayingList = tinyDB.getListString("initialNowPlayingList");
-	 MainActivity.currSongInfo.nowPlayingList = tinyDB.getListString("nowPlayingList");
+	 songInfoObj.isRepeat=tinyDB.getInt("isRepeat", 0);
+	 songInfoObj.shuffled=tinyDB.getBoolean("shuffled", false);
+	 songInfoObj.currPlayPos=tinyDB.getInt("currPlayPos", 0);
+	 songInfoObj.songId=tinyDB.getLong("songId",0L);
+	 songInfoObj.playerPostion=tinyDB.getInt("playerPosition", 0);
+	 songInfoObj.initialPlayingList = tinyDB.getListString("initialNowPlayingList");
+	 songInfoObj.nowPlayingList = tinyDB.getListString("nowPlayingList");
 	 Log.i("shared Preference", "Load Preference Success");
  }
 

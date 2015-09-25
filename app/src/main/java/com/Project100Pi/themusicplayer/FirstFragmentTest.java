@@ -35,41 +35,33 @@ public class FirstFragmentTest extends Fragment implements ClickInterface{
     private ActionMode actionMode;
     trackRecyclerAdapter tra;
     ArrayList<TrackObject> tracks;
+    String title="";
+    String path="";
+    String trackAlbum = "";
+    String trackArtist = "";
+    String trackDuration  = "";
+    Long id=null;
+
+    RecyclerView firstFragRecycler=null;
+    LinearLayoutManager llm=null;
+    FastScroller fastScroller=null;
 
     @Nullable
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
 
         View v =inflater.inflate(R.layout.first_frag_test, container, false);
-        final RecyclerView firstFragRecycler = (RecyclerView)v.findViewById(R.id.firstFragRecycler);
-        firstFragRecycler.setHasFixedSize(true);
-        LinearLayoutManager llm = new LinearLayoutManager(getActivity().getApplicationContext());
-        firstFragRecycler.setLayoutManager(llm);
+        setRecyclerView(v);
 
-        String title="";
-        String path="";
-        String trackAlbum = "";
-        String trackArtist = "";
-        String trackDuration  = "";
-        Long id=null;
         MainActivity.idList = new ArrayList<String>();
         tracks = new ArrayList<TrackObject>();
-        Cursor cursor = getActivity().getApplicationContext().getContentResolver().query(
-                MediaStore.Audio.Media.EXTERNAL_CONTENT_URI,
-                null,
-                null,
-                null,
-                MediaStore.Audio.Media.TITLE + " ASC");
+        Cursor cursor = getAllSongsCursor();
         int i = 0;
 
         while(cursor.moveToNext()){
             try{
-                title= cursor.getString(cursor.getColumnIndex(MediaStore.Audio.Media.TITLE));
-                id=cursor.getLong(cursor.getColumnIndex(MediaStore.Audio.Media._ID));
-                path=cursor.getString(cursor.getColumnIndex(MediaStore.Audio.Media.DATA));
-                trackAlbum = cursor.getString(cursor.getColumnIndex(MediaStore.Audio.Media.ALBUM));
-                trackArtist = cursor.getString(cursor.getColumnIndex(MediaStore.Audio.Media.ARTIST));
-                trackDuration = UtilFunctions.convertSecondsToHMmSs(Long.parseLong(cursor.getString(cursor.getColumnIndex(MediaStore.Audio.Media.DURATION))));
+
+                getSongInfoFromCursor(cursor);
                 TrackObject currTrack =  new TrackObject(i,id.toString(),title,trackArtist,trackDuration,path);
                 tracks.add(currTrack);
                 MainActivity.idList.add(id.toString());
@@ -82,11 +74,9 @@ public class FirstFragmentTest extends Fragment implements ClickInterface{
 
 
         // tra = new trackRecyclerAdapter(getActivity(),tracks);
-        tra = new trackRecyclerAdapter(this,tracks,MainActivity.idList,getActivity());
-        firstFragRecycler.setAdapter(tra);
-        firstFragRecycler.setItemAnimator(new DefaultItemAnimator());
-        FastScroller fastScroller=(FastScroller)v.findViewById(R.id.firstfastscroller);
-        fastScroller.setRecyclerView(firstFragRecycler);
+        setRecylerViewAdapter();
+        setFastScroller(v);
+
 
         return v;
     }
@@ -156,13 +146,7 @@ public class FirstFragmentTest extends Fragment implements ClickInterface{
                     UtilFunctions.playSelectedSongs(getActivity(), selIdList, 0, true);
                     break;
                 case R.id.itemPlay:
-        		/*
-        		 Intent intent=new Intent(getActivity(),PlayActivity.class);
-				 	intent.putExtra("do", "Play");
-		           intent.putExtra("position", 0);
-		            intent.putStringArrayListExtra("playingList", selsongNameList);
-		            startActivity(intent);
-		            */
+
                     UtilFunctions.playSelectedSongs(getActivity(),selIdList,0,false);
                     break;
 
@@ -214,50 +198,17 @@ public class FirstFragmentTest extends Fragment implements ClickInterface{
 
                     Intent intentarray[]={addIntent};
                     chooser.putExtra(Intent.EXTRA_INITIAL_INTENTS, intentarray);
-                    //Toast.makeText(getContext(),"choice is "+choice, Toast.LENGTH_SHORT).show();
-                    // sharingIntent.
-
                     startActivity(chooser);
                     break;
 
                 case R.id.itemDelete:
-            /*	AlertDialog.Builder builder=new AlertDialog.Builder(getContext());
-        		builder.setTitle("Confirm Delete");
-        		builder.setMessage("Are you sure you want to delete the selected songs?");
-        		builder.setCancelable(true);
-        		builder.setPositiveButton("Yes",
-                new DialogInterface.OnClickListener() {
-                    public void onClick(DialogInterface dialog, int id) {
-                    	   ContentResolver resolver=getActivity().getApplicationContext().getContentResolver();
-                    	   for(int i=0;i<size;i++)
-     	        		  {
 
-                    	   String selectedId=selIdList.get(i);
-                    	   String songName=idToName.get(Long.parseLong(selectedId));
-                    	   int rowsDeleted	=resolver.delete(MediaStore.Audio.Media.EXTERNAL_CONTENT_URI, MediaStore.Audio.Media._ID + " LIKE \"" + selectedId + "\"", null);
-                    	   File file = new File(idToPath.get(Long.parseLong(selectedId)));
-                    	   boolean deleted = file.delete();
-     	        		  }
-                    	   Toast.makeText(getActivity(), size+ " Songs deleted ",Toast.LENGTH_SHORT).show();
-                           dialog.cancel();
-                    }
-                });
-                builder.setNegativeButton("No",
-                        new DialogInterface.OnClickListener() {
-                    public void onClick(DialogInterface dialog, int id) {
-                        dialog.cancel();
-                    }
-                });
-
-                AlertDialog alert11 = builder.create();
-                alert11.show();
-            	*/
 
                     UtilFunctions.deletePopUp(getActivity(), getActivity(), selIdList, "Are you sure you want to delete the selected Songs?","Songs deleted");
                     break;
                 case R.id.itemToPlaylist :
 
-                    Intent intent=new Intent(getActivity(),PlayListSelectionTest.class);
+                    Intent intent=new Intent(getActivity(),PlaylistSelectionMultiple.class);
                     // intent.putExtra("songName",songName);
 
                     intent.putExtra("selectedIdList",selIdList);
@@ -315,5 +266,46 @@ public class FirstFragmentTest extends Fragment implements ClickInterface{
         }
     }
 
+
+    //Can be changed to Static method when needed..
+    public Cursor getAllSongsCursor(){
+        Cursor cursor = getActivity().getApplicationContext().getContentResolver().query(
+                MediaStore.Audio.Media.EXTERNAL_CONTENT_URI,
+                null,
+                null,
+                null,
+                MediaStore.Audio.Media.TITLE + " ASC");
+        return cursor;
+    }
+
+    public void setRecyclerView(View v){
+        firstFragRecycler = (RecyclerView)v.findViewById(R.id.firstFragRecycler);
+        firstFragRecycler.setHasFixedSize(true);
+        llm = new LinearLayoutManager(getActivity().getApplicationContext());
+        firstFragRecycler.setLayoutManager(llm);
+    }
+
+    public void setRecylerViewAdapter()
+    {
+        tra = new trackRecyclerAdapter(this,tracks,MainActivity.idList,getActivity());
+        firstFragRecycler.setAdapter(tra);
+        firstFragRecycler.setItemAnimator(new DefaultItemAnimator());
+    }
+
+    public void setFastScroller(View v)
+    {
+        fastScroller=(FastScroller)v.findViewById(R.id.firstfastscroller);
+        fastScroller.setRecyclerView(firstFragRecycler);
+    }
+
+    public void getSongInfoFromCursor(Cursor cursor)
+    {
+        title= cursor.getString(cursor.getColumnIndex(MediaStore.Audio.Media.TITLE));
+        id=cursor.getLong(cursor.getColumnIndex(MediaStore.Audio.Media._ID));
+        path=cursor.getString(cursor.getColumnIndex(MediaStore.Audio.Media.DATA));
+        trackAlbum = cursor.getString(cursor.getColumnIndex(MediaStore.Audio.Media.ALBUM));
+        trackArtist = cursor.getString(cursor.getColumnIndex(MediaStore.Audio.Media.ARTIST));
+        trackDuration = UtilFunctions.convertSecondsToHMmSs(Long.parseLong(cursor.getString(cursor.getColumnIndex(MediaStore.Audio.Media.DURATION))));
+    }
 
 }

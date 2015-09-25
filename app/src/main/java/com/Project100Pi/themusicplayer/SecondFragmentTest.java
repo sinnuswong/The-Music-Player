@@ -33,45 +33,43 @@ public class SecondFragmentTest extends Fragment implements ClickInterface{
     private ActionMode actionMode;
     ArrayList<AlbumInfo> albums ;
     AlbumRecyclerAdapter ara;
+
+    RecyclerView secondFragRecycler=null;
+    LinearLayoutManager llm=null;
+
+    String albumName="";
+    String artistName = "";
+    String albumArtPath = "";
+    Long albumId;
+    int noOfSongs;
+    String selection = null;
+    String[] selectionArgs = null;
+    String sortOrder = MediaStore.Audio.Albums.DEFAULT_SORT_ORDER;
+    String[] projection = new String[] {BaseColumns._ID, MediaStore.Audio.AlbumColumns.ALBUM, MediaStore.Audio.AlbumColumns.ARTIST, MediaStore.Audio.AlbumColumns.NUMBER_OF_SONGS, MediaStore.Audio.AlbumColumns.ALBUM_ART };
+
+    FastScroller fastScroller=null;
     @Nullable
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
 
         View v =inflater.inflate(R.layout.second_frag_test, container, false);
-        final RecyclerView secondFragRecycler = (RecyclerView)v.findViewById(R.id.secondFragRecycler);
-        secondFragRecycler.setHasFixedSize(true);
-        LinearLayoutManager llm = new LinearLayoutManager(getActivity().getApplicationContext());
-        secondFragRecycler.setLayoutManager(llm);
-
+        setRecyclerView(v);
         albums = new ArrayList<AlbumInfo>();
-        String albumName="";
-        String artistName = "";
-        String albumArtPath = "";
-        Long albumId;
-        int noOfSongs;
-        String selection = null;
-        String[] selectionArgs = null;
-        String sortOrder = MediaStore.Audio.Albums.DEFAULT_SORT_ORDER;
-        String[] projection = new String[] {BaseColumns._ID, MediaStore.Audio.AlbumColumns.ALBUM, MediaStore.Audio.AlbumColumns.ARTIST, MediaStore.Audio.AlbumColumns.NUMBER_OF_SONGS, MediaStore.Audio.AlbumColumns.ALBUM_ART };
-        Cursor cursor = getActivity().getApplicationContext().getContentResolver().query(MediaStore.Audio.Albums.EXTERNAL_CONTENT_URI, projection, selection, selectionArgs, sortOrder);
+        Cursor cursor = getAlbumCursor();
 
         int i = 0;
         while (cursor.moveToNext()) {
-            albumName = cursor.getString(1);
-            albumId = cursor.getLong(0);
-            artistName = cursor.getString(2);
-            noOfSongs = cursor.getInt(3);
-            albumArtPath = cursor.getString(4);
+
+            getAlbumInfoFromCursor(cursor);
             AlbumInfo thisAlbum = new AlbumInfo(i,albumId,albumName,artistName,albumArtPath,noOfSongs);
             albums.add(thisAlbum);
             i++;
         }
 
-        ara = new AlbumRecyclerAdapter(this,albums,getActivity());
-        secondFragRecycler.setAdapter(ara);
-        secondFragRecycler.setItemAnimator(new DefaultItemAnimator());
-        FastScroller fastScroller=(FastScroller)v.findViewById(R.id.secondfastscroller);
-        fastScroller.setRecyclerView(secondFragRecycler);
+
+        setRecyclerViewAdapter();
+        setFastScroller(v);
+
 
         return v;
     }
@@ -195,6 +193,42 @@ public class SecondFragmentTest extends Fragment implements ClickInterface{
             actionMode = null;
             MainActivity.mToolbar.getLayoutParams().height = MainActivity.mActionBarSize;
         }
+    }
+
+    public void setRecyclerView(View v)
+    {
+
+        secondFragRecycler = (RecyclerView)v.findViewById(R.id.secondFragRecycler);
+        secondFragRecycler.setHasFixedSize(true);
+        llm = new LinearLayoutManager(getActivity().getApplicationContext());
+        secondFragRecycler.setLayoutManager(llm);
+    }
+
+    public void setRecyclerViewAdapter()
+    {
+        ara = new AlbumRecyclerAdapter(this,albums,getActivity());
+        secondFragRecycler.setAdapter(ara);
+        secondFragRecycler.setItemAnimator(new DefaultItemAnimator());
+    }
+
+    public void setFastScroller(View v)
+    {
+        fastScroller=(FastScroller)v.findViewById(R.id.secondfastscroller);
+        fastScroller.setRecyclerView(secondFragRecycler);
+    }
+
+    public Cursor getAlbumCursor()
+    {
+        return getActivity().getApplicationContext().getContentResolver().query(MediaStore.Audio.Albums.EXTERNAL_CONTENT_URI, projection, selection, selectionArgs, sortOrder);
+    }
+
+    public void getAlbumInfoFromCursor(Cursor cursor)
+    {
+        albumName = cursor.getString(cursor.getColumnIndex(MediaStore.Audio.AlbumColumns.ALBUM));
+        albumId = cursor.getLong(cursor.getColumnIndex(BaseColumns._ID));
+        artistName = cursor.getString(cursor.getColumnIndex(MediaStore.Audio.AlbumColumns.ARTIST));
+        noOfSongs = cursor.getInt(cursor.getColumnIndex(MediaStore.Audio.AlbumColumns.NUMBER_OF_SONGS));
+        albumArtPath = cursor.getString(cursor.getColumnIndex( MediaStore.Audio.AlbumColumns.ALBUM_ART));
     }
 
 

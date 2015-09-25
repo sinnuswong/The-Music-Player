@@ -69,7 +69,7 @@ import it.gmariotti.cardslib.library.view.listener.SwipeOnScrollListener;
          */
 
 
-	static songInfoObj currSongInfo = null;
+
 	static String albumViewOption = "List";
 	static MediaPlayer mp = new MediaPlayer();
 	static Boolean isNowPlayEmpty = true;
@@ -85,50 +85,39 @@ import it.gmariotti.cardslib.library.view.listener.SwipeOnScrollListener;
          ImageView frontAlbumArt;
          TextView frontTitle,frontAlbum;
           PlayPauseView frontPlay;
+         ViewPager pager;
+         TabLayout tabLayout;
+         FloatingActionButton fab;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main_test);
-       mToolbar = (Toolbar) findViewById(R.id.toolbar);
-        setSupportActionBar(mToolbar);
-        setTitle("My Music");
-        mToolbar.setTitleTextColor(getResources().getColor(android.R.color.white));
-        mToolbar.inflateMenu(R.menu.main);
+        setUpToolBar();
+
         final TypedArray styledAttributes = getApplicationContext().getTheme().obtainStyledAttributes(
                 new int[] { android.R.attr.actionBarSize });
         mActionBarSize = (int) styledAttributes.getDimension(0, 0);
         styledAttributes.recycle();
 
-        frontAlbumArt= (ImageView) findViewById(R.id.front_album_art);
-        frontTitle = (TextView) findViewById(R.id.front_title);
-        frontAlbum = (TextView) findViewById(R.id.front_album);
-        frontPlay = (PlayPauseView) findViewById(R.id.front_play_Pause);
-        frontSeekbar = (SeekBar) findViewById(R.id.front_seekbar);
-        frontPlay.setPauseBackgroundColor(Color.parseColor("#00FFFFFF"));
-        frontPlay.setPlayBackgroundColor(Color.parseColor("#00FFFFFF"));
-        frontPlay.setBackgroundColor(Color.parseColor("#00FFFFFF"));
-        frontPlay.setNeedShadow(false);
+        setUpNowPlayingToolBar();
         frontPlay.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
 
 
                 if (MainActivity.isSongPlaying) {
-                    MainActivity.mp.pause();
-                    MainActivity.isSongPlaying = false;
-                    PlayActivity.floatingLyricIntent(getApplicationContext(), (long) MainActivity.mp.getCurrentPosition(), false);
+                    pauseMusicPlayer();
                 } else {
-                    MainActivity.mp.start();
-                    MainActivity.isSongPlaying = true;
-                    PlayActivity.floatingLyricIntent(getApplicationContext(), (long) MainActivity.mp.getCurrentPosition(), true);
+                    startMusicPlayer();
+
                 }
                 frontPlay.toggle();
             }
         });
         idToTrackObj = new HashMap<Long,TrackObject>();
-        if(currSongInfo==null){
-        currSongInfo = new songInfoObj();
+        if(songInfoObj.album==null && songInfoObj.album.length()>0){
+        //songInfoObj = new songInfoObj();
         try{
         UtilFunctions.loadPreference(getApplicationContext());
         isNowPlayEmpty = false;
@@ -171,7 +160,7 @@ import it.gmariotti.cardslib.library.view.listener.SwipeOnScrollListener;
             public void onProgressChanged(SeekBar seekBar, int progress,
                                           boolean fromUser) {
                 // TODO Auto-generated method stub
-               // runningTime.setText(UtilFunctions.convertSecondsToHMmSs(seekBar.getProgress()));
+                // runningTime.setText(UtilFunctions.convertSecondsToHMmSs(seekBar.getProgress()));
 
 
             }
@@ -202,14 +191,13 @@ import it.gmariotti.cardslib.library.view.listener.SwipeOnScrollListener;
             }
         });
        */
-       ViewPager pager = (ViewPager) findViewById(R.id.viewPager);
-        pager.setAdapter(new MyPagerAdapter(getSupportFragmentManager()));
-        TabLayout tabLayout = (TabLayout) findViewById(R.id.tabLayout);
-        tabLayout.setupWithViewPager(pager);
+
 
         //updateFrontNowPlaying();
-        FloatingActionButton fab = (FloatingActionButton) findViewById(R.id.fabButton);
-        fab.setRippleColor(Color.parseColor("#be4d56"));
+        setUpViewPager();
+        setUpTabLayout();
+        setUpFloatingActionButton();
+
 
         //seekbar = (SeekBar) findViewById(R.id.front_seekbar);
         //seekbar.setProgress(50);
@@ -244,7 +232,7 @@ import it.gmariotti.cardslib.library.view.listener.SwipeOnScrollListener;
     public boolean onOptionsItemSelected(MenuItem item) {
 switch (item.getItemId()) {
 case R.id.action_search:
-	Intent intent=new Intent(MainActivity.this,SearchResultsActivity.class);
+	Intent intent=new Intent(MainActivity.this,SearchResultTestActivity.class);
  startActivity(intent);
   break;
 
@@ -313,26 +301,28 @@ protected void onDestroy() {
              }
 
              try {
-             Cursor cursor = CursorClass.playSongCursor(getApplicationContext(),currSongInfo.songId);
-             cursor.moveToFirst();
+             Cursor cursor = CursorClass.playSongCursor(getApplicationContext(),songInfoObj.songId);
+             PlayActivity.setMainActivityCurrsongInfoFromCursor(getApplicationContext(),songInfoObj.songId,cursor);
+            /* cursor.moveToFirst();
+                 
             Long albumId = cursor.getLong(3);
-             MainActivity.currSongInfo.songName = cursor.getString(5);
-             MainActivity.currSongInfo.playPath =cursor.getString(0);
-             MainActivity.currSongInfo.artist = cursor.getString(1);
-             MainActivity.currSongInfo.album = cursor.getString(2);
-             MainActivity.currSongInfo.duration =cursor.getString(4);
-             MainActivity.currSongInfo.bitmap = CursorClass.albumArtCursor(getApplicationContext(), albumId);
+             songInfoObj.songName = cursor.getString(5);
+             songInfoObj.playPath =cursor.getString(0);
+             songInfoObj.artist = cursor.getString(1);
+             songInfoObj.album = cursor.getString(2);
+             songInfoObj.duration =cursor.getString(4);
+             songInfoObj.bitmap = CursorClass.albumArtCursor(getApplicationContext(), albumId); */
 
-                    frontAlbumArt.setImageBitmap(MainActivity.currSongInfo.bitmap);
-                    frontTitle.setText(MainActivity.currSongInfo.songName);
-                    frontAlbum.setText(MainActivity.currSongInfo.album);
+                    frontAlbumArt.setImageBitmap(songInfoObj.bitmap);
+                    frontTitle.setText(songInfoObj.songName);
+                    frontAlbum.setText(songInfoObj.album);
                 }catch (Exception e){
                     //Load the first song in tracks info
                     return;
                 }
 
              try {
-                 audioPlayer(MainActivity.currSongInfo.playPath, currSongInfo.playerPostion);
+                 audioPlayer(songInfoObj.playPath, songInfoObj.playerPostion);
              } catch (IOException e) {
                  e.printStackTrace();
              }
@@ -369,8 +359,9 @@ protected void onDestroy() {
                              break;
                          case R.id.addToPlaylist:
 
-                             Intent intent=new Intent(act,PlayListSelectionTest.class);
-                             intent.putExtra("selectedIdList",selectedIdList);
+                             Intent intent = new Intent(act, PlaylistSelection.class);
+                             intent.putExtra("songName", songName);
+                             intent.putExtra("selectedId", selectedId);
                              act.startActivity(intent);
 
 
@@ -626,11 +617,11 @@ protected void onDestroy() {
                  public boolean onMenuItemClick(MenuItem item) {
 
 
-                     switch(item.getItemId()){
+                     switch (item.getItemId()) {
 
                          case R.id.cnt_menu_play:
 
-                             UtilFunctions.playSelectedSongsfromChoice(act, selectedId, "playlist",false);
+                             UtilFunctions.playSelectedSongsfromChoice(act, selectedId, "playlist", false);
 
                              break;
                          case R.id.cnt_menu_play_next:
@@ -685,14 +676,14 @@ protected void onDestroy() {
                              break;
                          case R.id.cnt_mnu_delete:
 
-                             AlertDialog.Builder builder=new AlertDialog.Builder(act);
+                             AlertDialog.Builder builder = new AlertDialog.Builder(act);
                              builder.setTitle("Confirm Delete");
                              builder.setMessage("Are you sure you want to delete the Playlist?");
                              builder.setCancelable(true);
                              builder.setPositiveButton("Yes",
                                      new DialogInterface.OnClickListener() {
                                          public void onClick(DialogInterface dialog, int thisid) {
-                                             ContentResolver resolver=act.getApplicationContext().getContentResolver();
+                                             ContentResolver resolver = act.getApplicationContext().getContentResolver();
                                              UtilFunctions.deletePlaylist(resolver, selectedId);
                                              dialog.cancel();
                                          }
@@ -740,22 +731,22 @@ protected void onDestroy() {
                  @Override
                  public void onCompletion(MediaPlayer mp) {
                      //mp.reset();
-                     if(MainActivity.currSongInfo.isRepeat ==0){
-                         MainActivity.currSongInfo.currPlayPos = (MainActivity.currSongInfo.currPlayPos+1);
-                         if(MainActivity.currSongInfo.currPlayPos == MainActivity.currSongInfo.nowPlayingList.size()){
+                     if(songInfoObj.isRepeat ==0){
+                         songInfoObj.currPlayPos = (songInfoObj.currPlayPos+1);
+                         if(songInfoObj.currPlayPos == songInfoObj.nowPlayingList.size()){
 
-                             MainActivity.currSongInfo.currPlayPos--;
+                             songInfoObj.currPlayPos--;
                              return;
                          }
-                     }else if(MainActivity.currSongInfo.isRepeat == 1){
-                         MainActivity.currSongInfo.currPlayPos = (MainActivity.currSongInfo.currPlayPos+1)%MainActivity.currSongInfo.nowPlayingList.size();
+                     }else if(songInfoObj.isRepeat == 1){
+                         songInfoObj.currPlayPos = (songInfoObj.currPlayPos+1)%songInfoObj.nowPlayingList.size();
 
                      }
 
 
                      try {
                          mp.reset();
-                         audioPlayer((String)PlayActivity.getPlaySongInfo(getApplicationContext(), Long.parseLong(MainActivity.currSongInfo.nowPlayingList.get(MainActivity.currSongInfo.currPlayPos))),1);
+                         audioPlayer((String)PlayActivity.getPlaySongInfo(getApplicationContext(), Long.parseLong(songInfoObj.nowPlayingList.get(songInfoObj.currPlayPos))),1);
                      } catch (IOException e) {
                          // TODO Auto-generated catch block
                          e.printStackTrace();
@@ -811,7 +802,7 @@ protected void onDestroy() {
 
                  Integer mediaPos_new = MainActivity.mp.getCurrentPosition();
                  int mediaMax_new = MainActivity.mp.getDuration();
-                 MainActivity.currSongInfo.playerPostion = mediaPos_new;
+                 songInfoObj.playerPostion = mediaPos_new;
                  frontSeekbar.setMax(mediaMax_new);
                  frontSeekbar.setProgress(mediaPos_new);
                  if(MainActivity.mp.isPlaying()){
@@ -823,4 +814,63 @@ protected void onDestroy() {
 
              }
          };
+
+         public void setUpToolBar()
+         {
+             mToolbar = (Toolbar) findViewById(R.id.toolbar);
+             setSupportActionBar(mToolbar);
+             setTitle("My Music");
+             mToolbar.setTitleTextColor(getResources().getColor(android.R.color.white));
+             mToolbar.inflateMenu(R.menu.main);
+         }
+
+         public void setUpNowPlayingToolBar()
+         {
+             frontAlbumArt= (ImageView) findViewById(R.id.front_album_art);
+             frontTitle = (TextView) findViewById(R.id.front_title);
+             frontAlbum = (TextView) findViewById(R.id.front_album);
+             frontPlay = (PlayPauseView) findViewById(R.id.front_play_Pause);
+             frontSeekbar = (SeekBar) findViewById(R.id.front_seekbar);
+             frontPlay.setPauseBackgroundColor(Color.parseColor("#00FFFFFF"));
+             frontPlay.setPlayBackgroundColor(Color.parseColor("#00FFFFFF"));
+             frontPlay.setBackgroundColor(Color.parseColor("#00FFFFFF"));
+             frontPlay.setNeedShadow(false);
+         }
+
+         public void pauseMusicPlayer()
+         {
+             MainActivity.mp.pause();
+             MainActivity.isSongPlaying = false;
+             PlayActivity.floatingLyricIntent(getApplicationContext(), (long) MainActivity.mp.getCurrentPosition(), false);
+         }
+
+         public void startMusicPlayer()
+         {
+             MainActivity.mp.start();
+             MainActivity.isSongPlaying = true;
+             PlayActivity.floatingLyricIntent(getApplicationContext(), (long) MainActivity.mp.getCurrentPosition(), true);
+         }
+
+         public void setUpViewPager()
+         {
+             pager = (ViewPager) findViewById(R.id.viewPager);
+             pager.setAdapter(new MyPagerAdapter(getSupportFragmentManager()));
+
+
+         }
+
+         public void setUpTabLayout()
+         {
+             tabLayout = (TabLayout) findViewById(R.id.tabLayout);
+             tabLayout.setupWithViewPager(pager);
+
+         }
+
+         public void setUpFloatingActionButton()
+         {
+              fab = (FloatingActionButton) findViewById(R.id.fabButton);
+             fab.setRippleColor(Color.parseColor("#be4d56"));
+         }
+
+
      }

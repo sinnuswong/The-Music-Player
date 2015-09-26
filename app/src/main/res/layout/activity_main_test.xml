@@ -143,12 +143,13 @@ android:layout_height="match_parent">
         android:layout_width="56dp"
         android:layout_height="56dp"
         android:layout_gravity="end|bottom"
-        android:layout_margin="16dp"
+        android:layout_marginRight="16dp"
+        android:layout_marginBottom="32dp"
         android:scaleType="centerInside"
         android:backgroundTint="#be4d56"
         android:src="@drawable/shuffle"
         app:borderWidth="0dp"
-        android:elevation="8dp"
+        android:elevation="6dp"
         app:layout_behavior="com.Project100Pi.themusicplayer.ScrollingFABBehavior"/>
 
 

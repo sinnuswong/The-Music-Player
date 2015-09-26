@@ -27,7 +27,7 @@
                 android:textColor="#C1C1C1"
                 android:textSize="13sp"
                 android:layout_below="@+id/playlist_name"
-                android:layout_marginLeft="5dp"
+                android:layout_marginLeft="16dp"
                 android:layout_marginRight="120dp" />
 
             <TextView
@@ -39,7 +39,7 @@
                 android:layout_alignParentTop="true"
                 android:layout_alignParentLeft="true"
                 android:layout_alignParentStart="true"
-                android:layout_marginLeft="5dp"
+                android:layout_marginLeft="16dp"
                 android:layout_marginRight="120dp"
                 android:textColor="#C1C1C1"
                 android:textSize="15sp"

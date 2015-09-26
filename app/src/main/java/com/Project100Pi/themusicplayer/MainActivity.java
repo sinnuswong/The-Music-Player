@@ -16,6 +16,7 @@ import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
 import android.provider.MediaStore;
+import android.support.design.widget.AppBarLayout;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.TabLayout;
 import android.support.v4.app.Fragment;
@@ -107,9 +108,9 @@ import it.gmariotti.cardslib.library.view.listener.SwipeOnScrollListener;
 
 
                 if (PlayHelperFunctions.isSongPlaying) {
-                    pauseMusicPlayer();
+                    PlayHelperFunctions.pauseMusicPlayer();
                 } else {
-                    startMusicPlayer();
+                    PlayHelperFunctions.startMusicPlayer();
 
                 }
                 frontPlay.toggle();
@@ -547,10 +548,10 @@ protected void onDestroy() {
                  public boolean onMenuItemClick(MenuItem item) {
 
 
-                     switch(item.getItemId()){
+                     switch (item.getItemId()) {
                          case R.id.cnt_menu_play:
 
-                             UtilFunctions.playSelectedSongsfromChoice(act, selectedGenreId, "genre",false);
+                             UtilFunctions.playSelectedSongsfromChoice(act, selectedGenreId, "genre", false);
 
                              break;
                          case R.id.cnt_menu_play_next:
@@ -566,8 +567,6 @@ protected void onDestroy() {
                              act.startActivity(UtilFunctions.addSongstoPlaylist(act, selectedGenreId, "genre"));
 
 
-
-
                              break;
 
                          case R.id.cnt_mnu_edit:
@@ -575,7 +574,7 @@ protected void onDestroy() {
 
                              break;
                          case R.id.cnt_mnu_delete:
-                             UtilFunctions.deleteSinglePopUp(act, act, selectedGenreId.toString(),"Are you sure you want to delete the selected Genre?"," 1 Genre Deleted","genre");
+                             UtilFunctions.deleteSinglePopUp(act, act, selectedGenreId.toString(), "Are you sure you want to delete the selected Genre?", " 1 Genre Deleted", "genre");
 
                              break;
                          case R.id.cnt_mnu_share:
@@ -742,25 +741,31 @@ protected void onDestroy() {
              frontPlay.setNeedShadow(false);
          }
 
-         public void pauseMusicPlayer()
-         {
-             PlayHelperFunctions.mp.pause();
-             PlayHelperFunctions.isSongPlaying = false;
-             PlayHelperFunctions.floatingLyricIntent(getApplicationContext(), (long) PlayHelperFunctions.mp.getCurrentPosition(), false);
-         }
-
-         public void startMusicPlayer()
-         {
-             PlayHelperFunctions.mp.start();
-             PlayHelperFunctions.isSongPlaying = true;
-             PlayHelperFunctions.floatingLyricIntent(getApplicationContext(), (long) PlayHelperFunctions.mp.getCurrentPosition(), true);
-         }
-
          public void setUpViewPager()
          {
              pager = (ViewPager) findViewById(R.id.viewPager);
              pager.setAdapter(new MyPagerAdapter(getSupportFragmentManager()));
+             pager.setOnPageChangeListener(new ViewPager.OnPageChangeListener() {
+                 @Override
+                 public void onPageScrolled(int position, float positionOffset, int positionOffsetPixels) {
 
+                 }
+
+                 @Override
+                 public void onPageSelected(int position) {
+                     if(position < 4){
+                         fab.show();
+                     } else {
+                         fab.hide();
+                     }
+
+                 }
+
+                 @Override
+                 public void onPageScrollStateChanged(int state) {
+
+                 }
+             });
 
          }
 
@@ -775,6 +780,13 @@ protected void onDestroy() {
          {
               fab = (FloatingActionButton) findViewById(R.id.fabButton);
              fab.setRippleColor(Color.parseColor("#be4d56"));
+             fab.setOnClickListener(new View.OnClickListener() {
+                 @Override
+                 public void onClick(View v) {
+                     UtilFunctions.playSelectedSongs(MainActivity.this, idList, 0, true);
+                 }
+             });
+
          }
 
 

@@ -10,8 +10,12 @@ import android.support.v7.widget.DefaultItemAnimator;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.helper.ItemTouchHelper;
+import android.view.View;
+import android.widget.AbsListView;
 
 import java.util.ArrayList;
+
+import xyz.danoz.recyclerviewfastscroller.vertical.VerticalRecyclerViewFastScroller;
 
 /**
  * Created by BalachandranAR on 9/19/2015.
@@ -43,6 +47,38 @@ public class NowPlayingListTest extends Activity {
         ItemTouchHelper.Callback callback = new SimpleItemTouchHelperCallback(tra);
         mItemTouchHelper = new ItemTouchHelper(callback);
         mItemTouchHelper.attachToRecyclerView(firstFragRecycler);
+
+        final VerticalRecyclerViewFastScroller fastScroller = (VerticalRecyclerViewFastScroller) findViewById(R.id.fast_scroller);
+
+        // Connect the recycler to the scroller (to let the scroller scroll the list)
+        fastScroller.setRecyclerView(firstFragRecycler);
+        fastScroller.setVisibility(View.INVISIBLE);
+        
+        // Connect the scroller to the recycler (to let the recycler scroll the scroller's handle)
+        firstFragRecycler.addOnScrollListener(new RecyclerView.OnScrollListener() {
+            @Override
+            public void onScrollStateChanged(RecyclerView recyclerView, int newState) {
+                super.onScrollStateChanged(recyclerView, newState);
+                if (newState == AbsListView.OnScrollListener.SCROLL_STATE_IDLE && !fastScroller.isPressed()) {
+                  fastScroller.setVisibility(View.INVISIBLE);
+                }else if(newState == AbsListView.OnScrollListener.SCROLL_STATE_FLING || newState == AbsListView.OnScrollListener.SCROLL_STATE_TOUCH_SCROLL){
+                    fastScroller.setVisibility(View.VISIBLE);
+                }else{
+                    fastScroller.setVisibility(View.VISIBLE);
+                }
+            }
+
+            @Override
+            public void onScrolled(RecyclerView recyclerView, int dx, int dy) {
+                super.onScrolled(recyclerView, dx, dy);
+            }
+        });
+       firstFragRecycler.setOnScrollListener(fastScroller.getOnScrollListener());
+        if(songInfoObj.currPlayPos < 5) {
+            firstFragRecycler.scrollToPosition(songInfoObj.currPlayPos);
+        }else{
+            firstFragRecycler.scrollToPosition(songInfoObj.currPlayPos - 2);
+        }
 
     }
 }

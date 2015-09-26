@@ -78,8 +78,16 @@ public class NowPlayingRecyclerAdapter extends SelectableAdapter<NowPlayingRecyc
 
         @Override
         public void onClick(View v) {
-                UtilFunctions.playSelectedSongs(viewActivity, idList, getAdapterPosition(), false);
-                return;
+               // UtilFunctions.playSelectedSongs(viewActivity, idList, getAdapterPosition(), false);
+            //Play song staying in NowPlayingListTest activity.
+            try {
+                PlayHelperFunctions.isSongPlaying = true;
+                PlayHelperFunctions.audioPlayer((String) PlayHelperFunctions.setPlaySongInfo(Long.parseLong(songInfoObj.nowPlayingList.get(getAdapterPosition()))),1);
+                songInfoObj.currPlayPos = getAdapterPosition();
+            } catch(Exception e){
+
+            }
+            return;
 
         }
 

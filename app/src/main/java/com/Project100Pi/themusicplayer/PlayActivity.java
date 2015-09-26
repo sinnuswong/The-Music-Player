@@ -43,14 +43,14 @@ import android.graphics.PorterDuff;
 import android.graphics.drawable.ColorDrawable;
 import android.graphics.drawable.Drawable;
 
-public class PlayActivity extends Activity implements OnSeekBarChangeListener{
+public class PlayActivity extends Activity implements OnSeekBarChangeListener {
 
-    
+
     long nowPlayingId;
     int albumArtSize = 0;
     TextView runningTime = null;
-    int screenWidth ;
-    int screenHeight ;
+    int screenWidth;
+    int screenHeight;
     Context mcontext;
     ActionBar actionBar;
 
@@ -96,7 +96,6 @@ public class PlayActivity extends Activity implements OnSeekBarChangeListener{
         thisLayout.requestLayout();
 
 
-
         int bottomPlaySize = thisLayout.getHeight() + playLayout.getHeight();
         albumArtSize = screenHeight - bottomPlaySize;
 		   /*
@@ -106,10 +105,9 @@ public class PlayActivity extends Activity implements OnSeekBarChangeListener{
 			setPlayingLayout();
 		   }
 		   */
-        PlayHelperFunctions.seekbar = (SeekBar)findViewById(R.id.seekBar); // make PlayHelperFunctions.seekbar object
+        PlayHelperFunctions.seekbar = (SeekBar) findViewById(R.id.seekBar); // make PlayHelperFunctions.seekbar object
         PlayHelperFunctions.seekbar.setOnSeekBarChangeListener(this);
         PlayHelperFunctions.seekbar.setOnSeekBarChangeListener(new OnSeekBarChangeListener() {
-
 
 
             @Override
@@ -119,6 +117,7 @@ public class PlayActivity extends Activity implements OnSeekBarChangeListener{
                 PlayHelperFunctions.handler.removeCallbacks(PlayHelperFunctions.moveSeekBarThread);
 
             }
+
             public void onStopTrackingTouch(SeekBar seekBar) {
                 // TODO Auto-generated method stub
                 PlayHelperFunctions.handler.removeCallbacks(PlayHelperFunctions.moveSeekBarThread);
@@ -145,30 +144,29 @@ public class PlayActivity extends Activity implements OnSeekBarChangeListener{
             }
         });
         Intent intent = getIntent();
-        if(intent.getExtras().getString("do").equals("Play")){
+        if (intent.getExtras().getString("do").equals("Play")) {
             getAndSetCurrPlaySongInfoFromIntent(intent);
-            if(songInfoObj.shuffled){
+            if (songInfoObj.shuffled) {
                 long seed = System.nanoTime();
                 Collections.shuffle(songInfoObj.nowPlayingList, new Random(seed));
             }
 
-            nowPlayingId=Long.parseLong(songInfoObj.nowPlayingList.get(songInfoObj.currPlayPos));
+            nowPlayingId = Long.parseLong(songInfoObj.nowPlayingList.get(songInfoObj.currPlayPos));
 
-            try{
+            try {
                 PlayHelperFunctions.isSongPlaying = true;
-                PlayHelperFunctions.audioPlayer((String)PlayHelperFunctions.setPlaySongInfo(nowPlayingId),1);
+                PlayHelperFunctions.audioPlayer((String) PlayHelperFunctions.setPlaySongInfo(nowPlayingId), 1);
                 setPlayingLayout();
-            }catch(IOException e){
+            } catch (IOException e) {
                 e.printStackTrace();
             }
 
 
-
-        }else if(intent.getExtras().getString("do").equals("watch")){
+        } else if (intent.getExtras().getString("do").equals("watch")) {
 
             PlayHelperFunctions.setPlaySongInfo(songInfoObj.songId);
             setPlayingLayout();
-            if(!PlayHelperFunctions.isSongPlaying && (PlayHelperFunctions.mp.getDuration()!=Integer.parseInt(songInfoObj.duration))){
+            if (!PlayHelperFunctions.isSongPlaying && (PlayHelperFunctions.mp.getDuration() != Integer.parseInt(songInfoObj.duration))) {
                 try {
                     PlayHelperFunctions.audioPlayer(songInfoObj.playPath, songInfoObj.playerPostion);
                 } catch (IOException e) {
@@ -181,19 +179,20 @@ public class PlayActivity extends Activity implements OnSeekBarChangeListener{
         }
 
 
-
         final PlayPauseView view = (PlayPauseView) findViewById(R.id.playPauseView);
-        if(!PlayHelperFunctions.isSongPlaying){
+        /*
+        if (!PlayHelperFunctions.isSongPlaying) {
             view.toggle();
         }
-       // Toast.makeText(getApplicationContext(),view.isPlay()+"",Toast.LENGTH_LONG).show();
+        */
+        // Toast.makeText(getApplicationContext(),view.isPlay()+"",Toast.LENGTH_LONG).show();
         view.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                if(PlayHelperFunctions.isSongPlaying){
-                    pauseMusicPlayer();
+                if (PlayHelperFunctions.isSongPlaying) {
+                    PlayHelperFunctions.pauseMusicPlayer();
                 } else {
-                    startMusicPlayer(); // Check this code once..Check the Method implementation once with Bala's Code
+                    PlayHelperFunctions.startMusicPlayer(); // Check this code once..Check the Method implementation once with Bala's Code
                 }
                 view.toggle();
             }
@@ -206,7 +205,8 @@ public class PlayActivity extends Activity implements OnSeekBarChangeListener{
         next.setOnClickListener(new View.OnClickListener() {
             public void onClick(View v) {
 
-                nextAction();
+                PlayHelperFunctions.nextAction();
+                setPlayingLayout();
             }
         });
 
@@ -216,30 +216,9 @@ public class PlayActivity extends Activity implements OnSeekBarChangeListener{
         prev.setImageDrawable(prevIcon);
         prev.setOnClickListener(new View.OnClickListener() {
             public void onClick(View v) {
-                // Perform action on click
-            	/*
-            	Drawable myIcon = getResources().getDrawable(R.drawable.previous);
-            	myIcon.setColorFilter(Color.BLUE, PorterDuff.Mode.SRC_ATOP);
-            	prev.setImageDrawable(myIcon);
- 				*/
 
-                if(PlayHelperFunctions.mp.getCurrentPosition()>5000){
-                    PlayHelperFunctions.mp.reset();
-                }
-                else if(songInfoObj.currPlayPos <=0 ){
-                    songInfoObj.currPlayPos = songInfoObj.nowPlayingList.size()-1;
-                }else{
-                    songInfoObj.currPlayPos = songInfoObj.currPlayPos-1;
-                }
-                try {
-                    PlayHelperFunctions.mp.reset();
-                    PlayHelperFunctions.audioPlayer((String)PlayHelperFunctions.setPlaySongInfo(Long.parseLong(songInfoObj.nowPlayingList.get(songInfoObj.currPlayPos))),1);
-                    setPlayingLayout();
-                    PlayHelperFunctions.handler.postDelayed(PlayHelperFunctions.moveSeekBarThread, 100);
-                } catch (IOException e) {
-                    // TODO Auto-generated catch block
-                    e.printStackTrace();
-                }
+                PlayHelperFunctions.prevAction();
+                setPlayingLayout();
 
             }
         });
@@ -247,33 +226,33 @@ public class PlayActivity extends Activity implements OnSeekBarChangeListener{
         final ImageView repeat = (ImageView) findViewById(R.id.repeatImage);
         final Drawable repeatIcon = getResources().getDrawable(R.drawable.ic_action_playback_repeat);
         final Drawable repeatIcon_1 = getResources().getDrawable(R.drawable.ic_action_playback_repeat_1);
-        if(songInfoObj.isRepeat == 0){
+        if (songInfoObj.isRepeat == 0) {
             repeatIcon.setColorFilter(Color.parseColor("#2F5D53"), PorterDuff.Mode.SRC_ATOP);
             repeat.setImageDrawable(repeatIcon);
-        }else if(songInfoObj.isRepeat == 1){
+        } else if (songInfoObj.isRepeat == 1) {
             repeatIcon.setColorFilter(Color.parseColor("#be4d56"), PorterDuff.Mode.SRC_ATOP);
             repeat.setImageDrawable(repeatIcon);
-        }else{
+        } else {
             repeatIcon_1.setColorFilter(Color.parseColor("#be4d56"), PorterDuff.Mode.SRC_ATOP);
             repeat.setImageDrawable(repeatIcon_1);
         }
         repeat.setOnClickListener(new View.OnClickListener() {
             public void onClick(View v) {
                 // Perform action on click
-                if(songInfoObj.isRepeat == 0){
+                if (songInfoObj.isRepeat == 0) {
                     repeatIcon.setColorFilter(Color.parseColor("#be4d56"), PorterDuff.Mode.SRC_ATOP);
                     repeat.setImageDrawable(repeatIcon);
                     songInfoObj.isRepeat = 1;
                     Toast.makeText(getApplicationContext(), "Repeat ON", Toast.LENGTH_LONG).show();
-                }else if(songInfoObj.isRepeat == 1){
+                } else if (songInfoObj.isRepeat == 1) {
                     repeatIcon_1.setColorFilter(Color.parseColor("#be4d56"), PorterDuff.Mode.SRC_ATOP);
                     repeat.setImageDrawable(repeatIcon_1);
-                    songInfoObj.isRepeat =2;
+                    songInfoObj.isRepeat = 2;
                     Toast.makeText(getApplicationContext(), "Single Repeat ON", Toast.LENGTH_LONG).show();
-                }else{
+                } else {
                     repeatIcon.setColorFilter(Color.parseColor("#2F5D53"), PorterDuff.Mode.SRC_ATOP);
                     repeat.setImageDrawable(repeatIcon);
-                    songInfoObj.isRepeat=0;
+                    songInfoObj.isRepeat = 0;
                     Toast.makeText(getApplicationContext(), "Repeat OFF", Toast.LENGTH_LONG).show();
                 }
 
@@ -281,20 +260,19 @@ public class PlayActivity extends Activity implements OnSeekBarChangeListener{
         });
 
 
-
-        final ImageView shuffle=(ImageView)findViewById(R.id.shuffleImage);
+        final ImageView shuffle = (ImageView) findViewById(R.id.shuffleImage);
         final Drawable shuffleIcon = getResources().getDrawable(R.drawable.shuffle);
-        if(songInfoObj.shuffled){
+        if (songInfoObj.shuffled) {
             shuffleIcon.setColorFilter(Color.parseColor("#be4d56"), PorterDuff.Mode.SRC_ATOP);
             shuffle.setImageDrawable(shuffleIcon);
-        } else{
+        } else {
             shuffleIcon.setColorFilter(Color.parseColor("#2F5D53"), PorterDuff.Mode.SRC_ATOP);
             shuffle.setImageDrawable(shuffleIcon);
         }
         shuffle.setOnClickListener(new View.OnClickListener() {
             public void onClick(View v) {
 
-                if(!songInfoObj.shuffled){
+                if (!songInfoObj.shuffled) {
                     Toast.makeText(getApplicationContext(), "Shuffle ON ", Toast.LENGTH_LONG).show();
                     long seed = System.nanoTime();
                     Collections.shuffle(songInfoObj.nowPlayingList, new Random(seed));
@@ -302,7 +280,7 @@ public class PlayActivity extends Activity implements OnSeekBarChangeListener{
                     songInfoObj.shuffled = true;
                     shuffleIcon.setColorFilter(Color.parseColor("#be4d56"), PorterDuff.Mode.SRC_ATOP);
                     shuffle.setImageDrawable(shuffleIcon);
-                } else{
+                } else {
                     Toast.makeText(getApplicationContext(), "Shuffle OFF ", Toast.LENGTH_LONG).show();
                     songInfoObj.nowPlayingList.clear();
                     songInfoObj.nowPlayingList.addAll(songInfoObj.initialPlayingList);
@@ -315,12 +293,7 @@ public class PlayActivity extends Activity implements OnSeekBarChangeListener{
         });
 
 
-
-
-
     }
-  
-
 
 
     public boolean onCreateOptionsMenu(Menu menu) {
@@ -338,14 +311,14 @@ public class PlayActivity extends Activity implements OnSeekBarChangeListener{
         int id = item.getItemId();
         switch (id) {
             case R.id.nowPlayingListImage:
-                Intent intent=new Intent(PlayActivity.this,NowPlayingListTest.class);
+                Intent intent = new Intent(PlayActivity.this, NowPlayingListTest.class);
                 // intent.putExtra("art",(Serializable)songInfoObj.nowPlayingList);
                 intent.putExtra("position", songInfoObj.currPlayPos);
                 startActivity(intent);
 
                 break;
             case R.id.timerImage:
-                Toast.makeText(getApplicationContext(), "Timer ON",Toast.LENGTH_SHORT).show();
+                Toast.makeText(getApplicationContext(), "Timer ON", Toast.LENGTH_SHORT).show();
                 new CountDownTimer(30000, 1000) {
 
                     public void onTick(long millisUntilFinished) {
@@ -354,14 +327,14 @@ public class PlayActivity extends Activity implements OnSeekBarChangeListener{
 
                     public void onFinish() {
                         // mTextField.setText("done!");
-                        Toast.makeText(getApplicationContext(), "Timer over",Toast.LENGTH_SHORT).show();
+                        Toast.makeText(getApplicationContext(), "Timer over", Toast.LENGTH_SHORT).show();
                         PlayHelperFunctions.mp.pause();
                     }
                 }.start();
                 break;
 
             case R.id.equalizerImage:
-                intent=new Intent(PlayActivity.this,EqualizerSettings.class);
+                intent = new Intent(PlayActivity.this, EqualizerSettings.class);
                 // intent.putExtra("art",(Serializable)songInfoObj.nowPlayingList);
                 intent.putExtra("position", songInfoObj.currPlayPos);
                 startActivity(intent);
@@ -375,8 +348,6 @@ public class PlayActivity extends Activity implements OnSeekBarChangeListener{
         return true;
     }
 
-  
-  
 
     @Override
     protected void onRestart() {
@@ -384,26 +355,30 @@ public class PlayActivity extends Activity implements OnSeekBarChangeListener{
         super.onRestart();
 
     }
+
     @Override
     protected void onDestroy() {
         super.onDestroy();
-        try{
+        try {
             UtilFunctions.savePreference(getApplicationContext());
-        }catch(Exception e){
+        } catch (Exception e) {
             Log.i("shared preference", "save failed");
         }
     }
+
     @Override
     public void onProgressChanged(SeekBar seekBar, int progress,
                                   boolean fromUser) {
         // TODO Auto-generated method stub
 
     }
+
     @Override
     public void onStartTrackingTouch(SeekBar seekBar) {
         // TODO Auto-generated method stub
 
     }
+
     @Override
     public void onStopTrackingTouch(SeekBar seekBar) {
         // TODO Auto-generated method stub
@@ -415,12 +390,13 @@ public class PlayActivity extends Activity implements OnSeekBarChangeListener{
         // TODO Auto-generated method stub
         super.onResume();
         PlayHelperFunctions.setPlaySongInfo(songInfoObj.songId);
+        layoutInit();
         setPlayingLayout();
     }
 
-    private void setPlayingLayout(){
+    private void setPlayingLayout() {
 
-        ImageView albumArtView =(ImageView) findViewById(R.id.albumArt);
+        ImageView albumArtView = (ImageView) findViewById(R.id.albumArt);
         albumArtView.requestLayout();
         albumArtView.getLayoutParams().width = albumArtSize;
         albumArtView.getLayoutParams().height = albumArtSize;
@@ -437,33 +413,6 @@ public class PlayActivity extends Activity implements OnSeekBarChangeListener{
         TextView fullPlayingTime = (TextView) findViewById(R.id.fullPlayTIme);
         fullPlayingTime.setText(UtilFunctions.convertSecondsToHMmSs(Long.parseLong(songInfoObj.duration)));
     }
-    
-
-    public void nextAction(){
-        PlayHelperFunctions.mp.reset();
-        songInfoObj.currPlayPos = (songInfoObj.currPlayPos+1) % songInfoObj.nowPlayingList.size();
-        try {
-            PlayHelperFunctions.audioPlayer((String)PlayHelperFunctions.setPlaySongInfo(Long.parseLong(songInfoObj.nowPlayingList.get(songInfoObj.currPlayPos))),1);
-            setPlayingLayout();
-            PlayHelperFunctions.handler.postDelayed(PlayHelperFunctions.moveSeekBarThread, 100);
-        } catch (IOException e) {
-            // TODO Auto-generated catch block
-            e.printStackTrace();
-        }
-    }
-
-    public void swipeCurrPlayAction(){
-        PlayHelperFunctions.mp.reset();
-        songInfoObj.currPlayPos = (songInfoObj.currPlayPos) % songInfoObj.nowPlayingList.size();
-        try {
-            PlayHelperFunctions.audioPlayer((String)PlayHelperFunctions.setPlaySongInfo(Long.parseLong(songInfoObj.nowPlayingList.get(songInfoObj.currPlayPos))),1);
-            setPlayingLayout();
-            PlayHelperFunctions.handler.postDelayed(PlayHelperFunctions.moveSeekBarThread, 100);
-        } catch (IOException e) {
-            // TODO Auto-generated catch block
-            e.printStackTrace();
-        }
-    }
 
     public int getStatusBarHeight() {
         int result = 0;
@@ -474,26 +423,11 @@ public class PlayActivity extends Activity implements OnSeekBarChangeListener{
         return result;
     }
 
-    public void setActionBarUIData()
-    {
+    public void setActionBarUIData() {
         actionBar.setDisplayShowHomeEnabled(false);
         actionBar.setDisplayShowTitleEnabled(false);
         actionBar.setBackgroundDrawable(new ColorDrawable(Color.parseColor("#33000000")));
         actionBar.setStackedBackgroundDrawable(new ColorDrawable(Color.parseColor("#55000000")));
-    }
-
-    public void pauseMusicPlayer()
-    {
-        PlayHelperFunctions.mp.pause();
-        PlayHelperFunctions.isSongPlaying = false;
-        PlayHelperFunctions.floatingLyricIntent(getApplicationContext(), (long) PlayHelperFunctions.mp.getCurrentPosition(), false);
-    }
-
-    public void startMusicPlayer()
-    {
-        PlayHelperFunctions.mp.start();
-        PlayHelperFunctions.isSongPlaying = true;
-        PlayHelperFunctions.floatingLyricIntent(getApplicationContext(), (long) PlayHelperFunctions.mp.getCurrentPosition(), true);
     }
 
     public void setScreenWidthAndHeight(Point size) {
@@ -501,8 +435,7 @@ public class PlayActivity extends Activity implements OnSeekBarChangeListener{
         screenHeight = size.y - getStatusBarHeight();
     }
 
-    public void getAndSetCurrPlaySongInfoFromIntent(Intent i)
-    {
+    public void getAndSetCurrPlaySongInfoFromIntent(Intent i) {
         songInfoObj.currPlayPos = i.getExtras().getInt("position");
         songInfoObj.nowPlayingList = new ArrayList<String>();
         songInfoObj.initialPlayingList = new ArrayList<String>();
@@ -510,4 +443,38 @@ public class PlayActivity extends Activity implements OnSeekBarChangeListener{
         songInfoObj.initialPlayingList.addAll(songInfoObj.nowPlayingList);
         songInfoObj.shuffled = i.getExtras().getBoolean("shuffle");
     }
+
+    public void layoutInit() {
+        PlayPauseView view = (PlayPauseView) findViewById(R.id.playPauseView);
+        if ((!PlayHelperFunctions.isSongPlaying && !view.isShowPlay) || (PlayHelperFunctions.isSongPlaying && view.isShowPlay)) {
+            view.toggle();
+        }
+        final ImageView repeat = (ImageView) findViewById(R.id.repeatImage);
+        final Drawable repeatIcon = getResources().getDrawable(R.drawable.ic_action_playback_repeat);
+        final Drawable repeatIcon_1 = getResources().getDrawable(R.drawable.ic_action_playback_repeat_1);
+        if(songInfoObj.isRepeat == 0){
+            repeatIcon.setColorFilter(Color.parseColor("#2F5D53"), PorterDuff.Mode.SRC_ATOP);
+            repeat.setImageDrawable(repeatIcon);
+        }else if(songInfoObj.isRepeat == 1){
+            repeatIcon.setColorFilter(Color.parseColor("#be4d56"), PorterDuff.Mode.SRC_ATOP);
+            repeat.setImageDrawable(repeatIcon);
+        }else{
+            repeatIcon_1.setColorFilter(Color.parseColor("#be4d56"), PorterDuff.Mode.SRC_ATOP);
+            repeat.setImageDrawable(repeatIcon_1);
+        }
+
+        final ImageView shuffle = (ImageView) findViewById(R.id.shuffleImage);
+        final Drawable shuffleIcon = getResources().getDrawable(R.drawable.shuffle);
+        if (songInfoObj.shuffled) {
+            shuffleIcon.setColorFilter(Color.parseColor("#be4d56"), PorterDuff.Mode.SRC_ATOP);
+            shuffle.setImageDrawable(shuffleIcon);
+        } else {
+            shuffleIcon.setColorFilter(Color.parseColor("#2F5D53"), PorterDuff.Mode.SRC_ATOP);
+            shuffle.setImageDrawable(shuffleIcon);
+        }
+
+
+    }
+
+
 }

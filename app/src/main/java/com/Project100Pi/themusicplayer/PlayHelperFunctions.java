@@ -160,7 +160,7 @@ public class PlayHelperFunctions {
 
         handler.removeCallbacks(moveSeekBarThread);
         handler.postDelayed(moveSeekBarThread, 100); //cal the thread after 100 milliseconds
-
+        UtilFunctions.savePreference(mContext);
     }
 
     public static void floatingLyricIntent(Context context,long currDuration,Boolean isPlaying){
@@ -188,6 +188,55 @@ public class PlayHelperFunctions {
 
         intent.putExtras(bundle);
         context.sendBroadcast(intent);
+    }
+
+
+    public static void pauseMusicPlayer()
+    {
+        PlayHelperFunctions.mp.pause();
+        PlayHelperFunctions.isSongPlaying = false;
+        PlayHelperFunctions.floatingLyricIntent(mContext, (long) PlayHelperFunctions.mp.getCurrentPosition(), false);
+    }
+
+    public static void startMusicPlayer()
+    {
+        PlayHelperFunctions.mp.start();
+        PlayHelperFunctions.isSongPlaying = true;
+        PlayHelperFunctions.floatingLyricIntent(mContext, (long) PlayHelperFunctions.mp.getCurrentPosition(), true);
+    }
+
+
+    public static void nextAction(){
+        PlayHelperFunctions.mp.reset();
+        songInfoObj.currPlayPos = (songInfoObj.currPlayPos+1) % songInfoObj.nowPlayingList.size();
+        try {
+            PlayHelperFunctions.audioPlayer((String) PlayHelperFunctions.setPlaySongInfo(Long.parseLong(songInfoObj.nowPlayingList.get(songInfoObj.currPlayPos))),1);
+            PlayHelperFunctions.handler.postDelayed(PlayHelperFunctions.moveSeekBarThread, 100);
+        } catch (IOException e) {
+            // TODO Auto-generated catch block
+            e.printStackTrace();
+        }
+    }
+
+    public static void prevAction(){
+        if(PlayHelperFunctions.mp.getCurrentPosition()>5000){
+            PlayHelperFunctions.mp.reset();
+        }
+        else if(songInfoObj.currPlayPos <=0 ){
+            songInfoObj.currPlayPos = songInfoObj.nowPlayingList.size()-1;
+        }else{
+            songInfoObj.currPlayPos = songInfoObj.currPlayPos-1;
+        }
+        try {
+            PlayHelperFunctions.mp.reset();
+            PlayHelperFunctions.audioPlayer((String) PlayHelperFunctions.setPlaySongInfo(Long.parseLong(songInfoObj.nowPlayingList.get(songInfoObj.currPlayPos))), 1);
+
+            PlayHelperFunctions.handler.postDelayed(PlayHelperFunctions.moveSeekBarThread, 100);
+        } catch (IOException e) {
+            // TODO Auto-generated catch block
+            e.printStackTrace();
+        }
+
     }
 
 }

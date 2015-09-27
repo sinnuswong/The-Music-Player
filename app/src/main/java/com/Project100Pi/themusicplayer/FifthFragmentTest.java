@@ -39,12 +39,18 @@ public class FifthFragmentTest extends Fragment implements  ClickInterface{
     private ActionMode actionMode;
     ArrayList<PlaylistInfo> playlists ;
     PlaylistRecyclerAdapter pra;
+    RecyclerView fifthFragRecycler;
+    final String[] PROJECTION_PLAYLIST = new String[] {
+            MediaStore.Audio.Playlists._ID,
+            MediaStore.Audio.Playlists.NAME,
+            MediaStore.Audio.Playlists.DATA
+    };
     @Nullable
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
 
         View v =inflater.inflate(R.layout.fifth_frag_test, container, false);
-        final RecyclerView fifthFragRecycler = (RecyclerView)v.findViewById(R.id.fifthFragRecycler);
+         fifthFragRecycler = (RecyclerView)v.findViewById(R.id.fifthFragRecycler);
         fifthFragRecycler.setHasFixedSize(true);
         LinearLayoutManager llm = new LinearLayoutManager(getActivity().getApplicationContext());
         fifthFragRecycler.setLayoutManager(llm);
@@ -56,15 +62,18 @@ public class FifthFragmentTest extends Fragment implements  ClickInterface{
                 showInputDialog();
             }
         });
+        populateRecyclerList();
+
+       // FastScroller fastScroller=(FastScroller)v.findViewById(R.id.fifthfastscroller);
+        //fastScroller.setRecyclerView(fifthFragRecycler);
+
+        return v;
+    }
+
+
+    public void populateRecyclerList(){
 
         playlists = new ArrayList<PlaylistInfo>();
-
-        final String[] PROJECTION_PLAYLIST = new String[] {
-                MediaStore.Audio.Playlists._ID,
-                MediaStore.Audio.Playlists.NAME,
-                MediaStore.Audio.Playlists.DATA
-        };
-
         Cursor cursor=getActivity().getApplicationContext().getContentResolver().query(MediaStore.Audio.Playlists.EXTERNAL_CONTENT_URI, PROJECTION_PLAYLIST, null, null,MediaStore.Audio.Playlists.DATE_MODIFIED);
         int i =0;
         while (cursor.moveToNext()) {
@@ -76,14 +85,7 @@ public class FifthFragmentTest extends Fragment implements  ClickInterface{
         pra = new PlaylistRecyclerAdapter(this,playlists,getActivity(),false,null);
         fifthFragRecycler.setAdapter(pra);
         fifthFragRecycler.setItemAnimator(new DefaultItemAnimator());
-       // FastScroller fastScroller=(FastScroller)v.findViewById(R.id.fifthfastscroller);
-        //fastScroller.setRecyclerView(fifthFragRecycler);
-
-        return v;
     }
-
-
-
     private void showInputDialog() {
         // get prompts.xml view
         LayoutInflater layoutInflater = LayoutInflater.from(getActivity());
@@ -99,7 +101,7 @@ public class FifthFragmentTest extends Fragment implements  ClickInterface{
 
 
                         UtilFunctions.createNewPlayList(editText.getText().toString(),getActivity());
-                       // populateCards();
+                       populateRecyclerList();
                     }
                 })
                 .setNegativeButton("Cancel",
@@ -257,5 +259,9 @@ public class FifthFragmentTest extends Fragment implements  ClickInterface{
         }
     }
 
-
+    @Override
+    public void onResume() {
+        super.onResume();
+        populateRecyclerList();
+    }
 }

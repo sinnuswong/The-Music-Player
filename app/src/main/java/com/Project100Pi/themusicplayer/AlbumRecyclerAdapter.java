@@ -35,7 +35,7 @@ public class AlbumRecyclerAdapter extends SelectableAdapter<AlbumRecyclerAdapter
 
     @Override
     public void onBindViewHolder(AlbumViewHolder holder, final int position) {
-        if(position%2 == 0) {
+        if(position%2 != 0) {
            holder.cv.setBackgroundColor(Color.parseColor("#3D3D3D"));
 
         }else{
@@ -75,7 +75,7 @@ public class AlbumRecyclerAdapter extends SelectableAdapter<AlbumRecyclerAdapter
         public AlbumViewHolder (Activity con,View itemView ,ClickInterface listener){
             super(itemView);
             cv = (CardView) itemView.findViewById(R.id.cv);
-            albumName = (TextView)itemView.findViewById(R.id.playlist_name);
+            albumName = (TextView)itemView.findViewById(R.id.playList_name);
             artistName = (TextView)itemView.findViewById(R.id.album_artist);
             noOfSongs = (TextView)itemView.findViewById(R.id.artist_noOfSongs);
             viewActivity = con;

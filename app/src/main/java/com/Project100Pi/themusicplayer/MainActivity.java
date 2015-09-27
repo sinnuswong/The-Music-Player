@@ -81,7 +81,7 @@ import it.gmariotti.cardslib.library.view.listener.SwipeOnScrollListener;
          static Toolbar mToolbar;
          static int mActionBarSize;
 
-         ImageView frontAlbumArt;
+         RoundedImageView frontAlbumArt;
          TextView frontTitle,frontAlbum;
           PlayPauseView frontPlay;
          ViewPager pager;
@@ -131,43 +131,7 @@ import it.gmariotti.cardslib.library.view.listener.SwipeOnScrollListener;
         }
         }
 
-      //  PlayHelperFunctions.seekbar.getThumb().setColorFilter(0x22BE4D56, PorterDuff.Mode.MULTIPLY);
-        PlayHelperFunctions.seekbar.setOnSeekBarChangeListener(new OnSeekBarChangeListener() {
 
-
-            @Override
-            public void onStartTrackingTouch(SeekBar seekBar) {
-                // TODO Auto-generated method stub
-                Toast.makeText(getApplicationContext(), "Started tracking PlayHelperFunctions.seekbar", Toast.LENGTH_SHORT).show();
-                PlayHelperFunctions.handler.removeCallbacks(PlayHelperFunctions.moveSeekBarThread);
-
-            }
-
-            public void onStopTrackingTouch(SeekBar seekBar) {
-                // TODO Auto-generated method stub
-                PlayHelperFunctions.handler.removeCallbacks(PlayHelperFunctions.moveSeekBarThread);
-                int totalDuration = PlayHelperFunctions.mp.getDuration();
-                //  int currentPosition = utils.progressToTimer(seekBar.getProgress(), totalDuration);
-
-                // forward or backward to certain seconds
-                PlayHelperFunctions.mp.seekTo(seekBar.getProgress());
-
-                // update timer progress again
-
-                PlayHelperFunctions.handler.postDelayed(PlayHelperFunctions.moveSeekBarThread, 100);
-
-            }
-
-
-            @Override
-            public void onProgressChanged(SeekBar seekBar, int progress,
-                                          boolean fromUser) {
-                // TODO Auto-generated method stub
-                // runningTime.setText(UtilFunctions.convertSecondsToHMmSs(seekBar.getProgress()));
-
-
-            }
-        });
         LinearLayout frontNowPlayingContainer = (LinearLayout) findViewById(R.id.front_now_playing_container);
         frontNowPlayingContainer.setOnClickListener(new View.OnClickListener() {
             public void onClick(View v) {
@@ -356,9 +320,9 @@ protected void onDestroy() {
                              break;
                          case R.id.addToPlaylist:
 
-                             Intent intent = new Intent(act, PlaylistSelection.class);
+                             Intent intent = new Intent(act, PlayListSelectionTest.class);
                              intent.putExtra("songName", songName);
-                             intent.putExtra("selectedId", selectedId);
+                             intent.putExtra("selectedIdList", selectedIdList);
                              act.startActivity(intent);
 
 
@@ -730,7 +694,7 @@ protected void onDestroy() {
 
          public void setUpNowPlayingToolBar()
          {
-             frontAlbumArt= (ImageView) findViewById(R.id.front_album_art);
+             frontAlbumArt= (RoundedImageView) findViewById(R.id.front_album_art);
              frontTitle = (TextView) findViewById(R.id.front_title);
              frontAlbum = (TextView) findViewById(R.id.front_album);
              frontPlay = (PlayPauseView) findViewById(R.id.front_play_Pause);

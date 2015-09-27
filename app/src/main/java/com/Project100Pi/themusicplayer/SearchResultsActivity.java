@@ -494,9 +494,9 @@ public class SearchResultsActivity extends Activity {
 		            			       case R.id.addToPlaylist:
 		            			    	  
 		            			    
-		            			           Intent intent=new Intent(SearchResultsActivity.this,PlaylistSelection.class);
+		            			           Intent intent=new Intent(SearchResultsActivity.this,PlayListSelectionTest.class);
 		            			            intent.putExtra("songName",songName);
-		            			            intent.putExtra("selectedId",selectedId);
+										   intent.putExtra("selectedIdList",selectedIdList);
 		            			            startActivity(intent);
 		            			    	
 		            			    	   break;

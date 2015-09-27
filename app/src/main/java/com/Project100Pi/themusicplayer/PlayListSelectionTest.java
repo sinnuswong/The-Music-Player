@@ -28,7 +28,7 @@ import java.util.ArrayList;
 public class PlayListSelectionTest extends AppCompatActivity implements ClickInterface{
 
     ArrayList<PlaylistInfo> playlists ;
-    PlaylistRecyclerAdapter pra;
+    PlaylistRecyclerAdapter plra;
     String selectedlist;
     ArrayList<String> audioIdList=null;
     RecyclerView fifthFragRecycler;
@@ -75,8 +75,8 @@ public class PlayListSelectionTest extends AppCompatActivity implements ClickInt
             i++;
         }
 
-        pra = new PlaylistRecyclerAdapter(this,playlists,PlayListSelectionTest.this,true,audioIdList);
-        fifthFragRecycler.setAdapter(pra);
+        plra = new PlaylistRecyclerAdapter(this,playlists,PlayListSelectionTest.this,true,audioIdList);
+        fifthFragRecycler.setAdapter(plra);
         fifthFragRecycler.setItemAnimator(new DefaultItemAnimator());
 
     }

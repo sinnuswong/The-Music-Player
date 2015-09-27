@@ -269,7 +269,7 @@ public class SongsUnderTest extends AppCompatActivity  implements ClickInterface
                     break;
                 case R.id.itemToPlaylist :
 
-                    Intent intent=new Intent(SongsUnderTest.this,PlaylistSelectionMultiple.class);
+                    Intent intent=new Intent(SongsUnderTest.this,PlayListSelectionTest.class);
                     // intent.putExtra("songName",songName);
 
                     intent.putExtra("selectedIdList",selIdList);

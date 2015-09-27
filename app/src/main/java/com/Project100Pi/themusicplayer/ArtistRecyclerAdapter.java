@@ -33,8 +33,8 @@ static List<ArtistInfo> artists;
         public ArtistViewHolder(Activity con,View itemView,ClickInterface listener) {
             super(itemView);
             cv = (CardView) itemView.findViewById(R.id.cv);
-            artistName = (TextView) itemView.findViewById(R.id.playlist_name);
-            noOfAlbums = (TextView) itemView.findViewById(R.id.artist_noAlbum);
+            artistName = (TextView) itemView.findViewById(R.id.playList_name);
+            noOfAlbums = (TextView) itemView.findViewById(R.id.artist_no_album);
             noOfTracks = (TextView) itemView.findViewById(R.id.artist_noOfSongs);
             viewActivity= con;
             overflowButton=(ImageView)itemView.findViewById(R.id.my_overflow);
@@ -84,7 +84,7 @@ static List<ArtistInfo> artists;
 
     @Override
     public void onBindViewHolder(ArtistRecyclerAdapter.ArtistViewHolder holder, final int position) {
-        if(position%2 == 0) {
+        if(position%2 != 0) {
             holder.cv.setBackgroundColor(Color.parseColor("#3D3D3D"));
 
         }else{

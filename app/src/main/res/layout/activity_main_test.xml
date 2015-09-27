@@ -12,14 +12,14 @@ android:layout_height="match_parent">
         <android.support.v7.widget.Toolbar
             android:id="@+id/toolbar"
             android:layout_width="match_parent"
-            android:layout_height="?android:attr/actionBarSize"
+            android:layout_height="48dp"
             android:background="#273238"
             app:layout_scrollFlags="scroll|enterAlways"
             />
         <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
             xmlns:app="http://schemas.android.com/apk/res-auto"
             android:layout_width="match_parent"
-            android:layout_height="65dp"
+            android:layout_height="64dp"
             android:background="#273238"
             android:orientation="vertical"
             android:id="@+id/front_now_playing_container"
@@ -35,8 +35,8 @@ android:layout_height="match_parent">
                 android:background="#273238"
                 android:padding="0dp"
                 android:thumbTint="#00be4d56"
-                android:layout_marginTop="-10dp"
-                android:layout_marginBottom="-10dp"
+                android:layout_marginTop="-8dp"
+                android:layout_marginBottom="-16dp"
                 android:progressBackgroundTint="#00be4d56" />
 
 
@@ -45,16 +45,18 @@ android:layout_height="match_parent">
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
                 android:orientation="horizontal">
-                <ImageView
-                    android:layout_width="57dp"
+                <com.Project100Pi.themusicplayer.RoundedImageView
+                    android:layout_width="48dp"
                     android:layout_height="match_parent"
                     android:id="@+id/front_album_art"
                     android:src="@drawable/appicns"
-                    android:scaleType="centerCrop"
+                    android:scaleType="center"
                     android:paddingTop="3dp"
                     android:paddingBottom="3dp"
                     android:layout_weight="0.2"
-                    android:layout_marginLeft="3dp" />
+                    android:layout_marginLeft="16dp"
+                    android:layout_marginTop="4dp"
+                    android:layout_marginBottom="4dp" />
 
                 <RelativeLayout
                     android:layout_width="match_parent"
@@ -102,15 +104,15 @@ android:layout_height="match_parent">
 
                     <com.Project100Pi.themusicplayer.PlayPauseView
                         android:id="@+id/front_play_Pause"
-                        android:layout_width="57dp"
-                        android:layout_height="57dp"
+                        android:layout_width="56dp"
+                        android:layout_height="56dp"
                         android:layout_centerHorizontal="true"
                         android:layout_centerInParent="true"
                         android:clickable="true"
                         android:foreground="?android:selectableItemBackground"
                         android:stateListAnimator="@anim/button_elevation"
                         android:layout_weight="0.5"
-                        android:layout_marginRight="5dp">
+                        android:layout_marginRight="16dp">
                     </com.Project100Pi.themusicplayer.PlayPauseView>
                 </RelativeLayout>
             </LinearLayout>
@@ -149,8 +151,8 @@ android:layout_height="match_parent">
         android:backgroundTint="#be4d56"
         android:src="@drawable/shuffle"
         app:borderWidth="0dp"
-        android:elevation="6dp"
-        app:layout_behavior="com.Project100Pi.themusicplayer.ScrollingFABBehavior"/>
+        android:elevation="6dp"/>
+      <!--  app:layout_behavior="com.Project100Pi.themusicplayer.ScrollingFABBehavior" -->
 
 
 </android.support.design.widget.CoordinatorLayout>

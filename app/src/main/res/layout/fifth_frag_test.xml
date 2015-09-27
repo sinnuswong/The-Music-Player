@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
+    android:background="#3d3d3d"
     android:layout_width="match_parent"
     android:layout_height="match_parent">
 
@@ -11,14 +12,16 @@
 
         <TextView
             android:layout_width="match_parent"
-            android:layout_height="45dp"
+            android:layout_height="wrap_content"
             android:textAppearance="?android:attr/textAppearanceMedium"
             android:text="Create New Playlist"
             android:id="@+id/create_new_playlist"
             android:background="#3D3D3D"
             android:gravity="center"
             android:textColor="#C1C1C1"
-            android:textSize="14sp" />
+            android:textSize="16sp"
+            android:paddingTop="16dp"
+            android:paddingBottom="16dp" />
 
         <RelativeLayout
             android:layout_width="match_parent"

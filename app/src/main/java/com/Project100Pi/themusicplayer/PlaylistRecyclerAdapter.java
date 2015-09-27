@@ -37,7 +37,7 @@ public class PlaylistRecyclerAdapter extends SelectableAdapter<PlaylistRecyclerA
         public PlaylistViewHolder(Activity con,View itemView,ClickInterface listener) {
             super(itemView);
             cv = (CardView) itemView.findViewById(R.id.cv);
-            playlistName = (TextView) itemView.findViewById(R.id.playlist_name);
+            playlistName = (TextView) itemView.findViewById(R.id.playList_name);
             viewActivity= con;
             if(!isSelect) {
                 overflowButton = (ImageView) itemView.findViewById(R.id.my_overflow);

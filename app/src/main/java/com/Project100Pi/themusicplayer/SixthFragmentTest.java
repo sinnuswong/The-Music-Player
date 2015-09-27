@@ -529,7 +529,7 @@ public class SixthFragmentTest extends Fragment implements  ClickInterface{
 
         @Override
         public void onBindViewHolder(FolderRecyclerAdapter.FolderViewHolder holder, final int position) {
-            if(position%2 == 0) {
+            if(position%2 != 0) {
                 holder.cv.setBackgroundColor(Color.parseColor("#3D3D3D"));
 
             }else{

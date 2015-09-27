@@ -208,7 +208,7 @@ public class FirstFragmentTest extends Fragment implements ClickInterface{
                     break;
                 case R.id.itemToPlaylist :
 
-                    Intent intent=new Intent(getActivity(),PlaylistSelectionMultiple.class);
+                    Intent intent=new Intent(getActivity(),PlayListSelectionTest.class);
                     // intent.putExtra("songName",songName);
 
                     intent.putExtra("selectedIdList",selIdList);

@@ -41,7 +41,7 @@ public class trackRecyclerAdapter extends SelectableAdapter<trackRecyclerAdapter
         public TrackViewHolder(Activity con,View itemView,ClickInterface listener) {
             super(itemView);
             cv = (CardView) itemView.findViewById(R.id.cv);
-            trackName = (TextView) itemView.findViewById(R.id.playlist_name);
+            trackName = (TextView) itemView.findViewById(R.id.playList_name);
             trackArtist = (TextView) itemView.findViewById(R.id.track_artist);
             trackDuration = (TextView) itemView.findViewById(R.id.artist_noOfSongs);
             viewActivity= con;
@@ -103,7 +103,7 @@ public class trackRecyclerAdapter extends SelectableAdapter<trackRecyclerAdapter
 
     @Override
     public void onBindViewHolder(TrackViewHolder trackViewHolder, final int i) {
-        if(i%2 == 0) {
+        if(i%2 != 0) {
             trackViewHolder.cv.setBackgroundColor(Color.parseColor("#3D3D3D"));
 
         }else{

@@ -65,7 +65,7 @@ public class NowPlayingRecyclerAdapter extends SelectableAdapter<NowPlayingRecyc
         public NowPlayingViewHolder(Activity con,View itemView) {
             super(itemView);
             cv = (CardView) itemView.findViewById(R.id.cv);
-            trackName = (TextView) itemView.findViewById(R.id.playlist_name);
+            trackName = (TextView) itemView.findViewById(R.id.playList_name);
             trackArtist = (TextView) itemView.findViewById(R.id.track_artist);
             trackDuration = (TextView) itemView.findViewById(R.id.artist_noOfSongs);
             viewActivity= con;

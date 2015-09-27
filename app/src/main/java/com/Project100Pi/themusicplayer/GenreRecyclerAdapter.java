@@ -32,7 +32,7 @@ public class GenreRecyclerAdapter extends SelectableAdapter<GenreRecyclerAdapter
         public GenreViewHolder(Activity con,View itemView,ClickInterface listener) {
             super(itemView);
             cv = (CardView) itemView.findViewById(R.id.cv);
-            genreName = (TextView) itemView.findViewById(R.id.playlist_name);
+            genreName = (TextView) itemView.findViewById(R.id.playList_name);
             viewActivity= con;
             overflowButton=(ImageView)itemView.findViewById(R.id.my_overflow);
             this.listener = listener;
@@ -81,7 +81,7 @@ public class GenreRecyclerAdapter extends SelectableAdapter<GenreRecyclerAdapter
 
     @Override
     public void onBindViewHolder(GenreRecyclerAdapter.GenreViewHolder holder, final int position) {
-        if(position%2 == 0) {
+        if(position%2 != 0) {
             holder.cv.setBackgroundColor(Color.parseColor("#3D3D3D"));
 
         }else{

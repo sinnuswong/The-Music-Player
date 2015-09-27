@@ -3,6 +3,7 @@ package com.Project100Pi.themusicplayer;
 import android.content.Context;
 import android.content.Intent;
 import android.database.Cursor;
+import android.graphics.BitmapFactory;
 import android.media.MediaPlayer;
 import android.os.Bundle;
 import android.os.Handler;
@@ -40,6 +41,10 @@ public class PlayHelperFunctions {
         songInfoObj.duration = cursor.getString(cursor.getColumnIndex(MediaStore.Audio.Media.DURATION));
         songInfoObj.songId = songId;
         songInfoObj.bitmap = CursorClass.albumArtCursor(cursor.getLong(cursor.getColumnIndex(MediaStore.Audio.Media.ALBUM_ID)));
+        if(songInfoObj.bitmap == null){
+            songInfoObj.bitmap = BitmapFactory.decodeResource(mContext.getResources(),
+                    R.drawable.appicns);
+        }
     }
 
     public static String setPlaySongInfo(Long songId){

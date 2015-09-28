@@ -20,7 +20,7 @@ import xyz.danoz.recyclerviewfastscroller.vertical.VerticalRecyclerViewFastScrol
 /**
  * Created by BalachandranAR on 9/19/2015.
  */
-public class NowPlayingListTest extends Activity {
+public class NowPlayingListTest extends Activity implements NowPlayingRecyclerAdapter.OnDragStartListener {
     ArrayList<TrackObject> tracks;
     NowPlayingRecyclerAdapter tra;
     private ItemTouchHelper mItemTouchHelper;
@@ -40,7 +40,7 @@ public class NowPlayingListTest extends Activity {
             tracks.add(MainActivity.idToTrackObj.get(Long.parseLong(songInfoObj.nowPlayingList.get(i))));
         }
 
-        tra = new NowPlayingRecyclerAdapter(tracks,songInfoObj.nowPlayingList,NowPlayingListTest.this);
+        tra = new NowPlayingRecyclerAdapter(tracks,songInfoObj.nowPlayingList,NowPlayingListTest.this,NowPlayingListTest.this);
         firstFragRecycler.setAdapter(tra);
         firstFragRecycler.setItemAnimator(new DefaultItemAnimator());
 
@@ -80,5 +80,10 @@ public class NowPlayingListTest extends Activity {
             firstFragRecycler.scrollToPosition(songInfoObj.currPlayPos - 2);
         }
 
+    }
+
+    @Override
+    public void onDragStarted(RecyclerView.ViewHolder viewHolder) {
+        mItemTouchHelper.startDrag(viewHolder);
     }
 }

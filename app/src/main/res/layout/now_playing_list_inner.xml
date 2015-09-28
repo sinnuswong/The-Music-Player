@@ -25,6 +25,15 @@
                 android:layout_height="wrap_content"
                 android:layout_centerVertical="true">
 
+                <ImageView
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:id="@+id/drag_handle"
+                    android:paddingLeft="24dp"
+                    android:paddingRight="16dp"
+                    android:src="@drawable/grab_material"
+                    android:layout_weight="1.2" />
+
                 <LinearLayout
                     android:orientation="vertical"
                     android:layout_width="match_parent"
@@ -32,7 +41,7 @@
                     android:layout_centerVertical="true"
                     android:layout_marginTop="8dp"
                     android:layout_marginBottom="8dp"
-                    android:layout_weight="0.6">
+                    android:layout_weight="0.7">
 
                     <TextView
                         android:layout_width="match_parent"
@@ -43,7 +52,6 @@
                         android:layout_alignParentTop="true"
                         android:layout_alignParentLeft="true"
                         android:layout_alignParentStart="true"
-                        android:layout_marginLeft="16dp"
                         android:textColor="#C1C1C1"
                         android:textSize="14dp"
                         android:ellipsize="end"
@@ -59,8 +67,7 @@
                         android:text="ARTIST"
                         android:textColor="#C1C1C1"
                         android:textSize="14dp"
-                        android:layout_below="@+id/playList_name"
-                        android:layout_marginLeft="16dp" />
+                        android:layout_below="@+id/playList_name" />
 
                 </LinearLayout>
 
@@ -74,7 +81,7 @@
                     android:layout_alignParentRight="true"
                     android:layout_alignParentEnd="true"
                     android:textSize="14dp"
-                    android:layout_weight="1.5"
+                    android:layout_weight="1.25"
                     android:gravity="center"
                     android:ellipsize="end" />
 
@@ -86,8 +93,9 @@
                     android:layout_alignParentRight="true"
                     android:layout_alignParentEnd="true"
                     android:src="@drawable/ic_my_overflow"
-                    android:layout_weight="1.4"
+                    android:layout_weight="1.3"
                     android:scaleType="center" />
+
             </LinearLayout>
 
 

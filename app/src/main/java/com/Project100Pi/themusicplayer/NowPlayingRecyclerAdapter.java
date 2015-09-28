@@ -3,9 +3,14 @@ package com.Project100Pi.themusicplayer;
 
 import android.app.Activity;
 import android.graphics.Color;
+import android.graphics.PorterDuff;
+import android.graphics.drawable.Drawable;
+import android.media.Image;
+import android.support.v4.view.MotionEventCompat;
 import android.support.v7.widget.CardView;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
+import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
@@ -22,6 +27,7 @@ public class NowPlayingRecyclerAdapter extends SelectableAdapter<NowPlayingRecyc
     List<TrackObject> tracks;
     static ArrayList<String > idList;
     Activity mactivity;
+    private OnDragStartListener mDragStartListener;
 
     @Override
     public void onItemMove(int fromPosition, int toPosition) {
@@ -59,7 +65,7 @@ public class NowPlayingRecyclerAdapter extends SelectableAdapter<NowPlayingRecyc
         TextView trackName;
         TextView trackArtist;
         TextView trackDuration;
-        ImageView overflowButton;
+        ImageView overflowButton,dragHandle;
         Activity viewActivity;
 
         public NowPlayingViewHolder(Activity con,View itemView) {
@@ -70,6 +76,7 @@ public class NowPlayingRecyclerAdapter extends SelectableAdapter<NowPlayingRecyc
             trackDuration = (TextView) itemView.findViewById(R.id.artist_noOfSongs);
             viewActivity= con;
             overflowButton=(ImageView)itemView.findViewById(R.id.my_overflow);
+            dragHandle=(ImageView)itemView.findViewById(R.id.drag_handle);
             itemView.setOnClickListener(this);
 
         }
@@ -104,17 +111,23 @@ public class NowPlayingRecyclerAdapter extends SelectableAdapter<NowPlayingRecyc
         }
     }
 
-    public NowPlayingRecyclerAdapter(Activity act,List<TrackObject> trackList){
+    public NowPlayingRecyclerAdapter(Activity act,List<TrackObject> trackList,OnDragStartListener dragStartListener){
         this.tracks = trackList;
         this.mactivity = act;
+        this.mDragStartListener = dragStartListener;
 
     }
 
-    public NowPlayingRecyclerAdapter(List<TrackObject> trackList,ArrayList<String> idList,Activity act){
+    public interface OnDragStartListener {
+        void onDragStarted(RecyclerView.ViewHolder viewHolder);
+    }
+
+    public NowPlayingRecyclerAdapter(List<TrackObject> trackList,ArrayList<String> idList,Activity act,OnDragStartListener dragStartListener){
         super();
         this.tracks = trackList;
         this.mactivity = act;
         this.idList = idList;
+        this.mDragStartListener = dragStartListener;
     }
     @Override
     public int getItemCount() {
@@ -131,8 +144,19 @@ public class NowPlayingRecyclerAdapter extends SelectableAdapter<NowPlayingRecyc
     }
 
     @Override
-    public void onBindViewHolder(NowPlayingViewHolder trackViewHolder, final int i) {
-
+    public void onBindViewHolder(final NowPlayingViewHolder trackViewHolder, final int i) {
+        final Drawable dragIcon = mactivity.getResources().getDrawable(R.drawable.grab_material);
+        dragIcon.setColorFilter(Color.parseColor("#C1C1C1"), PorterDuff.Mode.SRC_ATOP);
+        trackViewHolder.dragHandle.setImageDrawable(dragIcon);
+        trackViewHolder.dragHandle.setOnTouchListener(new View.OnTouchListener() {
+            @Override
+            public boolean onTouch(View v, MotionEvent event) {
+                if (MotionEventCompat.getActionMasked(event) == MotionEvent.ACTION_DOWN) {
+                    mDragStartListener.onDragStarted(trackViewHolder);
+                }
+                return false;
+            }
+        });
         trackViewHolder.cv.setBackgroundColor(Color.parseColor("#3D3D3D"));
         trackViewHolder.trackName.setText(tracks.get(i).getTrackName());
         trackViewHolder.trackArtist.setText(tracks.get(i).getTrackArtist());

@@ -18,20 +18,24 @@ import android.support.v7.widget.helper.ItemTouchHelper;
  */
 public class SimpleItemTouchHelperCallback extends ItemTouchHelper.Callback {
 
+    private boolean isSwipeEnabled = true;
+    private boolean isLongPressDragEnabled = true;
     private final ItemTouchHelperAdapter mAdapter;
 
-    public SimpleItemTouchHelperCallback(ItemTouchHelperAdapter adapter) {
+    public SimpleItemTouchHelperCallback(ItemTouchHelperAdapter adapter,boolean isSwipeEnabled,boolean isLongPressDragEnabled) {
         mAdapter = adapter;
+        this.isSwipeEnabled = isSwipeEnabled;
+        this.isLongPressDragEnabled = isLongPressDragEnabled;
     }
 
     @Override
     public boolean isLongPressDragEnabled() {
-        return true;
+        return isLongPressDragEnabled;
     }
 
     @Override
     public boolean isItemViewSwipeEnabled() {
-        return true;
+        return isSwipeEnabled;
     }
 
     @Override

@@ -44,7 +44,7 @@ public class NowPlayingListTest extends Activity implements NowPlayingRecyclerAd
         firstFragRecycler.setAdapter(tra);
         firstFragRecycler.setItemAnimator(new DefaultItemAnimator());
 
-        ItemTouchHelper.Callback callback = new SimpleItemTouchHelperCallback(tra);
+        ItemTouchHelper.Callback callback = new SimpleItemTouchHelperCallback(tra,true,true);
         mItemTouchHelper = new ItemTouchHelper(callback);
         mItemTouchHelper.attachToRecyclerView(firstFragRecycler);
 

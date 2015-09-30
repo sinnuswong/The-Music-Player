@@ -13,6 +13,7 @@ import android.support.v7.view.ActionMode;
 import android.support.v7.widget.DefaultItemAnimator;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.support.v7.widget.helper.ItemTouchHelper;
 import android.view.Menu;
 import android.view.MenuItem;
 
@@ -21,21 +22,34 @@ import java.util.Collections;
 import java.util.List;
 
 
-public class SongsUnderTest extends AppCompatActivity  implements ClickInterface{
+public class SongsUnderTest extends AppCompatActivity  implements ClickInterface,NowPlayingRecyclerAdapter.OnDragStartListener{
     private ActionModeCallback actionModeCallback = new ActionModeCallback();
     private ActionMode actionMode;
     trackRecyclerAdapter tra;
     ArrayList<TrackObject> tracks;
     ArrayList<String > currIdList;
+    NowPlayingRecyclerAdapter ptra;
+    String X;
+    Long id;
+    Cursor cursor;
+    private ItemTouchHelper mItemTouchHelper;
+    RecyclerView firstFragRecycler;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.first_frag_test);
 
-        final RecyclerView firstFragRecycler = (RecyclerView)findViewById(R.id.firstFragRecycler);
+        firstFragRecycler = (RecyclerView)findViewById(R.id.firstFragRecycler);
         firstFragRecycler.setHasFixedSize(true);
         LinearLayoutManager llm = new LinearLayoutManager(this);
         firstFragRecycler.setLayoutManager(llm);
+        Intent intent = getIntent();
+         X = intent.getStringExtra("X");
+         id = intent.getLongExtra("id", 0L);
+        populateRecyclerList();
+    }
+
+    void populateRecyclerList(){
         tracks = new ArrayList<TrackObject>();
         currIdList = new ArrayList<String>();
         String title="";
@@ -44,10 +58,7 @@ public class SongsUnderTest extends AppCompatActivity  implements ClickInterface
         String trackArtist = "";
         String trackDuration  = "";
         Long trackId=null;
-        Intent intent = getIntent();
-        String X = intent.getStringExtra("X");
-        Long id = intent.getLongExtra("id", 0L);
-        Cursor cursor = null;
+
         if(X.equals("Album")){
             cursor = makeAlbumSongCursor(id);
         }else if(X.equals("Artist")){
@@ -70,7 +81,8 @@ public class SongsUnderTest extends AppCompatActivity  implements ClickInterface
                     MediaStore.Audio.Playlists.Members.ALBUM,
                     MediaStore.Audio.Playlists.Members.ARTIST,
                     MediaStore.Audio.Playlists.Members.DATA,
-                    MediaStore.Audio.Playlists.Members.DURATION
+                    MediaStore.Audio.Playlists.Members.DURATION,
+                    MediaStore.Audio.Playlists.Members.DEFAULT_SORT_ORDER
             };
             Uri uri = MediaStore.Audio.Playlists.Members.getContentUri("external", id);
             cursor =SongsUnderTest.this.getApplicationContext().getContentResolver().query(
@@ -78,7 +90,7 @@ public class SongsUnderTest extends AppCompatActivity  implements ClickInterface
                     projection1,
                     MediaStore.Audio.Playlists.Members.PLAYLIST_ID+ " = "+id+"",
                     null,
-                    null);
+                    MediaStore.Audio.Playlists.Members.DEFAULT_SORT_ORDER );
 
 
         }
@@ -100,15 +112,24 @@ public class SongsUnderTest extends AppCompatActivity  implements ClickInterface
                 continue;
             }
         }
+        if(X.equals("PlayList")){
+            ptra = new NowPlayingRecyclerAdapter(tracks,currIdList,SongsUnderTest.this,SongsUnderTest.this,id);
+            firstFragRecycler.setAdapter(ptra);
+            firstFragRecycler.setItemAnimator(new DefaultItemAnimator());
 
-        tra = new trackRecyclerAdapter(this,tracks,currIdList,SongsUnderTest.this);
-        firstFragRecycler.setAdapter(tra);
-        firstFragRecycler.setItemAnimator(new DefaultItemAnimator());
-        FastScroller fastScroller=(FastScroller)findViewById(R.id.firstfastscroller);
-        fastScroller.setRecyclerView(firstFragRecycler);
+            ItemTouchHelper.Callback callback = new SimpleItemTouchHelperCallback(ptra,false,true);
+            mItemTouchHelper = new ItemTouchHelper(callback);
+            mItemTouchHelper.attachToRecyclerView(firstFragRecycler);
 
+
+        }else {
+            tra = new trackRecyclerAdapter(this, tracks, currIdList, SongsUnderTest.this);
+            firstFragRecycler.setAdapter(tra);
+            firstFragRecycler.setItemAnimator(new DefaultItemAnimator());
+            FastScroller fastScroller = (FastScroller) findViewById(R.id.firstfastscroller);
+            fastScroller.setRecyclerView(firstFragRecycler);
+        }
     }
-
     @Override
     public void onItemClicked(int position) {
         if (actionMode != null) {
@@ -137,6 +158,11 @@ public class SongsUnderTest extends AppCompatActivity  implements ClickInterface
             actionMode.setTitle(String.valueOf(count)+" item(s) selected");
             actionMode.invalidate();
         }
+    }
+
+    @Override
+    public void onDragStarted(RecyclerView.ViewHolder viewHolder) {
+        mItemTouchHelper.startDrag(viewHolder);
     }
 
 
@@ -373,5 +399,11 @@ public class SongsUnderTest extends AppCompatActivity  implements ClickInterface
 		/* 4 */ MediaStore.Audio.AudioColumns.DATA,
 		/* 5 */ MediaStore.Audio.AudioColumns.DURATION
                 }, selection.toString(), null, MediaStore.Audio.Media.TRACK + ", " + MediaStore.Audio.Media.DEFAULT_SORT_ORDER);
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        populateRecyclerList();
     }
 }

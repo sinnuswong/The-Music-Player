@@ -2,10 +2,12 @@ package com.Project100Pi.themusicplayer;
 
 
 import android.app.Activity;
+import android.content.ContentResolver;
 import android.graphics.Color;
 import android.graphics.PorterDuff;
 import android.graphics.drawable.Drawable;
 import android.media.Image;
+import android.provider.MediaStore;
 import android.support.v4.view.MotionEventCompat;
 import android.support.v7.widget.CardView;
 import android.support.v7.widget.RecyclerView;
@@ -15,6 +17,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -28,37 +31,49 @@ public class NowPlayingRecyclerAdapter extends SelectableAdapter<NowPlayingRecyc
     static ArrayList<String > idList;
     Activity mactivity;
     private OnDragStartListener mDragStartListener;
+    Long playListid;
 
     @Override
     public void onItemMove(int fromPosition, int toPosition) {
-        TrackObject prev = tracks.remove(fromPosition);
-        String prevStr = songInfoObj.nowPlayingList.remove(fromPosition);
-        tracks.add(toPosition,prev);
-        songInfoObj.nowPlayingList.add(toPosition,prevStr);
-        songInfoObj.currPlayPos= songInfoObj.nowPlayingList.indexOf(songInfoObj.songId.toString());
+
+            TrackObject prev = tracks.remove(fromPosition);
+            String prevStr = songInfoObj.nowPlayingList.remove(fromPosition);
+            tracks.add(toPosition, prev);
+            songInfoObj.nowPlayingList.add(toPosition, prevStr);
+            songInfoObj.currPlayPos = songInfoObj.nowPlayingList.indexOf(songInfoObj.songId.toString());
+        if(mactivity instanceof SongsUnderTest){
+            idList.remove(fromPosition);
+            idList.add(toPosition,prevStr);
+            ContentResolver resolver=mactivity.getContentResolver();
+            boolean result= MediaStore.Audio.Playlists.Members.moveItem(resolver, playListid,fromPosition,toPosition);
+            Toast.makeText(mactivity, "result is " + result, Toast.LENGTH_SHORT).show();
+
+        }
         notifyItemMoved(fromPosition, toPosition);
+
     }
 
     @Override
     public void onItemDismiss(int position) {
-        songInfoObj.nowPlayingList.remove(tracks.get(position).getTrackId().toString());
-        songInfoObj.initialPlayingList.remove(tracks.get(position).getTrackId().toString());
-        tracks.remove(position);
-        if(songInfoObj.currPlayPos == position){
-            PlayHelperFunctions.mp.reset();
-            songInfoObj.currPlayPos = (songInfoObj.currPlayPos) % songInfoObj.nowPlayingList.size();
-            PlayHelperFunctions.getPlaySongInfo(Long.parseLong(songInfoObj.nowPlayingList.get(songInfoObj.currPlayPos)));
-            try {
-                PlayHelperFunctions.mp.setDataSource(songInfoObj.playPath);
-                PlayHelperFunctions.mp.prepare();
-            } catch (Exception e) {
-                // TODO Auto-generated catch block
-                e.printStackTrace();
+        if (mactivity instanceof NowPlayingListTest) {
+            songInfoObj.nowPlayingList.remove(tracks.get(position).getTrackId().toString());
+            songInfoObj.initialPlayingList.remove(tracks.get(position).getTrackId().toString());
+            tracks.remove(position);
+            if (songInfoObj.currPlayPos == position) {
+                PlayHelperFunctions.mp.reset();
+                songInfoObj.currPlayPos = (songInfoObj.currPlayPos) % songInfoObj.nowPlayingList.size();
+                PlayHelperFunctions.getPlaySongInfo(Long.parseLong(songInfoObj.nowPlayingList.get(songInfoObj.currPlayPos)));
+                try {
+                    PlayHelperFunctions.mp.setDataSource(songInfoObj.playPath);
+                    PlayHelperFunctions.mp.prepare();
+                } catch (Exception e) {
+                    // TODO Auto-generated catch block
+                    e.printStackTrace();
+                }
             }
+            notifyItemRemoved(position);
         }
-        notifyItemRemoved(position);
     }
-
 
     public static class NowPlayingViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener,ItemTouchHelperViewHolder{
         CardView cv;
@@ -86,13 +101,19 @@ public class NowPlayingRecyclerAdapter extends SelectableAdapter<NowPlayingRecyc
         @Override
         public void onClick(View v) {
                // UtilFunctions.playSelectedSongs(viewActivity, idList, getAdapterPosition(), false);
-            //Play song staying in NowPlayingListTest activity.
-            try {
-                PlayHelperFunctions.isSongPlaying = true;
-                PlayHelperFunctions.audioPlayer((String) PlayHelperFunctions.setPlaySongInfo(Long.parseLong(songInfoObj.nowPlayingList.get(getAdapterPosition()))),1);
-                songInfoObj.currPlayPos = getAdapterPosition();
-            } catch(Exception e){
+            if(viewActivity instanceof NowPlayingListTest) {
+                //Play song staying in NowPlayingListTest activity.
+                try {
+                    PlayHelperFunctions.isSongPlaying = true;
+                    PlayHelperFunctions.audioPlayer((String) PlayHelperFunctions.setPlaySongInfo(Long.parseLong(songInfoObj.nowPlayingList.get(getAdapterPosition()))), 1);
+                    songInfoObj.currPlayPos = getAdapterPosition();
+                } catch (Exception e) {
 
+                }
+
+                }else if(viewActivity instanceof SongsUnderTest){
+                UtilFunctions.playSelectedSongs(viewActivity, idList, getAdapterPosition(), false);
+                return;
             }
             return;
 
@@ -128,6 +149,14 @@ public class NowPlayingRecyclerAdapter extends SelectableAdapter<NowPlayingRecyc
         this.mactivity = act;
         this.idList = idList;
         this.mDragStartListener = dragStartListener;
+    }
+    public NowPlayingRecyclerAdapter(List<TrackObject> trackList,ArrayList<String> idList,Activity act,OnDragStartListener dragStartListener,Long id){
+        super();
+        this.tracks = trackList;
+        this.mactivity = act;
+        this.idList = idList;
+        this.mDragStartListener = dragStartListener;
+        this.playListid = id;
     }
     @Override
     public int getItemCount() {

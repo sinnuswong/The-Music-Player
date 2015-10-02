@@ -5,9 +5,9 @@ import java.util.ArrayList;
 import android.graphics.Bitmap;
 
 public class songInfoObj {
-	static String songName,playPath,artist,album,duration;
+	static String songName,playPath,artist,album;
 	static Long songId;
-	static int playerPostion;
+	static int playerPostion,duration;
 	static Bitmap bitmap;
 	static ArrayList<String> nowPlayingList = new ArrayList<String>();
 	static ArrayList<String> initialPlayingList = new ArrayList<String>();

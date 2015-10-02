@@ -8,6 +8,7 @@ import android.annotation.SuppressLint;
 import android.annotation.TargetApi;
 import android.content.Context;
 import android.graphics.Canvas;
+import android.graphics.Color;
 import android.graphics.Outline;
 import android.graphics.Paint;
 import android.graphics.drawable.Drawable;
@@ -51,14 +52,14 @@ public class PlayPauseView extends FrameLayout {
     public PlayPauseView(Context context, AttributeSet attrs) {
         super(context, attrs);
         setWillNotDraw(false);
-        mBackgroundColor = getResources().getColor(R.color.blue);
+        mBackgroundColor =Color.parseColor("#be4d56");
         mPaint.setAntiAlias(true);
         mPaint.setStyle(Paint.Style.FILL);
         mDrawable = new PlayPauseDrawable(context);
         mDrawable.setCallback(this);
 
-        mPauseBackgroundColor = getResources().getColor(R.color.blue);
-        mPlayBackgroundColor = getResources().getColor(R.color.pink);
+        mPauseBackgroundColor = Color.parseColor("#be4d56");
+        mPlayBackgroundColor = getResources().getColor(R.color.blue);
     }
 /*
     @Override

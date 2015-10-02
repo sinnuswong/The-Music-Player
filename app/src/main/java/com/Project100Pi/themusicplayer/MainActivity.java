@@ -1,5 +1,7 @@
 	 package com.Project100Pi.themusicplayer;
 
+import android.animation.ObjectAnimator;
+import android.animation.ValueAnimator;
 import android.annotation.TargetApi;
 import android.app.Activity;
 import android.app.AlertDialog;
@@ -31,7 +33,9 @@ import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
+import android.view.MotionEvent;
 import android.view.View;
+import android.view.animation.DecelerateInterpolator;
 import android.widget.AbsListView;
 import android.widget.AdapterView;
 import android.widget.Button;
@@ -48,7 +52,6 @@ import android.widget.Toast;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashMap;
-import android.widget.SeekBar.OnSeekBarChangeListener;
 
 import it.gmariotti.cardslib.library.view.CardListView;
 import it.gmariotti.cardslib.library.view.listener.SwipeOnScrollListener;
@@ -165,9 +168,7 @@ import it.gmariotti.cardslib.library.view.listener.SwipeOnScrollListener;
         setUpTabLayout();
         setUpFloatingActionButton();
 
-
-        //PlayHelperFunctions.seekbar = (SeekBar) findViewById(R.id.front_PlayHelperFunctions.seekbar);
-        //PlayHelperFunctions.seekbar.setProgress(50);
+        PlayHelperFunctions.seekbar = (SeekBar) findViewById(R.id.front_seekbar);
 
 
         /*
@@ -699,6 +700,12 @@ protected void onDestroy() {
              frontAlbum = (TextView) findViewById(R.id.front_album);
              frontPlay = (PlayPauseView) findViewById(R.id.front_play_Pause);
              PlayHelperFunctions.seekbar = (SeekBar) findViewById(R.id.front_seekbar);
+             PlayHelperFunctions.seekbar.setOnTouchListener(new View.OnTouchListener() {
+                 @Override
+                 public boolean onTouch(View v, MotionEvent event) {
+                     return true;
+                 }
+             });
              frontPlay.setPauseBackgroundColor(Color.parseColor("#00FFFFFF"));
              frontPlay.setPlayBackgroundColor(Color.parseColor("#00FFFFFF"));
              frontPlay.setBackgroundColor(Color.parseColor("#00FFFFFF"));

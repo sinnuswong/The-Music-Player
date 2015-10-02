@@ -38,7 +38,7 @@ public class PlayHelperFunctions {
         songInfoObj.playPath = cursor.getString(cursor.getColumnIndex(MediaStore.Audio.Media.DATA));
         songInfoObj.artist = cursor.getString(cursor.getColumnIndex(MediaStore.Audio.Media.ARTIST));
         songInfoObj.album = cursor.getString(cursor.getColumnIndex(MediaStore.Audio.Media.ALBUM));
-        songInfoObj.duration = cursor.getString(cursor.getColumnIndex(MediaStore.Audio.Media.DURATION));
+        songInfoObj.duration = cursor.getInt(cursor.getColumnIndex(MediaStore.Audio.Media.DURATION));
         songInfoObj.songId = songId;
         songInfoObj.bitmap = CursorClass.albumArtCursor(cursor.getLong(cursor.getColumnIndex(MediaStore.Audio.Media.ALBUM_ID)));
         if(songInfoObj.bitmap == null){
@@ -180,7 +180,7 @@ public class PlayHelperFunctions {
         bundle.putString("album", songInfoObj.album);
 
         // put the song's total duration (in ms)
-        bundle.putLong("duration", Long.parseLong(songInfoObj.duration)); // 4:05
+        bundle.putLong("duration",songInfoObj.duration); // 4:05
 
         // put the song's current position
         bundle.putLong("position", currDuration); // beginning of the song

@@ -27,20 +27,8 @@
         android:layout_height="wrap_content"
         android:layout_alignParentBottom="true"
         android:layout_alignParentLeft="true"
-        android:background="#2A5168" >
-
-        <View
-            android:id="@+id/View1"
-            android:layout_width="fill_parent"
-            android:layout_height="5dp"
-            android:background="@drawable/grad_shad_top" />
-
-        <View
-            android:id="@+id/View2"
-            android:layout_width="fill_parent"
-            android:layout_height="5dp"
-            android:layout_below="@+id/playArtistName"
-            android:background="@drawable/grad_shad_bottom" />
+        android:background="#36474F"
+        android:paddingBottom="8dp">
 
         <TextView
             android:id="@+id/playSongName"
@@ -48,17 +36,15 @@
             android:layout_height="wrap_content"
             android:layout_alignParentLeft="true"
             android:layout_alignParentTop="true"
-            android:layout_marginTop="10dp"
             android:singleLine="true"
-            android:ellipsize="marquee"
-            android:focusable="true"
-            android:focusableInTouchMode="true"
+            android:ellipsize="end"
             android:gravity="center"
-            android:marqueeRepeatLimit="marquee_forever"
-            android:scrollHorizontally="true"
             android:text="Large Text"
             android:textAppearance="?android:attr/textAppearanceLarge"
-            android:textColor="#4cb3a9" />
+            android:textColor="#FFF"
+            android:textSize="20sp"
+            android:layout_marginLeft="16dp"
+            android:layout_marginRight="16dp" />
 
         <TextView
             android:id="@+id/playArtistName"
@@ -66,16 +52,14 @@
             android:layout_height="wrap_content"
             android:layout_alignParentLeft="true"
             android:layout_below="@+id/playSongName"
-            android:layout_marginBottom="5dp"
-                        android:singleLine="true"
-            android:ellipsize="marquee"
-            android:focusable="true"
-            android:focusableInTouchMode="true"
+            android:layout_marginBottom="4dp"
+            android:ellipsize="end"
             android:gravity="center"
-            android:marqueeRepeatLimit="marquee_forever"
-            android:scrollHorizontally="true"
             android:textAppearance="?android:attr/textAppearanceMedium"
-            android:textColor="#4cb3a9" />
+            android:textColor="#FFF"
+            android:textSize="14sp"
+            android:layout_marginLeft="16dp"
+            android:layout_marginRight="16dp" />
 
     </RelativeLayout>
 
@@ -85,20 +69,12 @@
         android:layout_height="wrap_content"
         android:layout_above="@+id/playNamesContainer"
         android:layout_alignParentLeft="true"
-        android:background="#7cd1ba" >
-
-        <View
-            android:id="@+id/play_top"
-            android:layout_width="fill_parent"
-            android:layout_height="5dp"
-            android:background="@drawable/grad_shad_top" />
+        android:background="#36474F" >
 
         <LinearLayout
             android:id="@+id/playMainContainer"
             android:layout_width="match_parent"
-            android:layout_height="95dp"
-            android:layout_below="@id/play_top"
-            android:layout_marginTop="10dp" >
+            android:layout_height="85dp">
 
             <RelativeLayout
                 android:id="@+id/shuffleImageContainer"
@@ -134,7 +110,7 @@
             <RelativeLayout
                 android:id="@+id/playPauseContainer"
                 android:layout_width="75dp"
-                android:layout_height="95dp"
+                android:layout_height="match_parent"
                 android:layout_weight="0.33" >
 
                 <com.Project100Pi.themusicplayer.PlayPauseView
@@ -187,14 +163,13 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_alignParentLeft="true"
-            android:layout_below="@+id/playMainContainer"
-            android:layout_marginBottom="10dp" >
+            android:layout_below="@+id/playMainContainer">
 
             <RelativeLayout
                 android:id="@+id/runningTimeContainer"
-                android:layout_width="wrap_content"
+                android:layout_width="match_parent"
                 android:layout_height="match_parent"
-                android:layout_weight="0.1" >
+                android:layout_weight="1" >
 
                 <TextView
                     android:id="@+id/runningTime"
@@ -204,23 +179,34 @@
                     android:layout_centerVertical="true"
                     android:text="00:00"
                     android:textAppearance="?android:attr/textAppearanceSmall"
-                    android:textColor="#2A5168" />
+                    android:textColor="#FFF" />
             </RelativeLayout>
 
-            <SeekBar
-                android:id="@+id/seekBar"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_weight="0.8"
-                android:max="100"
-                android:progressTint="#2A5168"
-                android:thumb="@drawable/thumb1" />
+            <RelativeLayout
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:layout_weight="0.35">
+
+                <SeekBar
+                    android:id="@+id/seekBar"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="0.8"
+                    android:max="100"
+                    android:thumb="@drawable/my_thumb"
+                    android:thumbOffset="8dp"
+                    android:thumbTint="#be4d56"
+                    android:progressTint="#be4d56"
+                    android:layout_centerVertical="true"
+                    android:paddingTop="8dp"
+                    android:paddingBottom="8dp" />
+            </RelativeLayout>
 
             <RelativeLayout
                 android:id="@+id/fullPlayTimeContainer"
-                android:layout_width="wrap_content"
+                android:layout_width="match_parent"
                 android:layout_height="match_parent"
-                android:layout_weight="0.1" >
+                android:layout_weight="1" >
 
                 <TextView
                     android:id="@+id/fullPlayTIme"
@@ -230,15 +216,10 @@
                     android:layout_centerVertical="true"
                     android:text="00:00"
                     android:textAppearance="?android:attr/textAppearanceSmall"
-                    android:textColor="#2A5168" />
+                    android:textColor="#FFF" />
             </RelativeLayout>
+
         </LinearLayout>
-        
-         <View
-             android:layout_width="fill_parent"
-             android:layout_height="5dp"
-             android:layout_below="@id/seekBarContainer"
-             android:background="@drawable/grad_shad_bottom" />
 
     </RelativeLayout>
 
@@ -248,11 +229,11 @@
         android:layout_height="wrap_content"
         android:layout_above="@+id/playOuterContainer"
         android:layout_alignParentLeft="true"
-        android:background="#55000000"
+        android:background="#77000000"
         android:gravity="center_horizontal"
         android:maxLines="1"
         android:text="TextView"
         android:textColor="#FFF"
-        android:textSize="18sp" />
+        android:textSize="20sp" />
 
 </RelativeLayout>

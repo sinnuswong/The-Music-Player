@@ -14,12 +14,13 @@ android:layout_height="match_parent">
             android:layout_width="match_parent"
             android:layout_height="48dp"
             android:background="#273238"
+            android:layout_marginBottom="-8dp"
             app:layout_scrollFlags="scroll|enterAlways"
             />
         <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
             xmlns:app="http://schemas.android.com/apk/res-auto"
             android:layout_width="match_parent"
-            android:layout_height="64dp"
+            android:layout_height="68dp"
             android:background="#273238"
             android:orientation="vertical"
             android:id="@+id/front_now_playing_container"
@@ -30,14 +31,17 @@ android:layout_height="match_parent">
                 android:layout_height="wrap_content"
                 android:id="@+id/front_seekbar"
                 android:max="100"
-                android:maxHeight="3dp"
                 android:progressTint="#be4d56"
                 android:background="#273238"
-                android:padding="0dp"
+                android:paddingLeft="0dp"
+                android:paddingRight="0dp"
+                android:maxHeight="3dp"
+                android:thumbOffset="8dp"
+                android:layout_marginBottom="-15dp"
+                android:layout_marginTop="-10dp"
                 android:thumbTint="#00be4d56"
-                android:layout_marginTop="-8dp"
-                android:layout_marginBottom="-16dp"
-                android:progressBackgroundTint="#00be4d56" />
+                android:progressBackgroundTint="#00ff4081"
+                android:clickable="false" />
 
 
 
@@ -45,18 +49,24 @@ android:layout_height="match_parent">
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
                 android:orientation="horizontal">
-                <com.Project100Pi.themusicplayer.RoundedImageView
-                    android:layout_width="48dp"
+
+                <RelativeLayout
+                    android:layout_width="wrap_content"
                     android:layout_height="match_parent"
-                    android:id="@+id/front_album_art"
-                    android:src="@drawable/appicns"
-                    android:scaleType="center"
-                    android:paddingTop="3dp"
-                    android:paddingBottom="3dp"
-                    android:layout_weight="0.2"
-                    android:layout_marginLeft="16dp"
-                    android:layout_marginTop="4dp"
-                    android:layout_marginBottom="4dp" />
+                    android:gravity="center"
+                    android:paddingTop="4dp">
+
+                    <com.Project100Pi.themusicplayer.RoundedImageView
+                        android:layout_width="48dp"
+                        android:layout_height="match_parent"
+                        android:id="@+id/front_album_art"
+                        android:src="@drawable/appicns"
+                        android:scaleType="center"
+                        android:layout_weight="0.2"
+                        android:layout_marginLeft="16dp"
+                        android:layout_marginTop="4dp"
+                        android:layout_centerInParent="true" />
+                </RelativeLayout>
 
                 <RelativeLayout
                     android:layout_width="match_parent"
@@ -115,9 +125,9 @@ android:layout_height="match_parent">
                         android:layout_marginRight="16dp">
                     </com.Project100Pi.themusicplayer.PlayPauseView>
                 </RelativeLayout>
+
             </LinearLayout>
         </LinearLayout>
-
         <android.support.design.widget.TabLayout
             android:id="@+id/tabLayout"
             android:background="#36474F"

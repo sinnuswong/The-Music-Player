@@ -27,6 +27,7 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.EditText;
+import android.widget.TextView;
 import android.widget.Toast;
 
 public class UtilFunctions {
@@ -359,7 +360,7 @@ public class UtilFunctions {
  public static ArrayList<String> getIdListfromChoice(Activity activity,final Long selectedId,String choice){
 	 ArrayList<String> audioIdList = new ArrayList<String>();
 		 
-	 Cursor cursor=CursorClass.makeCursorBasedOnChoice(activity,selectedId, choice);
+	 Cursor cursor=CursorClass.makeCursorBasedOnChoice(activity, selectedId, choice);
 	 //  ArrayList<Uri> uris=new ArrayList<Uri>();
 	   while(cursor.moveToNext()){
 		  String title =cursor.getString(0);
@@ -513,8 +514,186 @@ public class UtilFunctions {
 	// TODO Auto-generated method stub
 	
 }
- 
- private static Uri makeGenreUri(String genreId) {
+
+
+	public static void editAlbumInfo(final Long selectedAlbumId,String selectedAlbumName,final Activity activity) {
+
+		LayoutInflater layoutInflater = LayoutInflater.from(activity);
+		View promptView = layoutInflater.inflate(R.layout.dialog_box, null);
+		AlertDialog.Builder alertDialogBuilder = new AlertDialog.Builder(activity);
+		alertDialogBuilder.setView(promptView);
+		//	Toast.makeText(activity,"Id is "+id,Toast.LENGTH_SHORT).show();
+		TextView textView = (TextView) promptView.findViewById(R.id.textView);
+		textView.setText("Edit Album Name");
+		final EditText editTitleText = (EditText) promptView.findViewById(R.id.edittext);
+		editTitleText.setText(selectedAlbumName);
+
+		//final EditText editAlbumText=(EditText) promptView.findViewById(R.id.edittext);
+		// setup a dialog window
+		alertDialogBuilder.setCancelable(false)
+				.setPositiveButton("OK", new DialogInterface.OnClickListener() {
+					public void onClick(DialogInterface dialog, int id) {
+
+						String albumChange = editTitleText.getText().toString();
+						ContentValues mInserts = new ContentValues();
+						ContentResolver resolver = activity.getApplicationContext().getContentResolver();
+						Uri uri = MediaStore.Audio.Media.EXTERNAL_CONTENT_URI;
+						//String songName=idToName.get(id);
+						//	Toast.makeText(activity,"songName  is "+songName,Toast.LENGTH_SHORT).show();
+
+						mInserts.put(MediaStore.Audio.Media.ALBUM, albumChange);
+						int rowsUpdated = resolver.update(uri, mInserts, MediaStore.Audio.Media.ALBUM_ID + " LIKE \"" + selectedAlbumId + "\"", null);
+						Toast.makeText(activity, "No of Rows updated is " + rowsUpdated, Toast.LENGTH_SHORT).show();
+
+						// populateCards();
+					}
+				})
+				.setNegativeButton("Cancel",
+						new DialogInterface.OnClickListener() {
+							public void onClick(DialogInterface dialog, int id) {
+								dialog.cancel();
+							}
+						});
+
+		// create an alert dialog
+		AlertDialog alert = alertDialogBuilder.create();
+		alert.show();
+
+
+
+/*
+		LayoutInflater layoutInflater = LayoutInflater.from(activity);
+		View promptView = layoutInflater.inflate(R.layout.editinfo_dialog_box, null);
+		AlertDialog.Builder alertDialogBuilder = new AlertDialog.Builder(activity);
+		alertDialogBuilder.setView(promptView);
+		//	Toast.makeText(activity,"Id is "+id,Toast.LENGTH_SHORT).show();
+
+		final EditText editAlbumText = (EditText) promptView.findViewById(R.id.edittext_album);
+		editAlbumText.setText(selectedAlbumName);
+		alertDialogBuilder.setCancelable(false)
+				.setPositiveButton("OK", new DialogInterface.OnClickListener() {
+					public void onClick(DialogInterface dialog, int id) {
+
+
+						String albumChange = editAlbumText.getText().toString();
+						ContentValues mInserts = new ContentValues();
+						ContentResolver resolver = activity.getApplicationContext().getContentResolver();
+						Uri uri = MediaStore.Audio.Media.EXTERNAL_CONTENT_URI;
+						//String songName=idToName.get(id);
+						//	Toast.makeText(activity,"songName  is "+songName,Toast.LENGTH_SHORT).show();
+
+						mInserts.put(MediaStore.Audio.Media.ALBUM, albumChange);
+						int rowsUpdated = resolver.update(uri, mInserts, MediaStore.Audio.Media.ALBUM_ID + " LIKE \"" + selectedAlbumId + "\"", null);
+						Toast.makeText(activity, "No of Rows updated is " + rowsUpdated, Toast.LENGTH_SHORT).show();
+
+					}
+
+
+				})
+				.setNegativeButton("Cancel",
+						new DialogInterface.OnClickListener() {
+							public void onClick(DialogInterface dialog, int id) {
+								dialog.cancel();
+							}
+						});
+
+		// create an alert dialog
+		AlertDialog alert = alertDialogBuilder.create();
+		alert.show();*/
+	}
+
+	public static void editArtistInfo(final Long selectedArtistId,String selectedArtistName,final Activity activity) {
+
+		LayoutInflater layoutInflater = LayoutInflater.from(activity);
+		View promptView = layoutInflater.inflate(R.layout.dialog_box, null);
+		AlertDialog.Builder alertDialogBuilder = new AlertDialog.Builder(activity);
+		alertDialogBuilder.setView(promptView);
+		//	Toast.makeText(activity,"Id is "+id,Toast.LENGTH_SHORT).show();
+		TextView textView = (TextView) promptView.findViewById(R.id.textView);
+		textView.setText("Edit Artist Name");
+		final EditText editTitleText = (EditText) promptView.findViewById(R.id.edittext);
+		editTitleText.setText(selectedArtistName);
+
+		//final EditText editAlbumText=(EditText) promptView.findViewById(R.id.edittext);
+		// setup a dialog window
+		alertDialogBuilder.setCancelable(false)
+				.setPositiveButton("OK", new DialogInterface.OnClickListener() {
+					public void onClick(DialogInterface dialog, int id) {
+
+						String artistChange = editTitleText.getText().toString();
+						ContentValues mInserts = new ContentValues();
+						ContentResolver resolver = activity.getApplicationContext().getContentResolver();
+						Uri uri = MediaStore.Audio.Media.EXTERNAL_CONTENT_URI;
+						//String songName=idToName.get(id);
+						//	Toast.makeText(activity,"songName  is "+songName,Toast.LENGTH_SHORT).show();
+
+						mInserts.put(MediaStore.Audio.Media.ARTIST, artistChange);
+						int rowsUpdated = resolver.update(uri, mInserts, MediaStore.Audio.Media.ARTIST_ID + " LIKE \"" + selectedArtistId + "\"", null);
+						Toast.makeText(activity, "No of Rows updated is " + rowsUpdated, Toast.LENGTH_SHORT).show();
+
+						// populateCards();
+					}
+				})
+				.setNegativeButton("Cancel",
+						new DialogInterface.OnClickListener() {
+							public void onClick(DialogInterface dialog, int id) {
+								dialog.cancel();
+							}
+						});
+
+		// create an alert dialog
+		AlertDialog alert = alertDialogBuilder.create();
+		alert.show();
+
+	}
+
+	public static void editGenreInfo(final Long GenreId,String GenreName,final Activity activity) {
+
+		LayoutInflater layoutInflater = LayoutInflater.from(activity);
+		View promptView = layoutInflater.inflate(R.layout.dialog_box, null);
+		AlertDialog.Builder alertDialogBuilder = new AlertDialog.Builder(activity);
+		alertDialogBuilder.setView(promptView);
+		//	Toast.makeText(activity,"Id is "+id,Toast.LENGTH_SHORT).show();
+		TextView textView = (TextView) promptView.findViewById(R.id.textView);
+		textView.setText("Edit Genre Name");
+		final EditText editTitleText = (EditText) promptView.findViewById(R.id.edittext);
+		editTitleText.setText(GenreName);
+
+		//final EditText editAlbumText=(EditText) promptView.findViewById(R.id.edittext);
+		// setup a dialog window
+		alertDialogBuilder.setCancelable(false)
+				.setPositiveButton("OK", new DialogInterface.OnClickListener() {
+					public void onClick(DialogInterface dialog, int id) {
+
+						String genreChange = editTitleText.getText().toString();
+
+						Uri GenreUri=MediaStore.Audio.Genres.EXTERNAL_CONTENT_URI;
+						ContentValues genreInserts=new ContentValues();
+						genreInserts.put(MediaStore.Audio.Genres.NAME, genreChange);
+						int rowsUpdated=activity.getApplicationContext().getContentResolver().update(GenreUri,genreInserts,MediaStore.Audio.Genres._ID+ " LIKE \"" + GenreId + "\"", null);
+						Toast.makeText(activity,"No of Rows updated for Genre is "+rowsUpdated,Toast.LENGTH_SHORT).show();
+
+
+						// populateCards();
+					}
+				})
+				.setNegativeButton("Cancel",
+						new DialogInterface.OnClickListener() {
+							public void onClick(DialogInterface dialog, int id) {
+								dialog.cancel();
+							}
+						});
+
+		// create an alert dialog
+		AlertDialog alert = alertDialogBuilder.create();
+		alert.show();
+
+	}
+
+
+
+
+	private static Uri makeGenreUri(String genreId) {
 	 Uri GENRES_URI = MediaStore.Audio.Genres.EXTERNAL_CONTENT_URI;
     String CONTENTDIR = MediaStore.Audio.Genres.Members.CONTENT_DIRECTORY;
     return Uri.parse(

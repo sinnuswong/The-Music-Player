@@ -15,7 +15,7 @@
     <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
     <uses-permission android:name="android.permission.MODIFY_AUDIO_SETTINGS" />
 
-    <android:uses-permission android:name="android.permission.READ_PHONE_STATE" />
+    <uses-permission android:name="android.permission.READ_PHONE_STATE" />
 
     <application
         android:allowBackup="true"
@@ -79,6 +79,12 @@
             android:label="Select PlayList"
             android:theme="@style/Theme.AppCompat.Light.DarkActionBar" >
         </activity>
+
+        <activity
+            android:name=".RingdroidEditActivity"
+            android:label="Edit Activity"
+            android:theme="@style/Theme.AppCompat.Light.DarkActionBar" >
+        </activity>
         <activity
             android:name=".SearchResultTestActivity"
             android:label="@string/title_activity_search_result_test" >
@@ -86,7 +92,21 @@
                 android:name="android.app.searchable"
                 android:resource="@xml/searchable" />
         </activity>
+        <service
+            android:name="com.Project100Pi.themusicplayer.LockScreenNotification"
+            android:exported="true"
+            android:enabled="true"/>
 
+        <receiver android:name="com.Project100Pi.themusicplayer.NotificationBroadcast" >
+            <intent-filter>
+                <action android:name="com.tutorialsface.audioplayer.delete" />
+                <action android:name="com.tutorialsface.audioplayer.pause" />
+                <action android:name="com.tutorialsface.audioplayer.next" />
+                <action android:name="com.tutorialsface.audioplayer.play" />
+                <action android:name="com.tutorialsface.audioplayer.previous" />
+                <action android:name="android.intent.action.MEDIA_BUTTON" />
+            </intent-filter>
+        </receiver>
     </application>
 
 </manifest>

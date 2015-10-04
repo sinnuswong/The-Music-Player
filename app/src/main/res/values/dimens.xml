@@ -9,4 +9,8 @@
 <dimen name="pause_bar_height">24dp</dimen>
     <dimen name="card_base_empty_height">35dp</dimen>
 
+    <dimen name="button_width">32dp</dimen>
+    <dimen name="small_button_width">28dp</dimen>
+    <dimen name="small_image_art_width">85dp</dimen>
+
 </resources>

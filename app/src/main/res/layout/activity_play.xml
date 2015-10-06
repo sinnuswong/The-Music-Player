@@ -44,7 +44,8 @@
             android:textColor="#FFF"
             android:textSize="20sp"
             android:layout_marginLeft="16dp"
-            android:layout_marginRight="16dp" />
+            android:layout_marginRight="16dp"
+            android:maxLines="1" />
 
         <TextView
             android:id="@+id/playArtistName"
@@ -59,7 +60,8 @@
             android:textColor="#FFF"
             android:textSize="14sp"
             android:layout_marginLeft="16dp"
-            android:layout_marginRight="16dp" />
+            android:layout_marginRight="16dp"
+            android:maxLines="1" />
 
     </RelativeLayout>
 

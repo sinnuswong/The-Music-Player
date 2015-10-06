@@ -29,10 +29,11 @@ dependencies {
    // compile project(':libs:CardView-master')
     compile project(':libs:cardslib-core')
     compile project(':libs:cardslib-extra-dragdrop')
+    compile project(':libs:RecyclerViewFastScroller-master')
    // compile project(':libs:cardslib-recyclerview')
     compile 'com.android.support:recyclerview-v7:22.2.1'
     compile 'com.squareup.picasso:picasso:2.5.2'
-    compile 'xyz.danoz:recyclerviewfastscroller:0.1.3'
+    compile 'pl.droidsonroids.gif:android-gif-drawable:1.1.+'
 
 }
 

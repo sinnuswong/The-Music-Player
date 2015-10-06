@@ -2,5 +2,6 @@ include ':app'
 //include ':libs:CardView-master'
 include ':libs:cardslib-core'
 include ':libs:cardslib-extra-dragdrop'
+include ':libs:RecyclerViewFastScroller-master'
 
 

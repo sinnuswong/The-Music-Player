@@ -22,6 +22,8 @@ import android.widget.Toast;
 import java.util.ArrayList;
 import java.util.List;
 
+import pl.droidsonroids.gif.GifImageView;
+
 /**
  * Created by BalachandranAR on 8/24/2015.
  */
@@ -32,6 +34,7 @@ public class NowPlayingRecyclerAdapter extends SelectableAdapter<NowPlayingRecyc
     Activity mactivity;
     private OnDragStartListener mDragStartListener;
     Long playListid;
+    static NowPlayingViewHolder nowPlayingHolder;
 
     @Override
     public void onItemMove(int fromPosition, int toPosition) {
@@ -46,7 +49,6 @@ public class NowPlayingRecyclerAdapter extends SelectableAdapter<NowPlayingRecyc
             idList.add(toPosition,prevStr);
             ContentResolver resolver=mactivity.getContentResolver();
             boolean result= MediaStore.Audio.Playlists.Members.moveItem(resolver, playListid,fromPosition,toPosition);
-            Toast.makeText(mactivity, "result is " + result, Toast.LENGTH_SHORT).show();
 
         }
         notifyItemMoved(fromPosition, toPosition);
@@ -70,8 +72,11 @@ public class NowPlayingRecyclerAdapter extends SelectableAdapter<NowPlayingRecyc
                     // TODO Auto-generated catch block
                     e.printStackTrace();
                 }
+            }else{
+                songInfoObj.currPlayPos = songInfoObj.nowPlayingList.indexOf(songInfoObj.songId.toString());
             }
             notifyItemRemoved(position);
+           notifyDataSetChanged();
         }
     }
 
@@ -82,6 +87,7 @@ public class NowPlayingRecyclerAdapter extends SelectableAdapter<NowPlayingRecyc
         TextView trackDuration;
         ImageView overflowButton,dragHandle;
         Activity viewActivity;
+        GifImageView animatedBars;
 
         public NowPlayingViewHolder(Activity con,View itemView) {
             super(itemView);
@@ -92,6 +98,7 @@ public class NowPlayingRecyclerAdapter extends SelectableAdapter<NowPlayingRecyc
             viewActivity= con;
             overflowButton=(ImageView)itemView.findViewById(R.id.my_overflow);
             dragHandle=(ImageView)itemView.findViewById(R.id.drag_handle);
+            animatedBars = (GifImageView)itemView.findViewById(R.id.animated_bars);
             itemView.setOnClickListener(this);
 
         }
@@ -107,6 +114,10 @@ public class NowPlayingRecyclerAdapter extends SelectableAdapter<NowPlayingRecyc
                     PlayHelperFunctions.isSongPlaying = true;
                     PlayHelperFunctions.audioPlayer((String) PlayHelperFunctions.setPlaySongInfo(Long.parseLong(songInfoObj.nowPlayingList.get(getAdapterPosition()))), 1);
                     songInfoObj.currPlayPos = getAdapterPosition();
+                    nowPlayingHolder.animatedBars.setVisibility(View.GONE);
+                    this.animatedBars.setVisibility(View.VISIBLE);
+                   this.animatedBars.setAlpha(0.25f);
+                    nowPlayingHolder = this;
                 } catch (Exception e) {
 
                 }
@@ -186,6 +197,15 @@ public class NowPlayingRecyclerAdapter extends SelectableAdapter<NowPlayingRecyc
                 return false;
             }
         });
+
+        if(Long.parseLong(tracks.get(i).getTrackId()) == songInfoObj.songId && mactivity instanceof NowPlayingListTest){
+            trackViewHolder.animatedBars.setVisibility(View.VISIBLE);
+            trackViewHolder.animatedBars.setAlpha(0.25f);
+            nowPlayingHolder = trackViewHolder;
+        }else {
+            trackViewHolder.animatedBars.setVisibility(View.GONE);
+        }
+
         trackViewHolder.cv.setBackgroundColor(Color.parseColor("#3D3D3D"));
         trackViewHolder.trackName.setText(tracks.get(i).getTrackName());
         trackViewHolder.trackArtist.setText(tracks.get(i).getTrackArtist());

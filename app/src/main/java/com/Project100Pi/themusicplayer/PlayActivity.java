@@ -7,6 +7,7 @@ import java.util.Random;
 
 import org.michaelevans.colorart.library.ColorArt;
 import android.app.Activity;
+import android.app.Dialog;
 import android.content.Context;
 import android.content.Intent;
 import android.database.Cursor;
@@ -29,12 +30,14 @@ import android.util.Log;
 import android.view.Display;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewConfiguration;
 import android.view.ViewTreeObserver;
 import android.view.Window;
 import android.view.animation.AccelerateDecelerateInterpolator;
 import android.widget.Button;
+import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
@@ -62,6 +65,13 @@ public class PlayActivity extends AppCompatActivity {
     Toolbar mToolbar;
     ImageView albumArtView;
     boolean shouldReveal = true;
+    private float x1,x2;
+    static final int MIN_DISTANCE  = 200;
+    static boolean isTimerOn = false;
+    static CountDownTimer myCountDownTimer;
+    PlayPauseView playPauseViewview;
+    EditText hoursEdit,minsEdit,secsEdit;
+    Dialog editDialog;
 
 
     @Override
@@ -160,14 +170,14 @@ public class PlayActivity extends AppCompatActivity {
         }
 
 
-        final PlayPauseView view = (PlayPauseView) findViewById(R.id.playPauseView);
+        playPauseViewview = (PlayPauseView) findViewById(R.id.playPauseView);
         /*
         if (!PlayHelperFunctions.isSongPlaying) {
             view.toggle();
         }
         */
         // Toast.makeText(getApplicationContext(),view.isPlay()+"",Toast.LENGTH_LONG).show();
-        view.setOnClickListener(new View.OnClickListener() {
+        playPauseViewview.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 if (PlayHelperFunctions.isSongPlaying) {
@@ -175,7 +185,7 @@ public class PlayActivity extends AppCompatActivity {
                 } else {
                     PlayHelperFunctions.startMusicPlayer(); // Check this code once..Check the Method implementation once with Bala's Code
                 }
-                view.toggle();
+                playPauseViewview.toggle();
             }
         });
 
@@ -284,6 +294,18 @@ public class PlayActivity extends AppCompatActivity {
         return true;
     }
 
+    public void disableEditText(EditText editText) {
+        editText.setFocusable(false);
+        editText.setEnabled(false);
+        editText.setCursorVisible(false);
+    }
+
+    public void enableEditText(EditText editText){
+        editText.setFocusable(true);
+        editText.setEnabled(true);
+        editText.setCursorVisible(true);
+    }
+
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         // Handle action bar item clicks here. The action bar will
@@ -300,6 +322,99 @@ public class PlayActivity extends AppCompatActivity {
 
                 break;
             case R.id.timerImage:
+                editDialog = new Dialog(this);
+                editDialog.setContentView(R.layout.timer_edit);
+                editDialog.setTitle("Sleep Timer");
+                final Button startStopEdit = (Button)editDialog.findViewById(R.id.start_edit);
+                Button resetEdit = (Button)editDialog.findViewById(R.id.reset_edit);
+                 hoursEdit = (EditText)editDialog.findViewById(R.id.hours_edit);
+                 minsEdit = (EditText)editDialog.findViewById(R.id.mins_edit);
+                 secsEdit = (EditText)editDialog.findViewById(R.id.secs_edit);
+                if(isTimerOn){
+                    disableEditText(hoursEdit);
+                    disableEditText(minsEdit);
+                    disableEditText(secsEdit);
+                    startStopEdit.setText("STOP");
+                }
+                startStopEdit.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View view) {
+                        if (!isTimerOn) {
+                            long secs, mins, hrs, countDownTime;
+                            secs = Long.parseLong(secsEdit.getText().toString());
+                            mins = Long.parseLong(minsEdit.getText().toString());
+                            hrs = Long.parseLong(hoursEdit.getText().toString());
+                            countDownTime = secs * 1000 + mins * 60000 + hrs * 3600000;
+                            if (secs >= 0L && secs < 60L && mins >= 0L && mins < 60L && hrs >= 0L && hrs < 24L) {
+                                if(countDownTime ==0L){
+                                    Toast.makeText(getApplicationContext(), "Please Enter a valid time!", Toast.LENGTH_SHORT).show();
+                                }else if (PlayHelperFunctions.isSongPlaying) {
+                                    myCountDownTimer = new CountDownTimer(countDownTime, 100) {
+
+                                        public void onTick(long millisUntilFinished) {
+                                            //Toa.setText("seconds remaining: " + millisUntilFinished / 1000);
+                                            if (isTimerOn) {
+                                                int seconds = (int) (millisUntilFinished / 1000) % 60;
+                                                int minutes = (int) ((millisUntilFinished / (1000 * 60)) % 60);
+                                                int hours = (int) ((millisUntilFinished / (1000 * 60 * 60)) % 24);
+                                                try {
+                                                    secsEdit.setText(Integer.toString(seconds));
+                                                    minsEdit.setText(Integer.toString(minutes));
+                                                    hoursEdit.setText(Integer.toString(hours));
+                                                } catch (Exception e) {
+
+                                                }
+                                            }
+                                        }
+
+                                        public void onFinish() {
+                                            // mTextField.setText("done!");
+                                            isTimerOn = false;
+                                            if (PlayHelperFunctions.isSongPlaying) {
+                                                PlayHelperFunctions.pauseMusicPlayer();
+                                                Toast.makeText(getApplicationContext(), "Sleep Timer over", Toast.LENGTH_SHORT).show();
+                                                try {
+                                                    editDialog.dismiss();
+                                                } catch (Exception e) {
+
+                                                }
+                                            }
+                                        }
+                                    }.start();
+                                    isTimerOn = true;
+                                    editDialog.dismiss();
+                                    Toast.makeText(getApplicationContext(), "Sleep Timer Set!", Toast.LENGTH_SHORT).show();
+                                }
+                                else {
+                                Toast.makeText(getApplicationContext(), "No song is playing!", Toast.LENGTH_SHORT).show();
+                                editDialog.dismiss();
+                            }
+                        }else {
+                            Toast.makeText(getApplicationContext(), "Please Enter a valid time!", Toast.LENGTH_SHORT).show();
+                            }
+                } else {
+                //For stop Button
+                isTimerOn = false;
+                            myCountDownTimer.cancel();
+                            startStopEdit.setText("START");
+                        }
+                    }
+                });
+                resetEdit.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View view) {
+                        enableEditText(hoursEdit);
+                        enableEditText(minsEdit);
+                        enableEditText(secsEdit);
+                        hoursEdit.setText("00");
+                        minsEdit.setText("00");
+                        secsEdit.setText("00");
+                        startStopEdit.setText("START");
+                        isTimerOn = false;
+                    }
+                });
+                editDialog.show();
+                /*
                 Toast.makeText(getApplicationContext(), "Timer ON", Toast.LENGTH_SHORT).show();
                 new CountDownTimer(30000, 1000) {
 
@@ -313,6 +428,7 @@ public class PlayActivity extends AppCompatActivity {
                         PlayHelperFunctions.mp.pause();
                     }
                 }.start();
+                */
                 break;
 
             case R.id.equalizerImage:
@@ -368,6 +484,33 @@ public class PlayActivity extends AppCompatActivity {
         //albumArtView.getLayoutParams().width = albumArtSize;
         //albumArtView.getLayoutParams().height = albumArtSize;
         albumArtView.setImageBitmap(songInfoObj.bitmap);
+        albumArtView.setOnTouchListener(new View.OnTouchListener() {
+            @Override
+            public boolean onTouch(View view, MotionEvent event) {
+                switch (event.getAction()) {
+                    case MotionEvent.ACTION_DOWN:
+                        x1 = event.getX();
+                        Log.i("PANACHE DOWN", String.valueOf(x1));
+                        break;
+                    case MotionEvent.ACTION_UP:
+                        x2 = event.getX();
+                        Log.i("PANACHE DOWN", String.valueOf(x1));
+                        float deltaX = x2 - x1;
+
+                        if (deltaX < 0 && Math.abs(deltaX) > MIN_DISTANCE) {
+                            Toast.makeText(PlayActivity.this, "right to left swipe", Toast.LENGTH_SHORT).show();
+                            PlayHelperFunctions.nextAction();
+                            setPlayingLayout();
+
+                        } else if (deltaX > 0 && Math.abs(deltaX) > MIN_DISTANCE) {
+                            Toast.makeText(PlayActivity.this, "left to right swipe", Toast.LENGTH_SHORT).show();
+                            PlayHelperFunctions.prevAction();
+                            setPlayingLayout();
+                        }
+                }
+                return true;
+            }
+        });
         albumArtView.getViewTreeObserver().addOnGlobalLayoutListener(new ViewTreeObserver.OnGlobalLayoutListener() {
             @Override
             public void onGlobalLayout() {
@@ -457,8 +600,5 @@ public class PlayActivity extends AppCompatActivity {
             shuffle.setImageDrawable(shuffleIcon);
         }
 
-
     }
-
-
 }

@@ -65,6 +65,7 @@ public class PlaylistRecyclerAdapter extends SelectableAdapter<PlaylistRecyclerA
                     Intent intent = new Intent(viewActivity, SongsUnderTest.class);
                     intent.putExtra("X", "PlayList");
                     intent.putExtra("id", playlists.get(getAdapterPosition()).getPlaylistId());
+                    intent.putExtra("title",playlists.get(getAdapterPosition()).getPlaylistName());
                     viewActivity.startActivity(intent);
                     return;
                 }

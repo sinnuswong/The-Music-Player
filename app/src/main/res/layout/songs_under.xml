@@ -1,18 +1,71 @@
-<?xml version="1.0" encoding="utf-8"?>
-<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<android.support.design.widget.CoordinatorLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
-    android:background="#FFF"
-    android:layout_height="match_parent" >
+    android:layout_height="match_parent"
+    android:background="#3D3D3D"
+    android:fitsSystemWindows="true">
+    <android.support.design.widget.AppBarLayout
+        android:id="@+id/appbar"
+        android:layout_width="match_parent"
+        android:layout_height="256dp"
+        android:fitsSystemWindows="true"
+        android:theme="@style/ThemeOverlay.AppCompat.Dark.ActionBar">
+        <android.support.design.widget.CollapsingToolbarLayout
+            android:id="@+id/collapsing_toolbar"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:fitsSystemWindows="true"
+            app:contentScrim="?attr/colorPrimary"
+            app:expandedTitleTextAppearance="@style/ExpandedAppBar"
+            app:layout_scrollFlags="scroll|exitUntilCollapsed">
+            <io.codetail.widget.RevealFrameLayout
+                android:layout_width="fill_parent"
+                android:layout_height="fill_parent" >
 
-    
-      <it.gmariotti.cardslib.library.view.CardListView
-          xmlns:card="http://schemas.android.com/apk/res-auto"
-          xmlns:android="http://schemas.android.com/apk/res/android"
-          android:id="@+id/songsUnderFragList"
-          android:layout_width="match_parent"
-          android:layout_height="match_parent"
-         
-          card:list_card_layout_resourceID="@layout/my_list_card_layout" />
-    
-   
-    </RelativeLayout>
+                <ImageView
+                    android:id="@+id/header"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:background="#77000000"
+                    android:foreground="?android:attr/selectableItemBackground"
+                    android:src="#77000000"
+                    android:fitsSystemWindows="true"
+                    android:scaleType="centerCrop"
+                    app:layout_collapseMode="parallax" />
+
+                <ImageView
+                    android:id="@+id/overlay"
+                    android:layout_width="fill_parent"
+                    android:layout_height="fill_parent"
+                    android:src="#80000000"/>
+            </io.codetail.widget.RevealFrameLayout>
+            <android.support.v7.widget.Toolbar
+                android:id="@+id/anim_toolbar"
+                android:layout_width="match_parent"
+                android:layout_height="?attr/actionBarSize"
+                app:layout_collapseMode="pin"
+                app:popupTheme="@style/ThemeOverlay.AppCompat.Light" />
+        </android.support.design.widget.CollapsingToolbarLayout>
+    </android.support.design.widget.AppBarLayout>
+    <android.support.v7.widget.RecyclerView
+        android:id="@+id/songsUnderRecycler"
+        android:layout_marginTop="8dp"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        app:layout_behavior="@string/appbar_scrolling_view_behavior" />
+    <android.support.design.widget.FloatingActionButton
+        xmlns:app="http://schemas.android.com/apk/res-auto"
+        android:id="@+id/fabButton"
+        android:layout_width="56dp"
+        android:layout_height="56dp"
+        android:layout_gravity="end|bottom"
+        android:layout_marginRight="16dp"
+        android:layout_marginBottom="32dp"
+        android:scaleType="centerInside"
+        android:backgroundTint="#be4d56"
+        android:src="@drawable/shuffle"
+        android:clickable="true"
+        app:borderWidth="0dp"
+        app:elevation="6dp"/>
+
+</android.support.design.widget.CoordinatorLayout>

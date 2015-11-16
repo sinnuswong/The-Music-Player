@@ -22,4 +22,9 @@
     <color name="type_bkgnd_notification">#88666600</color  >
     <color name="type_bkgnd_music">#88000000</color  >
     <color name="type_bkgnd_unsupported">#88cccccc</color  >
+
+
+    <color name="accent_color">#c56068</color  >
+    <color name="color_primary">#36474F</color>
+    <color name="color_primary_dark">#273238</color>
 </resources>

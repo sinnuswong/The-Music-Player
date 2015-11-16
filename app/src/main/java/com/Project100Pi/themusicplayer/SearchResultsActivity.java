@@ -131,6 +131,7 @@ public class SearchResultsActivity extends Activity {
  						Intent intent=new Intent(SearchResultsActivity.this,SongsUnderTest.class);
  		            intent.putExtra("X","Album");
  		            intent.putExtra("id", id);
+						 intent.putExtra("title",fullSearchRes.get(clickPos));
  		            startActivity(intent);  
  						
             	 }
@@ -149,6 +150,7 @@ public class SearchResultsActivity extends Activity {
     						Intent intent=new Intent(SearchResultsActivity.this,SongsUnderTest.class);
     		            intent.putExtra("X","Artist");
     		            intent.putExtra("id", id);
+						 intent.putExtra("title",fullSearchRes.get(clickPos));
     		            startActivity(intent);  
             	 }
             	

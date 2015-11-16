@@ -3,9 +3,13 @@ package com.Project100Pi.themusicplayer;
 import android.app.Activity;
 import android.content.Intent;
 import android.database.Cursor;
+import android.graphics.Color;
 import android.net.Uri;
 import android.provider.BaseColumns;
 import android.provider.MediaStore;
+import android.support.design.widget.CollapsingToolbarLayout;
+import android.support.design.widget.FloatingActionButton;
+import android.support.v7.app.ActionBar;
 import android.support.v7.app.ActionBarActivity;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
@@ -13,40 +17,81 @@ import android.support.v7.view.ActionMode;
 import android.support.v7.widget.DefaultItemAnimator;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.support.v7.widget.Toolbar;
 import android.support.v7.widget.helper.ItemTouchHelper;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.view.View;
+import android.view.ViewTreeObserver;
+import android.view.animation.AccelerateDecelerateInterpolator;
+import android.widget.ImageView;
 
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
+import java.util.Random;
+
+import io.codetail.animation.SupportAnimator;
+import io.codetail.animation.ViewAnimationUtils;
 
 
 public class SongsUnderTest extends AppCompatActivity  implements ClickInterface,NowPlayingRecyclerAdapter.OnDragStartListener{
     private ActionModeCallback actionModeCallback = new ActionModeCallback();
     private ActionMode actionMode;
+    Toolbar mToolbar;
+    ActionBar mActionbar;
+    CollapsingToolbarLayout collapsingToolbar;
+    ImageView actionBarImage;
     trackRecyclerAdapter tra;
     ArrayList<TrackObject> tracks;
     ArrayList<String > currIdList;
     NowPlayingRecyclerAdapter ptra;
-    String X;
+    String X,toolbarTitle;
     Long id;
     Cursor cursor;
     private ItemTouchHelper mItemTouchHelper;
     RecyclerView firstFragRecycler;
+    FloatingActionButton fab;
+    boolean shouldReveal = true;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.first_frag_test);
-
-        firstFragRecycler = (RecyclerView)findViewById(R.id.firstFragRecycler);
+        setContentView(R.layout.songs_under);
+        mToolbar = (Toolbar)findViewById(R.id.anim_toolbar);
+        setSupportActionBar(mToolbar);
+        mActionbar = getSupportActionBar();
+        mActionbar.setDisplayHomeAsUpEnabled(true);
+        collapsingToolbar = (CollapsingToolbarLayout) findViewById(R.id.collapsing_toolbar);
+        actionBarImage = (ImageView)findViewById(R.id.header);
+        fab = (FloatingActionButton) findViewById(R.id.fabButton);
+        firstFragRecycler = (RecyclerView)findViewById(R.id.songsUnderRecycler);
         firstFragRecycler.setHasFixedSize(true);
         LinearLayoutManager llm = new LinearLayoutManager(this);
         firstFragRecycler.setLayoutManager(llm);
         Intent intent = getIntent();
          X = intent.getStringExtra("X");
          id = intent.getLongExtra("id", 0L);
+        toolbarTitle = intent.getStringExtra("title");
+        collapsingToolbar.setTitle(toolbarTitle);
         populateRecyclerList();
+        actionBarImage.getViewTreeObserver().addOnGlobalLayoutListener(new ViewTreeObserver.OnGlobalLayoutListener() {
+            @Override
+            public void onGlobalLayout() {
+                // get the final radius for the clipping circle
+                if(shouldReveal) {
+                    int dx = actionBarImage.getWidth();
+                    int dy = actionBarImage.getHeight();
+                    float finalRadius = (float) Math.hypot(dx, dy);
+
+                    SupportAnimator animator =
+                            ViewAnimationUtils.createCircularReveal(actionBarImage, 0, 0, 0, finalRadius);
+                    animator.setInterpolator(new AccelerateDecelerateInterpolator());
+                    animator.setDuration(500);
+                    animator.start();
+                    shouldReveal = false;
+                }
+            }
+        });
     }
 
     void populateRecyclerList(){
@@ -126,9 +171,22 @@ public class SongsUnderTest extends AppCompatActivity  implements ClickInterface
             tra = new trackRecyclerAdapter(this, tracks, currIdList, SongsUnderTest.this);
             firstFragRecycler.setAdapter(tra);
             firstFragRecycler.setItemAnimator(new DefaultItemAnimator());
-            FastScroller fastScroller = (FastScroller) findViewById(R.id.firstfastscroller);
-            fastScroller.setRecyclerView(firstFragRecycler);
         }
+        fab.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                UtilFunctions.playSelectedSongs(SongsUnderTest.this, currIdList, 0, true);
+            }
+        });
+
+        int min = 0;
+        int max = currIdList.size()-1;
+
+        Random r = new Random();
+        int randPos = r.nextInt(max - min + 1) + min;
+        actionBarImage.setImageBitmap(PlayHelperFunctions.getBitmapFromSongId(Long.parseLong(tracks.get(randPos).getTrackId())));
+
+
     }
     @Override
     public void onItemClicked(int position) {
@@ -401,9 +459,39 @@ public class SongsUnderTest extends AppCompatActivity  implements ClickInterface
                 }, selection.toString(), null, MediaStore.Audio.Media.TRACK + ", " + MediaStore.Audio.Media.DEFAULT_SORT_ORDER);
     }
 
+    public boolean onCreateOptionsMenu(Menu menu) {
+        // Inflate the menu; this adds items to the action bar if it is present.
+        getMenuInflater().inflate(R.menu.menu_songs_under_test, menu);
+        return true;
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        // Handle action bar item clicks here. The action bar will
+        // automatically handle clicks on the Home/Up button, so long
+        // as you specify a parent activity in AndroidManifest.xml.
+        super.onOptionsItemSelected(item);
+        int id = item.getItemId();
+        switch (id) {
+            case R.id.action_search:
+                Intent intent=new Intent(SongsUnderTest.this,SearchResultsActivity.class);
+                startActivity(intent);
+                break;
+            case android.R.id.home:
+                onBackPressed();
+                return true;
+
+            default:
+                break;
+        }
+
+        return true;
+    }
+
     @Override
     protected void onResume() {
         super.onResume();
+        shouldReveal = true;
         populateRecyclerList();
     }
 }

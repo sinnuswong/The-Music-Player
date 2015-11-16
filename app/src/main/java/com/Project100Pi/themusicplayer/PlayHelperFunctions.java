@@ -3,6 +3,7 @@ package com.Project100Pi.themusicplayer;
 import android.content.Context;
 import android.content.Intent;
 import android.database.Cursor;
+import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.media.MediaPlayer;
 import android.os.Bundle;
@@ -31,6 +32,16 @@ public class PlayHelperFunctions {
 
     }
 
+    public static Bitmap getBitmapFromSongId(Long songId){
+        Cursor cursor = CursorClass.playSongCursor(songId);
+        cursor.moveToFirst();
+        Bitmap returnBitmap = CursorClass.albumArtCursor(cursor.getLong(cursor.getColumnIndex(MediaStore.Audio.Media.ALBUM_ID)));
+        if(returnBitmap == null){
+            returnBitmap = BitmapFactory.decodeResource(mContext.getResources(),
+                    R.drawable.music_default);
+        }
+        return returnBitmap;
+    }
     //This method will also be used in the MainActivity for the same purpose
     public static void setMainActivityCurrsongInfoFromCursor(Long songId, Cursor cursor) {
         cursor.moveToFirst();
@@ -43,7 +54,7 @@ public class PlayHelperFunctions {
         songInfoObj.bitmap = CursorClass.albumArtCursor(cursor.getLong(cursor.getColumnIndex(MediaStore.Audio.Media.ALBUM_ID)));
         if(songInfoObj.bitmap == null){
             songInfoObj.bitmap = BitmapFactory.decodeResource(mContext.getResources(),
-                    R.drawable.appicns);
+                    R.drawable.music_default);
         }
     }
 
@@ -223,14 +234,17 @@ public class PlayHelperFunctions {
         }
     }
 
-    public static void prevAction(){
+    public static boolean prevAction(){
+        boolean shouldReveal = false;
         if(PlayHelperFunctions.mp.getCurrentPosition()>5000){
             PlayHelperFunctions.mp.reset();
         }
         else if(songInfoObj.currPlayPos <=0 ){
             songInfoObj.currPlayPos = songInfoObj.nowPlayingList.size()-1;
+            shouldReveal = true;
         }else{
             songInfoObj.currPlayPos = songInfoObj.currPlayPos-1;
+            shouldReveal = true;
         }
         try {
             PlayHelperFunctions.mp.reset();
@@ -241,7 +255,7 @@ public class PlayHelperFunctions {
             // TODO Auto-generated catch block
             e.printStackTrace();
         }
-
+        return shouldReveal;
     }
 
 }

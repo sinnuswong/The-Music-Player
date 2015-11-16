@@ -6,8 +6,6 @@ import java.util.Collections;
 import java.util.Random;
 
 import org.michaelevans.colorart.library.ColorArt;
-
-import android.app.ActionBar;
 import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
@@ -22,6 +20,10 @@ import android.media.MediaPlayer.OnPreparedListener;
 import android.os.Bundle;
 import android.os.CountDownTimer;
 import android.provider.MediaStore;
+import android.support.v4.app.NavUtils;
+import android.support.v7.app.ActionBar;
+import android.support.v7.app.AppCompatActivity;
+import android.support.v7.widget.Toolbar;
 import android.text.Layout;
 import android.util.Log;
 import android.view.Display;
@@ -31,6 +33,7 @@ import android.view.View;
 import android.view.ViewConfiguration;
 import android.view.ViewTreeObserver;
 import android.view.Window;
+import android.view.animation.AccelerateDecelerateInterpolator;
 import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
@@ -43,7 +46,10 @@ import android.graphics.PorterDuff;
 import android.graphics.drawable.ColorDrawable;
 import android.graphics.drawable.Drawable;
 
-public class PlayActivity extends Activity {
+import io.codetail.animation.SupportAnimator;
+import io.codetail.animation.ViewAnimationUtils;
+
+public class PlayActivity extends AppCompatActivity {
 
 
     long nowPlayingId;
@@ -53,6 +59,9 @@ public class PlayActivity extends Activity {
     int screenHeight;
     Context mcontext;
     ActionBar actionBar;
+    Toolbar mToolbar;
+    ImageView albumArtView;
+    boolean shouldReveal = true;
 
 
     @Override
@@ -68,43 +77,16 @@ public class PlayActivity extends Activity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        getWindow().requestFeature(Window.FEATURE_ACTION_BAR_OVERLAY);
         setContentView(R.layout.activity_play);
         runningTime = (TextView) findViewById(R.id.runningTime);
-        actionBar = getActionBar();
+        mToolbar = (Toolbar)findViewById(R.id.toolbar);
+        setSupportActionBar(mToolbar);
+        actionBar = getSupportActionBar();
         setActionBarUIData();
 
 
         mcontext = getApplicationContext();
 
-        //Toast.makeText(getApplicationContext(), width+" "+height, Toast.LENGTH_LONG).show();
-        // albumArtSize = width;
-        boolean hasMenuKey = ViewConfiguration.get(getApplicationContext()).hasPermanentMenuKey();
-        // Toast.makeText(getApplicationContext(), height+" ", Toast.LENGTH_LONG).show();
-
-        //   Toast.makeText(getApplicationContext(), thisLayout.getLayoutParams().height+" ", Toast.LENGTH_LONG).show();
-
-        Display display = getWindowManager().getDefaultDisplay();
-        Point size = new Point();
-        display.getSize(size);
-        setScreenWidthAndHeight(size);
-
-        final RelativeLayout playLayout = (RelativeLayout) findViewById(R.id.playNamesContainer);
-        playLayout.requestLayout();
-
-        final RelativeLayout thisLayout = (RelativeLayout) findViewById(R.id.playOuterContainer);
-        thisLayout.requestLayout();
-
-
-        int bottomPlaySize = thisLayout.getHeight() + playLayout.getHeight();
-        albumArtSize = screenHeight - bottomPlaySize;
-		   /*
-		   if(bottomPlaySize < screenHeight /3){
-			   int increment = thisLayout.getMeasuredHeight()/10;
-			thisLayout.setPadding(0,increment , 0, increment);
-			setPlayingLayout();
-		   }
-		   */
         PlayHelperFunctions.seekbar = (SeekBar) findViewById(R.id.seekBar); // make PlayHelperFunctions.seekbar object
         PlayHelperFunctions.seekbar.setOnSeekBarChangeListener(new OnSeekBarChangeListener() {
 
@@ -216,8 +198,9 @@ public class PlayActivity extends Activity {
         prev.setOnClickListener(new View.OnClickListener() {
             public void onClick(View v) {
 
-                PlayHelperFunctions.prevAction();
-                setPlayingLayout();
+                if(PlayHelperFunctions.prevAction()) {
+                    setPlayingLayout();
+                }
 
             }
         });
@@ -340,6 +323,10 @@ public class PlayActivity extends Activity {
 
                 break;
 
+            case android.R.id.home:
+                onBackPressed();
+                return true;
+
             default:
                 break;
         }
@@ -375,12 +362,30 @@ public class PlayActivity extends Activity {
     }
 
     private void setPlayingLayout() {
-
-        ImageView albumArtView = (ImageView) findViewById(R.id.albumArt);
-        albumArtView.requestLayout();
-        albumArtView.getLayoutParams().width = albumArtSize;
-        albumArtView.getLayoutParams().height = albumArtSize;
+        shouldReveal = true;
+        albumArtView = (ImageView) findViewById(R.id.albumArt);
+        //albumArtView.requestLayout();
+        //albumArtView.getLayoutParams().width = albumArtSize;
+        //albumArtView.getLayoutParams().height = albumArtSize;
         albumArtView.setImageBitmap(songInfoObj.bitmap);
+        albumArtView.getViewTreeObserver().addOnGlobalLayoutListener(new ViewTreeObserver.OnGlobalLayoutListener() {
+            @Override
+            public void onGlobalLayout() {
+                // get the final radius for the clipping circle
+                if(shouldReveal) {
+                    int dx = albumArtView.getWidth();
+                    int dy = albumArtView.getHeight();
+                    float finalRadius = (float) Math.hypot(dx, dy);
+
+                    SupportAnimator animator =
+                            ViewAnimationUtils.createCircularReveal(albumArtView, 0, 0, 0, finalRadius);
+                    animator.setInterpolator(new AccelerateDecelerateInterpolator());
+                    animator.setDuration(750);
+                    animator.start();
+                    shouldReveal = false;
+                }
+            }
+        });
 
         TextView playAlbumName = (TextView) findViewById(R.id.playAlbumName);
         playAlbumName.setText(songInfoObj.album);
@@ -406,8 +411,7 @@ public class PlayActivity extends Activity {
     public void setActionBarUIData() {
         actionBar.setDisplayShowHomeEnabled(false);
         actionBar.setDisplayShowTitleEnabled(false);
-        actionBar.setBackgroundDrawable(new ColorDrawable(Color.parseColor("#77000000")));
-        actionBar.setStackedBackgroundDrawable(new ColorDrawable(Color.parseColor("#77000000")));
+        actionBar.setDisplayHomeAsUpEnabled(true);
     }
 
     public void setScreenWidthAndHeight(Point size) {

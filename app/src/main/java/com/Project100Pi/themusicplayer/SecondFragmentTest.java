@@ -11,6 +11,7 @@ import android.support.v4.app.Fragment;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.view.ActionMode;
 import android.support.v7.widget.DefaultItemAnimator;
+import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
@@ -33,6 +34,7 @@ public class SecondFragmentTest extends Fragment implements ClickInterface{
     private ActionMode actionMode;
     ArrayList<AlbumInfo> albums ;
     AlbumRecyclerAdapter ara;
+    AlbumGridRecyclerAdapter agra;
 
     RecyclerView secondFragRecycler=null;
     LinearLayoutManager llm=null;
@@ -99,8 +101,15 @@ public class SecondFragmentTest extends Fragment implements ClickInterface{
     }
 
     private void toggleSelection(int position) {
-        ara.toggleSelection(position);
-        int count = ara.getSelectedItemCount();
+        int count;
+        if(MainActivity.albumViewOption.equals("List")) {
+            ara.toggleSelection(position);
+             count = ara.getSelectedItemCount();
+        } else {
+            agra.toggleSelection(position);
+             count = agra.getSelectedItemCount();
+        }
+
 
         if (count == 0) {
             actionMode.finish();
@@ -170,7 +179,12 @@ public class SecondFragmentTest extends Fragment implements ClickInterface{
 
 
         private ArrayList<String> getidList(){
-            List<Integer> selItems = ara.getSelectedItems();
+            List<Integer> selItems ;
+            if(MainActivity.albumViewOption.equals("List")) {
+                selItems = ara.getSelectedItems();
+            } else {
+                selItems = agra.getSelectedItems();
+            }
             ArrayList<String> selIdList = new ArrayList<String>();
             int size = selItems.size();
             int i;
@@ -188,7 +202,11 @@ public class SecondFragmentTest extends Fragment implements ClickInterface{
 
         @Override
         public void onDestroyActionMode(ActionMode mode) {
-            ara.clearSelection();
+            if(MainActivity.albumViewOption.equals("List")) {
+                ara.clearSelection();
+            } else {
+                agra.clearSelection();
+            }
             MainActivity.isLongClickOn = false;
             actionMode = null;
             MainActivity.mToolbar.getLayoutParams().height = MainActivity.mActionBarSize;
@@ -200,14 +218,24 @@ public class SecondFragmentTest extends Fragment implements ClickInterface{
 
         secondFragRecycler = (RecyclerView)v.findViewById(R.id.secondFragRecycler);
         secondFragRecycler.setHasFixedSize(true);
-        llm = new LinearLayoutManager(getActivity().getApplicationContext());
-        secondFragRecycler.setLayoutManager(llm);
+        if(MainActivity.albumViewOption.equals("List")) {
+            llm = new LinearLayoutManager(getActivity().getApplicationContext());
+            secondFragRecycler.setLayoutManager(llm);
+        } else {
+            llm = new GridLayoutManager(getActivity().getApplicationContext(),2);
+            secondFragRecycler.setLayoutManager(llm);
+        }
     }
 
     public void setRecyclerViewAdapter()
     {
-        ara = new AlbumRecyclerAdapter(this,albums,getActivity());
-        secondFragRecycler.setAdapter(ara);
+        if(MainActivity.albumViewOption.equals("List")) {
+            ara = new AlbumRecyclerAdapter(this, albums, getActivity());
+            secondFragRecycler.setAdapter(ara);
+        } else {
+            agra = new AlbumGridRecyclerAdapter(this,albums,getActivity());
+            secondFragRecycler.setAdapter(agra);
+        }
         secondFragRecycler.setItemAnimator(new DefaultItemAnimator());
     }
 

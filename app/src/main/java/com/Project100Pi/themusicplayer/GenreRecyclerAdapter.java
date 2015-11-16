@@ -54,6 +54,7 @@ public class GenreRecyclerAdapter extends SelectableAdapter<GenreRecyclerAdapter
                 Intent intent=new Intent(viewActivity,SongsUnderTest.class);
                 intent.putExtra("X","Genre");
                 intent.putExtra("id",genres.get(getAdapterPosition()).getGenreId());
+                intent.putExtra("title",genres.get(getAdapterPosition()).getGenreName());
                 viewActivity.startActivity(intent);
                 return;
             }

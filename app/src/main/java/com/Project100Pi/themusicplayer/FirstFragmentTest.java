@@ -26,6 +26,9 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
+import xyz.danoz.recyclerviewfastscroller.sectionindicator.title.SectionTitleIndicator;
+import xyz.danoz.recyclerviewfastscroller.vertical.VerticalRecyclerViewFastScroller;
+
 /**
  * Created by BalachandranAR on 8/24/2015.
  */
@@ -44,7 +47,6 @@ public class FirstFragmentTest extends Fragment implements ClickInterface{
 
     RecyclerView firstFragRecycler=null;
     LinearLayoutManager llm=null;
-    FastScroller fastScroller=null;
 
     @Nullable
     @Override
@@ -294,8 +296,10 @@ public class FirstFragmentTest extends Fragment implements ClickInterface{
 
     public void setFastScroller(View v)
     {
-        fastScroller=(FastScroller)v.findViewById(R.id.firstfastscroller);
+        final VerticalRecyclerViewFastScroller fastScroller = (VerticalRecyclerViewFastScroller) v.findViewById(R.id.first_frag_fast_scroller);
+        // Connect the recycler to the scroller (to let the scroller scroll the list)
         fastScroller.setRecyclerView(firstFragRecycler);
+        firstFragRecycler.setOnScrollListener(fastScroller.getOnScrollListener());
     }
 
     public void getSongInfoFromCursor(Cursor cursor)

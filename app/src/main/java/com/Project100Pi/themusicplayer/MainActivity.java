@@ -73,7 +73,7 @@ import it.gmariotti.cardslib.library.view.listener.SwipeOnScrollListener;
          */
 
 
-	static String albumViewOption = "List";
+	static String albumViewOption = "Grid";
 
 	static Boolean isNowPlayEmpty = true;
 
@@ -750,7 +750,6 @@ protected void onDestroy() {
          public void setUpFloatingActionButton()
          {
               fab = (FloatingActionButton) findViewById(R.id.fabButton);
-             fab.setRippleColor(Color.parseColor("#be4d56"));
              fab.setOnClickListener(new View.OnClickListener() {
                  @Override
                  public void onClick(View v) {

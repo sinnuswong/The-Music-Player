@@ -57,6 +57,7 @@ static List<ArtistInfo> artists;
                 Intent intent=new Intent(viewActivity,SongsUnderTest.class);
                 intent.putExtra("X","Artist");
                 intent.putExtra("id",artists.get(getAdapterPosition()).getArtistId());
+                intent.putExtra("title",artists.get(getAdapterPosition()).getArtistName());
                 viewActivity.startActivity(intent);
                 return;
             }

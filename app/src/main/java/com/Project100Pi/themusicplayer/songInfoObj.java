@@ -5,7 +5,7 @@ import java.util.ArrayList;
 import android.graphics.Bitmap;
 
 public class songInfoObj {
-	static String songName,playPath,artist,album;
+	static String songName,playPath,artist,album,albumArtPath;
 	static Long songId;
 	static int playerPostion,duration;
 	static Bitmap bitmap;

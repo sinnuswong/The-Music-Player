@@ -19,9 +19,11 @@ import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
+import pl.droidsonroids.gif.GifDrawable;
 import pl.droidsonroids.gif.GifImageView;
 
 /**
@@ -88,8 +90,9 @@ public class NowPlayingRecyclerAdapter extends SelectableAdapter<NowPlayingRecyc
         ImageView overflowButton,dragHandle;
         Activity viewActivity;
         GifImageView animatedBars;
+        GifDrawable bars;
 
-        public NowPlayingViewHolder(Activity con,View itemView) {
+        public NowPlayingViewHolder(Activity con,View itemView) throws IOException {
             super(itemView);
             cv = (CardView) itemView.findViewById(R.id.cv);
             trackName = (TextView) itemView.findViewById(R.id.playList_name);
@@ -99,6 +102,7 @@ public class NowPlayingRecyclerAdapter extends SelectableAdapter<NowPlayingRecyc
             overflowButton=(ImageView)itemView.findViewById(R.id.my_overflow);
             dragHandle=(ImageView)itemView.findViewById(R.id.drag_handle);
             animatedBars = (GifImageView)itemView.findViewById(R.id.animated_bars);
+            bars = new GifDrawable( viewActivity.getResources(), R.drawable.soundbars_blue);
             itemView.setOnClickListener(this);
 
         }
@@ -115,6 +119,7 @@ public class NowPlayingRecyclerAdapter extends SelectableAdapter<NowPlayingRecyc
                     PlayHelperFunctions.audioPlayer((String) PlayHelperFunctions.setPlaySongInfo(Long.parseLong(songInfoObj.nowPlayingList.get(getAdapterPosition()))), 1);
                     songInfoObj.currPlayPos = getAdapterPosition();
                     nowPlayingHolder.animatedBars.setVisibility(View.GONE);
+                  this.animatedBars.setImageDrawable(this.bars);
                     this.animatedBars.setVisibility(View.VISIBLE);
                    this.animatedBars.setAlpha(0.25f);
                     nowPlayingHolder = this;
@@ -179,7 +184,12 @@ public class NowPlayingRecyclerAdapter extends SelectableAdapter<NowPlayingRecyc
         View v = LayoutInflater.from(viewGroup.getContext()).inflate(R.layout.now_playing_list_inner, viewGroup, false);
 
 
-        NowPlayingViewHolder pvh = new NowPlayingViewHolder(mactivity,v);
+        NowPlayingViewHolder pvh = null;
+        try {
+            pvh = new NowPlayingViewHolder(mactivity,v);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
         return pvh;
     }
 
@@ -198,7 +208,8 @@ public class NowPlayingRecyclerAdapter extends SelectableAdapter<NowPlayingRecyc
             }
         });
 
-        if(Long.parseLong(tracks.get(i).getTrackId()) == songInfoObj.songId && mactivity instanceof NowPlayingListTest){
+        if(i == songInfoObj.currPlayPos && mactivity instanceof NowPlayingListTest){
+            trackViewHolder.animatedBars.setImageDrawable(trackViewHolder.bars);
             trackViewHolder.animatedBars.setVisibility(View.VISIBLE);
             trackViewHolder.animatedBars.setAlpha(0.25f);
             nowPlayingHolder = trackViewHolder;
@@ -206,7 +217,7 @@ public class NowPlayingRecyclerAdapter extends SelectableAdapter<NowPlayingRecyc
             trackViewHolder.animatedBars.setVisibility(View.GONE);
         }
 
-        trackViewHolder.cv.setBackgroundColor(Color.parseColor("#3D3D3D"));
+        trackViewHolder.cv.setBackgroundColor(Color.parseColor("#484848"));
         trackViewHolder.trackName.setText(tracks.get(i).getTrackName());
         trackViewHolder.trackArtist.setText(tracks.get(i).getTrackArtist());
         trackViewHolder.trackDuration.setText(tracks.get(i).getTrackDuration());

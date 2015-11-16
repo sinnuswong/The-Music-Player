@@ -544,7 +544,7 @@ public class SongsUnder extends Activity {
 
 	       };
 	    
-	       CardListView listView = (CardListView)findViewById(R.id.songsUnderFragList);
+	       CardListView listView = (CardListView)findViewById(R.id.songsUnderRecycler);
 	    // listView.setFastScrollEnabled(true);
 	       if (listView!=null){
 	           listView.setAdapter(mCardArrayAdapter);

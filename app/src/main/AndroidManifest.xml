@@ -22,6 +22,7 @@
         android:icon="@drawable/ic_launcher"
         android:hardwareAccelerated="true"
         android:label="@string/app_name"
+        android:launchMode="singleInstance"
         android:theme="@style/AppBaseTheme" >
         <activity
             android:name=".MainActivity"
@@ -53,15 +54,15 @@
         </activity>
         <activity android:name=".EqualizerSettings" >
         </activity>
-        <activity android:name=".SearchResultsActivity" >
+        <activity android:name=".SearchResultsActivity">
+
             <meta-data
                 android:name="android.app.searchable"
                 android:resource="@xml/searchable" />
         </activity>
         <activity
             android:name=".SongsUnder"
-            android:label="@string/title_activity_songs_under"
-            android:theme="@style/AppBaseTheme.NoActionBar">
+            android:label="@string/title_activity_songs_under">
         </activity>
         <activity
             android:name=".PlaylistUnder"

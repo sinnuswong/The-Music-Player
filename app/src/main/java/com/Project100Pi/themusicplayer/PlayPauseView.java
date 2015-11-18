@@ -58,7 +58,7 @@ public class PlayPauseView extends FrameLayout {
         mDrawable = new PlayPauseDrawable(context);
         mDrawable.setCallback(this);
 
-        mPauseBackgroundColor = Color.parseColor("#be4d56");
+        //mPauseBackgroundColor = Color.parseColor("#be4d56");
         mPlayBackgroundColor = getResources().getColor(R.color.blue);
     }
 /*
@@ -69,7 +69,7 @@ public class PlayPauseView extends FrameLayout {
         setMeasuredDimension(size, size);
     }
 */ 
-    @TargetApi(Build.VERSION_CODES.LOLLIPOP)
+
 	@Override
     protected void onSizeChanged(final int w, final int h, int oldw, int oldh) {
         super.onSizeChanged(w, h, oldw, oldh);
@@ -86,6 +86,8 @@ public class PlayPauseView extends FrameLayout {
                 }
             });
             setClipToOutline(true);
+        }else{
+           ;
         }
         
     }

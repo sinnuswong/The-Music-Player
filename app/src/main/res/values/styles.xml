@@ -15,14 +15,17 @@
             res/values-vXX/styles.xml, while customizations related to
             backward-compatibility can go here.
         -->
+        <item name="android:windowContentTransitions">true</item>
         <item name="colorPrimary">@color/color_primary</item>
         <item name="colorPrimaryDark">@color/color_primary_dark</item>
         <item name="colorAccent">@color/accent_color</item>
         <item name="colorControlHighlight">#99C1C1C1</item>
         <item name="colorControlNormal">#C1C1C1</item>
+
     </style>
 
     <style name="AppBaseTheme.NoActionBar" parent="Theme.AppCompat.Light.NoActionBar">
+        <item name="android:windowContentTransitions">true</item>
         <item name="colorPrimary">@color/color_primary</item>
         <item name="colorPrimaryDark">@color/color_primary_dark</item>
         <item name="colorAccent">@color/accent_color</item>
@@ -33,7 +36,7 @@
     <!-- Application theme. -->
     <style name="AppTheme" parent="AppBaseTheme">
         <!-- All customizations that are NOT specific to a particular API-level can go here. -->
-        <item name="windowActionBar">false</item>
+        <item name="android:windowContentTransitions">true</item>
     </style>
 
 

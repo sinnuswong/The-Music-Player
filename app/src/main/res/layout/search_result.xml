@@ -3,8 +3,6 @@
     android:layout_width="match_parent"
     android:background="#3d3d3d"
     android:layout_height="match_parent" >
-
-    
       <it.gmariotti.cardslib.library.view.CardListView
           xmlns:card="http://schemas.android.com/apk/res-auto"
           xmlns:android="http://schemas.android.com/apk/res/android"

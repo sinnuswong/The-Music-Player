@@ -7,10 +7,12 @@ import android.database.Cursor;
 import android.os.Bundle;
 import android.os.PersistableBundle;
 import android.provider.MediaStore;
+import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.DefaultItemAnimator;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.helper.ItemTouchHelper;
+import android.view.MenuItem;
 import android.view.MotionEvent;
 import android.view.View;
 import android.view.animation.AccelerateDecelerateInterpolator;
@@ -23,7 +25,7 @@ import xyz.danoz.recyclerviewfastscroller.vertical.VerticalRecyclerViewFastScrol
 /**
  * Created by BalachandranAR on 9/19/2015.
  */
-public class NowPlayingListTest extends Activity implements NowPlayingRecyclerAdapter.OnDragStartListener {
+public class NowPlayingListTest extends AppCompatActivity implements NowPlayingRecyclerAdapter.OnDragStartListener {
     ArrayList<TrackObject> tracks;
     NowPlayingRecyclerAdapter tra;
     private ItemTouchHelper mItemTouchHelper;
@@ -31,8 +33,9 @@ public class NowPlayingListTest extends Activity implements NowPlayingRecyclerAd
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-
         setContentView(R.layout.now_playing_list_test);
+        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+        getSupportActionBar().setTitle("Now Playing");
         final RecyclerView firstFragRecycler = (RecyclerView)findViewById(R.id.firstFragRecycler);
         firstFragRecycler.setHasFixedSize(true);
         LinearLayoutManager llm = new LinearLayoutManager(getApplicationContext());
@@ -64,6 +67,20 @@ public class NowPlayingListTest extends Activity implements NowPlayingRecyclerAd
             firstFragRecycler.scrollToPosition(songInfoObj.currPlayPos - 2);
         }
 
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        super.onOptionsItemSelected(item);
+        int id = item.getItemId();
+        switch (id){
+            case android.R.id.home:
+                onBackPressed();;
+                return true;
+            default:
+                break;
+        }
+        return true ;
     }
 
     @Override

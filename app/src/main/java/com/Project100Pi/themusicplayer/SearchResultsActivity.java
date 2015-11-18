@@ -25,6 +25,10 @@ import android.provider.BaseColumns;
 import android.provider.MediaStore;
 import android.provider.MediaStore.Audio.AlbumColumns;
 import android.provider.MediaStore.Audio.ArtistColumns;
+import android.support.v4.view.MenuItemCompat;
+import android.support.v7.app.AppCompatActivity;
+import android.support.v7.widget.SearchView;
+import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
@@ -35,12 +39,12 @@ import android.widget.AdapterView;
 import android.widget.ImageView;
 import android.widget.ListAdapter;
 import android.widget.PopupMenu;
-import android.widget.SearchView;
+
 import android.widget.TextView;
 import android.widget.Toast;
 import android.widget.SearchView.OnQueryTextListener;
 
-public class SearchResultsActivity extends Activity {
+public class SearchResultsActivity extends AppCompatActivity {
 
 	ArrayList<String> titleRes = null;
 	ArrayList<String> albumRes = null;
@@ -54,10 +58,14 @@ public class SearchResultsActivity extends Activity {
 	 HashMap<Long, ArtistInfo> idToartistInfo = null;
 	 static ArrayList<String> pathList=null;
 	   static HashMap<Long, songInfo> idToSongInfo =  null;
+	Toolbar mToolbar;
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.search_result);
+		mToolbar = (Toolbar) findViewById(R.id.toolbar);
+		//setSupportActionBar(mToolbar);
+		getSupportActionBar().setDisplayHomeAsUpEnabled(true);
    idToalbumInfo =  new HashMap<Long,AlbumInfo>();
    idToartistInfo =  new HashMap<Long,ArtistInfo>();
    pathList = new ArrayList<String>();
@@ -581,11 +589,11 @@ public class SearchResultsActivity extends Activity {
         SearchManager searchManager =
                 (SearchManager) getSystemService(Context.SEARCH_SERVICE);
          SearchView searchView =
-                 (SearchView) menu.findItem(R.id.search).getActionView();
+				 (SearchView) menu.findItem(R.id.search).getActionView();
          searchView.setIconified(false);
          searchView.setSearchableInfo(
                  searchManager.getSearchableInfo(getComponentName()));
-         searchView.setOnQueryTextListener(new OnQueryTextListener() { 
+         searchView.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
 
            
 
@@ -617,8 +625,24 @@ public class SearchResultsActivity extends Activity {
 
         return true;
     }
-    
-    public void doQuery(String query) {
+
+	@Override
+	public boolean onOptionsItemSelected(MenuItem item) {
+		super.onOptionsItemSelected(item);
+		int id = item.getItemId();
+		switch (id) {
+
+		case android.R.id.home:
+		onBackPressed();
+		return true;
+
+		default:
+		break;
+		}
+		return true;
+	}
+
+	public void doQuery(String query) {
     	
     	titleRes.clear();
     	albumIdRes.clear();

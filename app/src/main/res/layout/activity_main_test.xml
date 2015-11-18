@@ -60,6 +60,7 @@
                     <com.Project100Pi.themusicplayer.RoundedImageView
                         android:layout_width="48dp"
                         android:layout_height="match_parent"
+                        android:transitionName="albumArtShared"
                         android:id="@+id/front_album_art"
                         android:src="@drawable/music_default"
                         android:scaleType="centerCrop"

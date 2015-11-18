@@ -80,7 +80,7 @@
                         android:layout_centerVertical="true"
                         android:layout_alignParentRight="true"
                         android:layout_alignParentEnd="true"
-                        android:src="@drawable/ic_my_overflow"
+                        android:src="@drawable/ic_menu_overflow_card"
                         android:layout_weight="1.4"
                         android:scaleType="center" />
                 </RelativeLayout>

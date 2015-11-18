@@ -21,6 +21,7 @@ import android.provider.MediaStore;
 import android.support.design.widget.AppBarLayout;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.TabLayout;
+import android.support.v4.app.ActivityOptionsCompat;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentActivity;
 import android.support.v4.app.FragmentManager;
@@ -143,8 +144,9 @@ import it.gmariotti.cardslib.library.view.listener.SwipeOnScrollListener;
 
                 Intent intent = new Intent(getApplicationContext(), PlayActivity.class);
                 intent.putExtra("do", "watch");
-
-                startActivity(intent);
+                ActivityOptionsCompat options = ActivityOptionsCompat.
+                        makeSceneTransitionAnimation(MainActivity.this, (RoundedImageView)frontAlbumArt, "albumArtShared");
+                startActivity(intent, options.toBundle());
             }
         });
         /*
@@ -247,7 +249,9 @@ protected void onStop() {
 	// TODO Auto-generated method stub
 	super.onStop();
 	//UtilFunctions.savePreference(getApplicationContext());
-}  
+}
+
+
  @Override
 protected void onDestroy() {
 	// TODO Auto-generated method stub
@@ -257,6 +261,10 @@ protected void onDestroy() {
 	}catch(Exception e){
 		Log.i("shared preference", "savefailed");
 	}
+     if(PlayHelperFunctions.isSongPlaying) {
+         Intent notificationIntent = new Intent(MainActivity.this, LockScreenNotification.class);
+         startService(notificationIntent);
+     }
 }
 
          public void updateFrontNowPlaying(){

@@ -19,7 +19,7 @@
 
     <application
         android:allowBackup="true"
-        android:icon="@drawable/ic_launcher"
+        android:icon="@drawable/music_player_icon"
         android:hardwareAccelerated="true"
         android:label="@string/app_name"
         android:launchMode="singleInstance"

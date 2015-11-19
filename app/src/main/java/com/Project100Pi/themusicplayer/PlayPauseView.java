@@ -86,8 +86,6 @@ public class PlayPauseView extends FrameLayout {
                 }
             });
             setClipToOutline(true);
-        }else{
-           ;
         }
         
     }

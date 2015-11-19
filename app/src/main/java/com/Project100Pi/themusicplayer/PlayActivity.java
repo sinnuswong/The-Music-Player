@@ -321,6 +321,14 @@ public class PlayActivity extends AppCompatActivity {
                 startActivity(intent);
 
                 break;
+            case R.id.addToPlaylist:
+                 ArrayList<String> selectedIdList = new ArrayList<String>();
+                 selectedIdList.add(songInfoObj.songId.toString());
+                 intent = new Intent(PlayActivity.this, PlayListSelectionTest.class);
+                intent.putExtra("songName", songInfoObj.songName);
+                intent.putExtra("selectedIdList", selectedIdList);
+                startActivity(intent);
+                break;
             case R.id.timerImage:
                 editDialog = new Dialog(this);
                 editDialog.setContentView(R.layout.timer_edit);

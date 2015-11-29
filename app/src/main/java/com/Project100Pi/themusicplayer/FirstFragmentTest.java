@@ -1,8 +1,10 @@
 package com.Project100Pi.themusicplayer;
 
 import android.app.Activity;
+import android.content.ContentValues;
 import android.content.Intent;
 import android.database.Cursor;
+import android.media.RingtoneManager;
 import android.net.Uri;
 import android.os.Bundle;
 import android.provider.MediaStore;
@@ -183,7 +185,7 @@ public class FirstFragmentTest extends Fragment implements ClickInterface{
                     for(int i=0;i<size;i++)
                     {
                         String id=selIdList.get(i);
-                        String path=FirstFragment.idToPath.get(Long.parseLong(id));
+                        String path=MainActivity.idToTrackObj.get(Long.parseLong(id)).getTrackPath();
                         path="file://"+path;
 
                         // Toast.makeText(getContext(),"Hi there", Toast.LENGTH_LONG).show();

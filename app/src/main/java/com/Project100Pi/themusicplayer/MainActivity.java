@@ -5,7 +5,10 @@ import android.animation.ValueAnimator;
 import android.annotation.TargetApi;
 import android.app.Activity;
 import android.app.AlertDialog;
+import android.app.NotificationManager;
 import android.content.ContentResolver;
+import android.content.ContentUris;
+import android.content.ContentValues;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
@@ -15,6 +18,8 @@ import android.database.Cursor;
 import android.graphics.Color;
 import android.graphics.PorterDuff;
 import android.media.MediaPlayer;
+import android.media.Ringtone;
+import android.media.RingtoneManager;
 import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
@@ -65,7 +70,9 @@ import it.gmariotti.cardslib.library.view.CardListView;
 import it.gmariotti.cardslib.library.view.listener.SwipeOnScrollListener;
 
      public class MainActivity extends AppCompatActivity {
-
+         Intent notificationIntent;
+         static boolean shouldUpdateLayout=false;
+         Handler layoutThreadHandler;
          static ColorUtils myColorUtils;
          private DrawerLayout mDrawerLayout;
          private ListView mDrawerList;
@@ -113,6 +120,17 @@ import it.gmariotti.cardslib.library.view.listener.SwipeOnScrollListener;
         myColorUtils = new ColorUtils();
         PlayHelperFunctions.mContext = getApplicationContext();
         setUpToolBar();
+
+        //Start the foregroundcheck Service
+        Intent foregroundCheckIntent=new Intent(MainActivity.this,CheckForegroundService.class);
+        startService(foregroundCheckIntent);
+
+        //start the widget servce
+
+        Intent playHelperService=new Intent(getApplicationContext(),PlayHelperFunctions.class);
+         startService(playHelperService);
+
+        PlayHelperFunctions.mContext=getApplicationContext();
 
         final TypedArray styledAttributes = getApplicationContext().getTheme().obtainStyledAttributes(
                 new int[] { android.R.attr.actionBarSize });
@@ -183,6 +201,7 @@ import it.gmariotti.cardslib.library.view.listener.SwipeOnScrollListener;
         setUpViewPager();
         setUpTabLayout();
         setUpFloatingActionButton();
+        startLayoutThread();
 
         PlayHelperFunctions.seekbar = (SeekBar) findViewById(R.id.front_seekbar);
         mNavItems.add(new NavItem("Recently Added","",R.drawable.music_player_icon));
@@ -263,7 +282,7 @@ return true;
             case 3: return FourthFragmentTest.newInstance("ThirdFragment, Instance 2");
             case 4: return FifthFragmentTest.newInstance("ThirdFragment, Instance 3");
             case 5: return SixthFragmentTest.newInstance("ThirdFragment, Instance 3");
-            default: return ThirdFragment.newInstance("ThirdFragment, Default");
+            default: return FirstFragmentTest.newInstance("ThirdFragment, Default");
             }
             
         }
@@ -295,11 +314,15 @@ protected void onDestroy() {
 	}catch(Exception e){
 		Log.i("shared preference", "savefailed");
 	}
-     if(PlayHelperFunctions.isSongPlaying) {
-         Intent notificationIntent = new Intent(MainActivity.this, LockScreenNotification.class);
-         startService(notificationIntent);
-     }
+    
 }
+
+         @Override
+         public void onBackPressed() {
+
+         Log.d("SERVICE STATE", "On BackPressed..gonna start the service");
+             super.onBackPressed();
+         }
 
          public void updateFrontNowPlaying(){
 
@@ -617,5 +640,25 @@ protected void onDestroy() {
              // Pass any configuration change to the drawer toggls
              mDrawerToggle.onConfigurationChanged(newConfig);
          }
+ public void startLayoutThread(){
 
+             layoutThreadHandler=new Handler();
+             Runnable updateNowPlayingLayoutThread = new Runnable() {
+                 public void run() {
+                     if(shouldUpdateLayout==true){
+                         updateFrontNowPlaying();
+                         shouldUpdateLayout=false;
+
+                     }
+
+                     layoutThreadHandler.postDelayed(this, 100);
+
+
+
+                 }
+             };
+
+             layoutThreadHandler.postDelayed(updateNowPlayingLayoutThread, 100);
+             layoutThreadHandler.postDelayed(updateNowPlayingLayoutThread, 100);
+         }
      }

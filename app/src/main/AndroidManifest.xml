@@ -102,6 +102,21 @@
             android:exported="true"
             android:enabled="true"/>
 
+        <service
+            android:name="com.Project100Pi.themusicplayer.PlayHelperFunctions"
+            android:exported="true"
+            android:enabled="true"/>
+
+        <service
+            android:name="com.Project100Pi.themusicplayer.CheckForegroundService"
+            android:exported="true"
+            android:enabled="true"/>
+        <service
+            android:name="com.Project100Pi.themusicplayer.UpdateWidgetService"
+            android:permission="android.permission.BIND_REMOTEVIEWS"
+            android:exported="true"
+            android:enabled="true"/>
+
         <receiver android:name="com.Project100Pi.themusicplayer.NotificationBroadcast" >
             <intent-filter>
                 <action android:name="com.tutorialsface.audioplayer.delete" />
@@ -111,6 +126,17 @@
                 <action android:name="com.tutorialsface.audioplayer.previous" />
                 <action android:name="android.intent.action.MEDIA_BUTTON" />
             </intent-filter>
+        </receiver>
+
+        <receiver android:name="MyWidgetProvider" >
+            <intent-filter >
+                <action
+                    android:name="android.appwidget.action.APPWIDGET_UPDATE" />
+            </intent-filter>
+
+            <meta-data
+                android:name="android.appwidget.provider"
+                android:resource="@xml/widget_info" />
         </receiver>
     </application>
 

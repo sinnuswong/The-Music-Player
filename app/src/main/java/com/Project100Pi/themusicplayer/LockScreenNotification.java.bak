@@ -102,7 +102,7 @@ public class LockScreenNotification extends Service implements AudioManager.OnAu
     public int onStartCommand(Intent intent, int flags, int startId) {
         try {
 
-            Log.d(" LS Notifications ONSTART","flags is "+String.valueOf(flags)+"  and start Id is "+String.valueOf(startId));
+            Log.d("SERVICE ONSTART","flags is "+String.valueOf(flags)+"  and start Id is "+String.valueOf(startId));
           //  MediaItem data = PlayerConstants.SONGS_LIST.get(PlayerConstants.SONG_NUMBER);
             if(currentVersionSupportLockScreenControls){
                 RegisterRemoteClient();
@@ -191,9 +191,9 @@ public class LockScreenNotification extends Service implements AudioManager.OnAu
 
             Bitmap albumArt = songInfoObj.bitmap;
             if(albumArt != null){
-                notification.contentView.setImageViewBitmap(R.id.custom_notify_album_art, albumArt);
+                notification.contentView.setImageViewBitmap(R.id.imageViewAlbumArt, albumArt);
                 if(currentVersionSupportBigNotification){
-                    notification.bigContentView.setImageViewBitmap(R.id.custom_notify_album_art, albumArt);
+                    notification.bigContentView.setImageViewBitmap(R.id.imageViewAlbumArt, albumArt);
                 }
             }/*(else{
                 notification.contentView.setImageViewResource(R.id.imageViewAlbumArt, R.drawable.default_album_art);
@@ -205,25 +205,28 @@ public class LockScreenNotification extends Service implements AudioManager.OnAu
             e.printStackTrace();
         }
         if(!PlayHelperFunctions.isSongPlaying){
-            notification.contentView.setImageViewResource(R.id.custom_notify_play_pause, R.drawable.play);
+            notification.contentView.setViewVisibility(R.id.btnPause, View.GONE);
+            notification.contentView.setViewVisibility(R.id.btnPlay, View.VISIBLE);
 
             if(currentVersionSupportBigNotification){
-                notification.bigContentView.setImageViewResource(R.id.custom_notify_play_pause, R.drawable.play);
+                notification.bigContentView.setViewVisibility(R.id.btnPause, View.GONE);
+                notification.bigContentView.setViewVisibility(R.id.btnPlay, View.VISIBLE);
             }
         }else{
-            notification.contentView.setImageViewResource(R.id.custom_notify_play_pause, R.drawable.pause);
+            notification.contentView.setViewVisibility(R.id.btnPause, View.VISIBLE);
+            notification.contentView.setViewVisibility(R.id.btnPlay, View.GONE);
 
             if(currentVersionSupportBigNotification){
-                notification.bigContentView.setImageViewResource(R.id.custom_notify_play_pause, R.drawable.pause);
-
+                notification.bigContentView.setViewVisibility(R.id.btnPause, View.VISIBLE);
+                notification.bigContentView.setViewVisibility(R.id.btnPlay, View.GONE);
             }
         }
 
-        notification.contentView.setTextViewText(R.id.custom_notify_song_name, songName);
-        notification.contentView.setTextViewText(R.id.custom_notify_album_name, albumName);
+        notification.contentView.setTextViewText(R.id.textSongName, songName);
+        notification.contentView.setTextViewText(R.id.textAlbumName, albumName);
         if(currentVersionSupportBigNotification){
-            notification.bigContentView.setTextViewText(R.id.custom_notify_song_name, songName);
-            notification.bigContentView.setTextViewText(R.id.custom_notify_album_name, albumName);
+            notification.bigContentView.setTextViewText(R.id.textSongName, songName);
+            notification.bigContentView.setTextViewText(R.id.textAlbumName, albumName);
         }
       //  notification.flags |= Notification.FLAG_ONGOING_EVENT;
           notification.flags|=Notification.FLAG_AUTO_CANCEL;
@@ -243,19 +246,19 @@ public class LockScreenNotification extends Service implements AudioManager.OnAu
         Intent play = new Intent(NOTIFY_PLAY);
 
         PendingIntent pPrevious = PendingIntent.getBroadcast(getApplicationContext(), 0, previous, PendingIntent.FLAG_UPDATE_CURRENT);
-        view.setOnClickPendingIntent(R.id.custom_notify_previous, pPrevious);
+        view.setOnClickPendingIntent(R.id.btnPrevious, pPrevious);
 
         PendingIntent pDelete = PendingIntent.getBroadcast(getApplicationContext(), 0, delete, PendingIntent.FLAG_UPDATE_CURRENT);
-        view.setOnClickPendingIntent(R.id.custom_notify_close, pDelete);
+        view.setOnClickPendingIntent(R.id.bt, pDelete);
 
         PendingIntent pPause = PendingIntent.getBroadcast(getApplicationContext(), 0, pause, PendingIntent.FLAG_UPDATE_CURRENT);
         view.setOnClickPendingIntent(R.id.btnPause, pPause);
 
         PendingIntent pNext = PendingIntent.getBroadcast(getApplicationContext(), 0, next, PendingIntent.FLAG_UPDATE_CURRENT);
-        view.setOnClickPendingIntent(R.id.custom_notify_next, pNext);
+        view.setOnClickPendingIntent(R.id.btnNext, pNext);
 
         PendingIntent pPlay = PendingIntent.getBroadcast(getApplicationContext(), 0, play, PendingIntent.FLAG_UPDATE_CURRENT);
-        view.setOnClickPendingIntent(R.id.custom_notify_play_pause, pPlay);
+        view.setOnClickPendingIntent(R.id.btnPlay, pPlay);
 
     }
 

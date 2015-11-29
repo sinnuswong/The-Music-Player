@@ -1,22 +1,29 @@
 package com.Project100Pi.themusicplayer;
 
+import android.app.ActivityManager;
+import android.app.Service;
 import android.content.Context;
 import android.content.Intent;
 import android.database.Cursor;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
+import android.media.AudioManager;
 import android.media.MediaPlayer;
 import android.os.Bundle;
 import android.os.Handler;
+import android.os.IBinder;
 import android.provider.MediaStore;
+import android.support.annotation.Nullable;
+import android.util.Log;
 import android.widget.SeekBar;
 
 import java.io.IOException;
+import java.util.List;
 
 /**
  * Created by BalachandranAR on 9/25/2015.
  */
-public class PlayHelperFunctions {
+public class PlayHelperFunctions extends Service {
 
     static Context mContext;
     static SeekBar seekbar;
@@ -24,6 +31,17 @@ public class PlayHelperFunctions {
     static Handler handler = new Handler();
     static Boolean isSongPlaying =  false;
     static int mediaPos,mediaMax;
+    static AudioManager audioManager;
+
+    @Override
+    public int onStartCommand(Intent intent, int flags, int startId) {
+        if(mContext==null){
+            Log.d("CONTEXT STATUS","Context is null");
+            mContext=this;
+        }
+        CursorClass.mContext=this; // COntext references are throwing too much NPEs
+        return START_STICKY;
+    }
 
     public static String getPlaySongInfo(Long songId){
         Cursor cursor = CursorClass.playSongCursor(songId);
@@ -84,8 +102,11 @@ public class PlayHelperFunctions {
             Integer mediaPos_new = mp.getCurrentPosition();
             int mediaMax_new = mp.getDuration();
             songInfoObj.playerPostion = mediaPos_new;
-            seekbar.setMax(mediaMax_new);
-            seekbar.setProgress(mediaPos_new);
+            /* seekbar throwing exception when only widget is running.NPE..Should make it loosely decoupled*/
+            if(seekbar!=null) {
+                seekbar.setMax(mediaMax_new);
+                seekbar.setProgress(mediaPos_new);
+            }
             if(mp.isPlaying()){
                 //  runningTime.setText(UtilFunctions.convertSecondsToHMmSs(mediaPos_new));
             }
@@ -100,6 +121,20 @@ public class PlayHelperFunctions {
         if (mp != null) {
             mp.reset();
         }
+
+
+
+        audioManager= (AudioManager) mContext.getSystemService(Context.AUDIO_SERVICE);
+
+        int result = audioManager.requestAudioFocus(mAudioFocusListener,
+                // Use the music stream.
+                AudioManager.STREAM_MUSIC,
+                // Request permanent focus.
+                AudioManager.AUDIOFOCUS_GAIN_TRANSIENT);
+
+        Log.d("AF REsult",String.valueOf(result));
+
+
 
         mp.setOnCompletionListener(new MediaPlayer.OnCompletionListener() {
 
@@ -122,7 +157,9 @@ public class PlayHelperFunctions {
 
                 try {
                     mp.reset();
-                    audioPlayer((String)setPlaySongInfo(Long.parseLong(songInfoObj.nowPlayingList.get(songInfoObj.currPlayPos))),1);
+                    audioPlayer((String) setPlaySongInfo(Long.parseLong(songInfoObj.nowPlayingList.get(songInfoObj.currPlayPos))), 1);
+                    PlayActivity.shouldUpdateLayout = true;  // so,that now playing activity will update its UI
+                    MainActivity.shouldUpdateLayout = true;
                 } catch (IOException e) {
                     // TODO Auto-generated catch block
                     e.printStackTrace();
@@ -171,8 +208,13 @@ public class PlayHelperFunctions {
         mediaPos =mp.getCurrentPosition();
         mediaMax = mp.getDuration();
 
-        seekbar.setMax(mediaMax); // Set the Maximum range of the
-        seekbar.setProgress(mediaPos);// set current progress to song's
+        /*
+        If only widget Service is there, we should disable all the seekbar related code
+                */
+        if(seekbar!=null) {
+            seekbar.setMax(mediaMax); // Set the Maximum range of the song  ..Note..What to do when there is no seekbar reference.
+            seekbar.setProgress(mediaPos);// set current progress to song's
+        }
 
         handler.removeCallbacks(moveSeekBarThread);
         handler.postDelayed(moveSeekBarThread, 100); //cal the thread after 100 milliseconds
@@ -223,13 +265,16 @@ public class PlayHelperFunctions {
 
 
     public static void nextAction(){
+        Log.d("Voila", "I am here in NextAction()");
         PlayHelperFunctions.mp.reset();
         songInfoObj.currPlayPos = (songInfoObj.currPlayPos+1) % songInfoObj.nowPlayingList.size();
+        Log.d("   CURRPLAYPOSITION ","curr position album is "+songInfoObj.songName);
         try {
             PlayHelperFunctions.audioPlayer((String) PlayHelperFunctions.setPlaySongInfo(Long.parseLong(songInfoObj.nowPlayingList.get(songInfoObj.currPlayPos))),1);
             PlayHelperFunctions.handler.postDelayed(PlayHelperFunctions.moveSeekBarThread, 100);
         } catch (IOException e) {
             // TODO Auto-generated catch block
+            Log.e("EXCEPTION!!!!!","Exception is "+e);
             e.printStackTrace();
         }
     }
@@ -257,5 +302,81 @@ public class PlayHelperFunctions {
         }
         return shouldReveal;
     }
+
+    private  static AudioManager.OnAudioFocusChangeListener mAudioFocusListener = new AudioManager.OnAudioFocusChangeListener() {
+        public void onAudioFocusChange(int focusChange) {
+            // AudioFocus is a new feature: focus updates are made verbose on
+            // purpose
+            switch (focusChange) {
+                case AudioManager.AUDIOFOCUS_LOSS:
+                    mp.stop();
+                    audioManager.abandonAudioFocus(mAudioFocusListener);
+
+
+                    //stop();
+                    Log.d("MUSIC PLAYER", "AudioFocus: received AUDIOFOCUS_LOSS");
+//              mp.release();
+//              mp = null;
+                    break;
+
+                case AudioManager.AUDIOFOCUS_LOSS_TRANSIENT:
+//              if (mp.isPlaying())
+                    mp.pause();
+
+                    Log.d("MUSIC PLAYER", "AudioFocus: received AUDIOFOCUS_LOSS_TRANSIENT");
+
+                    break;
+
+                case AudioManager.AUDIOFOCUS_LOSS_TRANSIENT_CAN_DUCK:
+                   // mp.setVolume(0.5f, 0.5f);
+                    Log.d("MUSIC PLAYER", "AudioFocus: received AUDIOFOCUS_LOSS_TRANSIENT_CAN_DUCK");
+                    break;
+
+                case AudioManager.AUDIOFOCUS_GAIN:
+                    mp.start();
+                   // mp.setVolume(1.0f, 1.0f);
+                    Log.d("MUSIC PLAYER", "AudioFocus: received AUDIOFOCUS_GAIN");
+                    break;
+
+                default:
+                    Log.e("MUSIC PLAYER", "Unknown audio focus change code");
+            }
+
+        }
+    };
+
+    @Nullable
+    @Override
+    public IBinder onBind(Intent intent) {
+        return null;
+    }
+
+    public static boolean isAppRunning(){
+    ActivityManager activityManager = (ActivityManager) mContext.getSystemService( ACTIVITY_SERVICE );
+    List<ActivityManager.RunningAppProcessInfo> procInfos = activityManager.getRunningAppProcesses();
+        final String packageName = mContext.getPackageName();
+        Log.d("Package Name", "Name is "+packageName);
+    for(int i = 0; i < procInfos.size(); i++){
+
+        if(procInfos.get(i).processName.equals(packageName))
+        {
+            Log.e("Result APP RUNNING", "App is running - Doesn't need to reload");
+            return true;
+        }
+        else
+        {
+            Log.e(" result APP RUNNING", "App is not running - Needs to reload");
+        }
+      }
+        return false;
+    }
+
+    public static void loadFromPreferencesOnAppNotRunning(){
+        if(isAppRunning()==false) {
+            UtilFunctions.loadPreference(mContext);
+            Log.d("PREFERENCES", "preferences loaded from shared preferences");
+        }
+    }
+
 
 }

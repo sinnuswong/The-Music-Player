@@ -21,6 +21,7 @@ import android.media.MediaPlayer.OnPreparedListener;
 import android.os.Build;
 import android.os.Bundle;
 import android.os.CountDownTimer;
+import android.os.Handler;
 import android.provider.MediaStore;
 import android.support.v4.app.NavUtils;
 import android.support.v7.app.ActionBar;
@@ -74,6 +75,9 @@ public class PlayActivity extends AppCompatActivity {
     EditText hoursEdit,minsEdit,secsEdit;
     RelativeLayout toolbarContainer= null;
     Dialog editDialog;
+   Handler layoutThreadHandler;
+    boolean stopThread = false;
+static  boolean shouldUpdateLayout=false;
 
 
     @Override
@@ -85,6 +89,20 @@ public class PlayActivity extends AppCompatActivity {
 
     }
 
+    @Override
+    protected void onPause() {
+        super.onPause();
+    }
+
+    @Override
+    protected void onStop() {
+        super.onStop();
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+    }
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -102,6 +120,7 @@ public class PlayActivity extends AppCompatActivity {
         }
         mcontext = getApplicationContext();
 
+  startLayoutThread();// so that it keeps on looking for whether we should Update its UI
         PlayHelperFunctions.seekbar = (SeekBar) findViewById(R.id.seekBar); // make PlayHelperFunctions.seekbar object
         PlayHelperFunctions.seekbar.setOnSeekBarChangeListener(new OnSeekBarChangeListener() {
 
@@ -483,6 +502,7 @@ public class PlayActivity extends AppCompatActivity {
         } catch (Exception e) {
             Log.i("shared preference", "save failed");
         }
+        stopThread = true;
     }
 
     @Override
@@ -587,6 +607,30 @@ public class PlayActivity extends AppCompatActivity {
         songInfoObj.initialPlayingList.addAll(songInfoObj.nowPlayingList);
         songInfoObj.shuffled = i.getExtras().getBoolean("shuffle");
     }
+
+    public void startLayoutThread(){
+
+        layoutThreadHandler=new Handler();
+         final Runnable updateNowPlayingLayoutThread = new Runnable() {
+            public void run() {
+               if(shouldUpdateLayout==true){
+                   setPlayingLayout();
+                   shouldUpdateLayout=false;
+
+               }
+                if(!stopThread)                                       //should Understand
+                layoutThreadHandler.postDelayed(this, 100);
+
+
+
+            }
+        };
+
+
+        layoutThreadHandler.postDelayed(updateNowPlayingLayoutThread,100);
+    }
+
+
 
     public void layoutInit() {
         PlayPauseView view = (PlayPauseView) findViewById(R.id.playPauseView);

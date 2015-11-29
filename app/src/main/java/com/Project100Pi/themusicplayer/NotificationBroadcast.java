@@ -44,6 +44,13 @@ public class NotificationBroadcast extends BroadcastReceiver {
                     break;
             }
         }  else{
+            Log.d("NotifBroadCast.Java",intent.getAction().toString());
+            if(songInfoObj.album==null &&  songInfoObj.playPath==null ) {
+                UtilFunctions.loadPreference(context);
+                PlayHelperFunctions.mContext=context; // mContext throws NPE lots of times
+                CursorClass.mContext=context;
+                Log.d("PREFERENCES", "preferences loaded from shared preferences");
+            }
             if (intent.getAction().equals(LockScreenNotification.NOTIFY_PLAY)) {
                 PlayHelperFunctions.startMusicPlayer();
             } else if (intent.getAction().equals(LockScreenNotification.NOTIFY_PAUSE)) {

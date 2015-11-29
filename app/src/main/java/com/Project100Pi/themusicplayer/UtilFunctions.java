@@ -231,7 +231,7 @@ public class UtilFunctions {
      	      int count=cursor.getCount();
      	       while(cursor.moveToNext()){
      	    	   Long id=cursor.getLong(0);
-     		       String path=FirstFragment.idToPath.get(id);
+     		       String path=MainActivity.idToTrackObj.get(id).getTrackPath();
      		       path="file://"+path;
      		   
      		  // Toast.makeText(getContext(),"Hi there", Toast.LENGTH_LONG).show();
@@ -274,7 +274,7 @@ public class UtilFunctions {
   	   ArrayList<Uri> uris=new ArrayList<Uri>();
   	   while(cursor.moveToNext()){
   		   Long id=cursor.getLong(0);
-  		   String path=FirstFragment.idToPath.get(id);
+  		   String path=MainActivity.idToTrackObj.get(id).getTrackPath();
   		   path="file://"+path;
   		   
   		  // Toast.makeText(getContext(),"Hi there", Toast.LENGTH_LONG).show();

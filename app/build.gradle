@@ -28,11 +28,13 @@ dependencies {
     // compile project(':libs:CardView-master')
     compile project(':libs:cardslib-core')
     compile project(':libs:cardslib-extra-dragdrop')
-    compile project(':libs:RecyclerViewFastScroller-master')
+    //compile project(':libs:RecyclerViewFastScroller-master')
     // compile project(':libs:cardslib-recyclerview')
     compile 'com.android.support:recyclerview-v7:23.1.0'
     compile 'com.squareup.picasso:picasso:2.5.2'
     compile 'pl.droidsonroids.gif:android-gif-drawable:1.1.7'
+    compile 'com.h6ah4i.android.widget.verticalseekbar:verticalseekbar:0.5.2'
     compile project(':libs:circualreveal')
+    compile project(':libs:RecyclerViewFastScroller-master')
 }
 

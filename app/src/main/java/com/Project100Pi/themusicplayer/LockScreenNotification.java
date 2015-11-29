@@ -40,6 +40,12 @@ public class LockScreenNotification extends Service implements AudioManager.OnAu
     public static final String NOTIFY_PLAY = "com.tutorialsface.audioplayer.play";
     public static final String NOTIFY_NEXT = "com.tutorialsface.audioplayer.next";
 
+
+    RemoteViews simpleContentView;
+    RemoteViews expandedView;
+    Notification notification;
+    NotificationManager mNotificationManager;
+
     private ComponentName remoteComponentName;
     private RemoteControlClient remoteControlClient;
     AudioManager audioManager;
@@ -47,6 +53,9 @@ public class LockScreenNotification extends Service implements AudioManager.OnAu
     private static Timer timer;
     private static boolean currentVersionSupportBigNotification = false;
     private static boolean currentVersionSupportLockScreenControls = false;
+
+    Handler layoutThreadHandler;
+    static boolean shouldUpdateLayout=false;
 
     @Override
     public IBinder onBind(Intent intent) {
@@ -57,6 +66,7 @@ public class LockScreenNotification extends Service implements AudioManager.OnAu
     public void onCreate() {
        // mp = new MediaPlayer();
         audioManager = (AudioManager) getSystemService(AUDIO_SERVICE);
+        mNotificationManager = (NotificationManager) getSystemService(Context.NOTIFICATION_SERVICE);
 
         currentVersionSupportBigNotification = true;
         currentVersionSupportLockScreenControls = true; // I have plainly initialized it to true..have to check.;
@@ -69,6 +79,7 @@ public class LockScreenNotification extends Service implements AudioManager.OnAu
             }
         });
         super.onCreate();
+        startLayoutThread();
     }
 
     /**
@@ -102,7 +113,7 @@ public class LockScreenNotification extends Service implements AudioManager.OnAu
     public int onStartCommand(Intent intent, int flags, int startId) {
         try {
 
-            Log.d(" LS Notifications ONSTART","flags is "+String.valueOf(flags)+"  and start Id is "+String.valueOf(startId));
+            Log.d(" LSNotif ONSTART","flags is "+String.valueOf(flags)+"  and start Id is "+String.valueOf(startId));
           //  MediaItem data = PlayerConstants.SONGS_LIST.get(PlayerConstants.SONG_NUMBER);
             if(currentVersionSupportLockScreenControls){
                 RegisterRemoteClient();
@@ -169,23 +180,58 @@ public class LockScreenNotification extends Service implements AudioManager.OnAu
      */
     @SuppressLint("NewApi")
     private void newNotification() {
-        String songName = songInfoObj.songName;
-        String albumName = songInfoObj.album;
-        RemoteViews simpleContentView = new RemoteViews(getApplicationContext().getPackageName(),R.layout.custom_notification);
-        RemoteViews expandedView = new RemoteViews(getApplicationContext().getPackageName(),
-                R.layout.big_notification);
+        createNotificationSubViews();
+        getNotificationViews();
 
-        Notification notification = new NotificationCompat.Builder(getApplicationContext())
-                .setSmallIcon(R.drawable.abc_switch_thumb_material)
-                .setContentTitle(songName).build();
 
-        setListeners(simpleContentView);
-        setListeners(expandedView);
 
-        notification.contentView = simpleContentView;
-        if(currentVersionSupportBigNotification){
-            notification.bigContentView = expandedView;
+
+         // notification.flags |= Notification.FLAG_ONGOING_EVENT;
+          notification.flags|=Notification.FLAG_NO_CLEAR;
+         notification.defaults |= Notification.DEFAULT_LIGHTS;
+          startForeground(NOTIFICATION_ID, notification);
+       // stopForeground(true);
+    }
+
+    private void updateNotification() {
+
+        Log.d("UPDATE NOTIF", " Within Update Notification Method");
+        getNotificationViews();
+        mNotificationManager.notify(NOTIFICATION_ID, notification);
+
         }
+
+    /**
+     * Notification click listeners
+     * @param view
+     */
+    public void setListeners(RemoteViews view) {
+        Intent previous = new Intent(NOTIFY_PREVIOUS);
+        Intent delete = new Intent(NOTIFY_DELETE);
+        Intent pause = new Intent(NOTIFY_PAUSE);
+        Intent next = new Intent(NOTIFY_NEXT);
+        Intent play = new Intent(NOTIFY_PLAY);
+
+        PendingIntent pPrevious = PendingIntent.getBroadcast(getApplicationContext(), 0, previous, PendingIntent.FLAG_UPDATE_CURRENT);
+        view.setOnClickPendingIntent(R.id.custom_notify_previous, pPrevious);
+
+        PendingIntent pDelete = PendingIntent.getBroadcast(getApplicationContext(), 0, delete, PendingIntent.FLAG_UPDATE_CURRENT);
+        view.setOnClickPendingIntent(R.id.custom_notify_close, pDelete);
+
+        PendingIntent pPause = PendingIntent.getBroadcast(getApplicationContext(), 0, pause, PendingIntent.FLAG_UPDATE_CURRENT);
+        view.setOnClickPendingIntent(R.id.btnPause, pPause);
+
+        PendingIntent pNext = PendingIntent.getBroadcast(getApplicationContext(), 0, next, PendingIntent.FLAG_UPDATE_CURRENT);
+        view.setOnClickPendingIntent(R.id.custom_notify_next, pNext);
+
+        PendingIntent pPlay = PendingIntent.getBroadcast(getApplicationContext(), 0, play, PendingIntent.FLAG_UPDATE_CURRENT);
+        view.setOnClickPendingIntent(R.id.custom_notify_play_pause, pPlay);
+
+    }
+
+    private void getNotificationViews(){
+
+
 
         try{
 
@@ -219,44 +265,30 @@ public class LockScreenNotification extends Service implements AudioManager.OnAu
             }
         }
 
-        notification.contentView.setTextViewText(R.id.custom_notify_song_name, songName);
-        notification.contentView.setTextViewText(R.id.custom_notify_album_name, albumName);
+        notification.contentView.setTextViewText(R.id.custom_notify_song_name, songInfoObj.songName);
+        notification.contentView.setTextViewText(R.id.custom_notify_album_name,songInfoObj.album);
         if(currentVersionSupportBigNotification){
-            notification.bigContentView.setTextViewText(R.id.custom_notify_song_name, songName);
-            notification.bigContentView.setTextViewText(R.id.custom_notify_album_name, albumName);
+            notification.bigContentView.setTextViewText(R.id.custom_notify_song_name, songInfoObj.songName);
+            notification.bigContentView.setTextViewText(R.id.custom_notify_album_name, songInfoObj.album);
         }
-      //  notification.flags |= Notification.FLAG_ONGOING_EVENT;
-          notification.flags|=Notification.FLAG_AUTO_CANCEL;
-        startForeground(NOTIFICATION_ID, notification);
-       // stopForeground(true);
     }
 
-    /**
-     * Notification click listeners
-     * @param view
-     */
-    public void setListeners(RemoteViews view) {
-        Intent previous = new Intent(NOTIFY_PREVIOUS);
-        Intent delete = new Intent(NOTIFY_DELETE);
-        Intent pause = new Intent(NOTIFY_PAUSE);
-        Intent next = new Intent(NOTIFY_NEXT);
-        Intent play = new Intent(NOTIFY_PLAY);
+    private void createNotificationSubViews() {
+        simpleContentView = new RemoteViews(getApplicationContext().getPackageName(), R.layout.custom_notification);
+        expandedView = new RemoteViews(getApplicationContext().getPackageName(),
+                R.layout.big_notification);
 
-        PendingIntent pPrevious = PendingIntent.getBroadcast(getApplicationContext(), 0, previous, PendingIntent.FLAG_UPDATE_CURRENT);
-        view.setOnClickPendingIntent(R.id.custom_notify_previous, pPrevious);
+        notification = new NotificationCompat.Builder(getApplicationContext())
+                .setSmallIcon(R.drawable.abc_switch_thumb_material)
+                .setContentTitle(songInfoObj.songName).build();
 
-        PendingIntent pDelete = PendingIntent.getBroadcast(getApplicationContext(), 0, delete, PendingIntent.FLAG_UPDATE_CURRENT);
-        view.setOnClickPendingIntent(R.id.custom_notify_close, pDelete);
+        setListeners(simpleContentView);
+        setListeners(expandedView);
 
-        PendingIntent pPause = PendingIntent.getBroadcast(getApplicationContext(), 0, pause, PendingIntent.FLAG_UPDATE_CURRENT);
-        view.setOnClickPendingIntent(R.id.btnPause, pPause);
-
-        PendingIntent pNext = PendingIntent.getBroadcast(getApplicationContext(), 0, next, PendingIntent.FLAG_UPDATE_CURRENT);
-        view.setOnClickPendingIntent(R.id.custom_notify_next, pNext);
-
-        PendingIntent pPlay = PendingIntent.getBroadcast(getApplicationContext(), 0, play, PendingIntent.FLAG_UPDATE_CURRENT);
-        view.setOnClickPendingIntent(R.id.custom_notify_play_pause, pPlay);
-
+        notification.contentView = simpleContentView;
+        if(currentVersionSupportBigNotification){
+            notification.bigContentView = expandedView;
+        }
     }
 
     @Override
@@ -311,6 +343,30 @@ public class LockScreenNotification extends Service implements AudioManager.OnAu
         }catch(Exception ex) {
         }
     }
+
+
+    public void startLayoutThread(){
+
+        layoutThreadHandler=new Handler();
+        final Runnable updateNowPlayingLayoutThread = new Runnable() {
+            public void run() {
+                if(shouldUpdateLayout==true){
+                    updateNotification();
+                    shouldUpdateLayout=false;
+
+                }
+                                                  //should Understand
+                    layoutThreadHandler.postDelayed(this, 100);
+
+
+
+            }
+        };
+
+
+        layoutThreadHandler.postDelayed(updateNowPlayingLayoutThread,100);
+    }
+
 
 
     @Override

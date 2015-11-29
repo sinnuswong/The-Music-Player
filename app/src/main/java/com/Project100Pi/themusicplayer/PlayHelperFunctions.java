@@ -19,6 +19,7 @@ import android.widget.SeekBar;
 
 import java.io.IOException;
 import java.util.List;
+import java.util.concurrent.locks.Lock;
 
 /**
  * Created by BalachandranAR on 9/25/2015.
@@ -123,7 +124,7 @@ public class PlayHelperFunctions extends Service {
         }
 
 
-
+        LockScreenNotification.shouldUpdateLayout=true;
         audioManager= (AudioManager) mContext.getSystemService(Context.AUDIO_SERVICE);
 
         int result = audioManager.requestAudioFocus(mAudioFocusListener,
@@ -160,6 +161,8 @@ public class PlayHelperFunctions extends Service {
                     audioPlayer((String) setPlaySongInfo(Long.parseLong(songInfoObj.nowPlayingList.get(songInfoObj.currPlayPos))), 1);
                     PlayActivity.shouldUpdateLayout = true;  // so,that now playing activity will update its UI
                     MainActivity.shouldUpdateLayout = true;
+                    LockScreenNotification.shouldUpdateLayout=true; // So, that lockscreeen will update its UI
+
                 } catch (IOException e) {
                     // TODO Auto-generated catch block
                     e.printStackTrace();
@@ -251,6 +254,7 @@ public class PlayHelperFunctions extends Service {
 
     public static void pauseMusicPlayer()
     {
+        LockScreenNotification.shouldUpdateLayout=true;// to update lockScreen UI
         PlayHelperFunctions.mp.pause();
         PlayHelperFunctions.isSongPlaying = false;
         PlayHelperFunctions.floatingLyricIntent(mContext, (long) PlayHelperFunctions.mp.getCurrentPosition(), false);
@@ -258,6 +262,7 @@ public class PlayHelperFunctions extends Service {
 
     public static void startMusicPlayer()
     {
+        LockScreenNotification.shouldUpdateLayout=true;
         PlayHelperFunctions.mp.start();
         PlayHelperFunctions.isSongPlaying = true;
         PlayHelperFunctions.floatingLyricIntent(mContext, (long) PlayHelperFunctions.mp.getCurrentPosition(), true);

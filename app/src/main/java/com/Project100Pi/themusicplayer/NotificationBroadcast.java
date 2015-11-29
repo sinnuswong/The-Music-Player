@@ -52,7 +52,11 @@ public class NotificationBroadcast extends BroadcastReceiver {
                 Log.d("PREFERENCES", "preferences loaded from shared preferences");
             }
             if (intent.getAction().equals(LockScreenNotification.NOTIFY_PLAY)) {
-                PlayHelperFunctions.startMusicPlayer();
+                if(!PlayHelperFunctions.isSongPlaying)
+                    PlayHelperFunctions.startMusicPlayer();
+                else
+                    PlayHelperFunctions.pauseMusicPlayer();
+
             } else if (intent.getAction().equals(LockScreenNotification.NOTIFY_PAUSE)) {
                 PlayHelperFunctions.pauseMusicPlayer();
             } else if (intent.getAction().equals(LockScreenNotification.NOTIFY_NEXT)) {

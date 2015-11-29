@@ -18,10 +18,14 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.RelativeLayout;
 
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
+
+import xyz.danoz.recyclerviewfastscroller.sectionindicator.title.SectionTitleIndicator;
+import xyz.danoz.recyclerviewfastscroller.vertical.VerticalRecyclerViewFastScroller;
 
 /**
  * Created by BalachandranAR on 8/30/2015.
@@ -32,6 +36,7 @@ public class ThirdFragmentTest extends Fragment implements  ClickInterface{
     private ActionMode actionMode;
     ArrayList<ArtistInfo> artists ;
     ArtistRecyclerAdapter ara;
+    RelativeLayout outerWindow;
     @Nullable
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
@@ -41,6 +46,8 @@ public class ThirdFragmentTest extends Fragment implements  ClickInterface{
         thirdFragRecycler.setHasFixedSize(true);
         LinearLayoutManager llm = new LinearLayoutManager(getActivity().getApplicationContext());
         thirdFragRecycler.setLayoutManager(llm);
+        outerWindow = (RelativeLayout)v.findViewById(R.id.thirdFragOuter);
+        outerWindow.setBackgroundColor(ColorUtils.primaryBgColor);
 
         artists = new ArrayList<ArtistInfo>();
         String artistName="";
@@ -49,7 +56,7 @@ public class ThirdFragmentTest extends Fragment implements  ClickInterface{
         String[] projection = new String[] {BaseColumns._ID, MediaStore.Audio.ArtistColumns.ARTIST, MediaStore.Audio.ArtistColumns.NUMBER_OF_TRACKS, MediaStore.Audio.ArtistColumns.NUMBER_OF_ALBUMS };
         String selection = null;
         String[] selectionArgs = null;
-        String sortOrder = MediaStore.Audio.Artists.DEFAULT_SORT_ORDER;
+        String sortOrder = MediaStore.Audio.ArtistColumns.ARTIST +" COLLATE NOCASE ASC";
         Cursor cursor = getActivity().getApplicationContext().getContentResolver().query(MediaStore.Audio.Artists.EXTERNAL_CONTENT_URI, projection, selection, selectionArgs, sortOrder);
 
         int i = 0;
@@ -66,8 +73,14 @@ public class ThirdFragmentTest extends Fragment implements  ClickInterface{
         ara = new ArtistRecyclerAdapter(this,artists,getActivity());
         thirdFragRecycler.setAdapter(ara);
        thirdFragRecycler.setItemAnimator(new DefaultItemAnimator());
-        FastScroller fastScroller=(FastScroller)v.findViewById(R.id.thirdfastscroller);
+        final VerticalRecyclerViewFastScroller fastScroller = (VerticalRecyclerViewFastScroller) v.findViewById(R.id.third_frag_fast_scroller);
+        // Connect the recycler to the scroller (to let the scroller scroll the list)
         fastScroller.setRecyclerView(thirdFragRecycler);
+        thirdFragRecycler.setOnScrollListener(fastScroller.getOnScrollListener());
+        fastScroller.setHandleColor(ColorUtils.accentColor);
+        SectionTitleIndicator sectionTitleIndicator =
+                (SectionTitleIndicator)v.findViewById(R.id.third_frag_fast_scroller_section_title_indicator);
+        fastScroller.setSectionIndicator(sectionTitleIndicator);
 
         return v;
     }

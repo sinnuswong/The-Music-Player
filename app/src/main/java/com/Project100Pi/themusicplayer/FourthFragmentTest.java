@@ -22,11 +22,15 @@ import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
+import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
+
+import xyz.danoz.recyclerviewfastscroller.sectionindicator.title.SectionTitleIndicator;
+import xyz.danoz.recyclerviewfastscroller.vertical.VerticalRecyclerViewFastScroller;
 
 /**
  * Created by BalachandranAR on 8/30/2015.
@@ -37,12 +41,15 @@ public class FourthFragmentTest extends Fragment implements  ClickInterface{
     private ActionMode actionMode;
     ArrayList<GenreInfo> genres ;
     GenreRecyclerAdapter gra;
+    RelativeLayout outerWindow;
     @Nullable
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
 
         View v =inflater.inflate(R.layout.forth_frag_test, container, false);
         final RecyclerView fourthFragRecycler = (RecyclerView)v.findViewById(R.id.forthFragRecycler);
+        outerWindow = (RelativeLayout)v.findViewById(R.id.fourthFragOuter);
+        outerWindow.setBackgroundColor(ColorUtils.primaryBgColor);
         fourthFragRecycler.setHasFixedSize(true);
         LinearLayoutManager llm = new LinearLayoutManager(getActivity().getApplicationContext());
         fourthFragRecycler.setLayoutManager(llm);
@@ -55,7 +62,7 @@ public class FourthFragmentTest extends Fragment implements  ClickInterface{
         String[] projection = new String[] {BaseColumns._ID, MediaStore.Audio.GenresColumns.NAME, };
         String selection = null;
         String[] selectionArgs = null;
-        String sortOrder = MediaStore.Audio.Genres.DEFAULT_SORT_ORDER;
+        String sortOrder = MediaStore.Audio.GenresColumns.NAME +" COLLATE NOCASE ASC";
         Cursor cursor = getActivity().getApplicationContext().getContentResolver().query(MediaStore.Audio.Genres.EXTERNAL_CONTENT_URI, projection, selection, selectionArgs, sortOrder);
         int i = 0;
         while (cursor.moveToNext()) {
@@ -69,8 +76,14 @@ public class FourthFragmentTest extends Fragment implements  ClickInterface{
         gra = new GenreRecyclerAdapter(this,genres,getActivity());
         fourthFragRecycler.setAdapter(gra);
         fourthFragRecycler.setItemAnimator(new DefaultItemAnimator());
-        FastScroller fastScroller=(FastScroller)v.findViewById(R.id.forthfastscroller);
+        final VerticalRecyclerViewFastScroller fastScroller = (VerticalRecyclerViewFastScroller) v.findViewById(R.id.fourth_frag_fast_scroller);
+        // Connect the recycler to the scroller (to let the scroller scroll the list)
         fastScroller.setRecyclerView(fourthFragRecycler);
+        fourthFragRecycler.setOnScrollListener(fastScroller.getOnScrollListener());
+        fastScroller.setHandleColor(ColorUtils.accentColor);
+        SectionTitleIndicator sectionTitleIndicator =
+                (SectionTitleIndicator)v.findViewById(R.id.fourth_frag_fast_scroller_section_title_indicator);
+        fastScroller.setSectionIndicator(sectionTitleIndicator);
 
         return v;
     }

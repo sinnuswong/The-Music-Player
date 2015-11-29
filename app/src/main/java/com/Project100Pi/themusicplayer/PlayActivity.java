@@ -18,6 +18,7 @@ import android.media.Image;
 import android.media.MediaPlayer;
 import android.media.MediaPlayer.OnCompletionListener;
 import android.media.MediaPlayer.OnPreparedListener;
+import android.os.Build;
 import android.os.Bundle;
 import android.os.CountDownTimer;
 import android.provider.MediaStore;
@@ -71,6 +72,7 @@ public class PlayActivity extends AppCompatActivity {
     static CountDownTimer myCountDownTimer;
     PlayPauseView playPauseViewview;
     EditText hoursEdit,minsEdit,secsEdit;
+    RelativeLayout toolbarContainer= null;
     Dialog editDialog;
 
 
@@ -93,8 +95,11 @@ public class PlayActivity extends AppCompatActivity {
         setSupportActionBar(mToolbar);
         actionBar = getSupportActionBar();
         setActionBarUIData();
-
-
+        if((Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP)) {
+            toolbarContainer = (RelativeLayout) findViewById(R.id.toolbar_container);
+            toolbarContainer.setPadding(0, getStatusBarHeight(), 0, 0);
+            mToolbar.setBackgroundColor(Color.parseColor("#5B000000"));
+        }
         mcontext = getApplicationContext();
 
         PlayHelperFunctions.seekbar = (SeekBar) findViewById(R.id.seekBar); // make PlayHelperFunctions.seekbar object
@@ -314,8 +319,12 @@ public class PlayActivity extends AppCompatActivity {
         super.onOptionsItemSelected(item);
         int id = item.getItemId();
         switch (id) {
+            case R.id.action_search:
+                Intent intent=new Intent(PlayActivity.this,SearchResultsActivity.class);
+                startActivity(intent);
+                break;
             case R.id.nowPlayingListImage:
-                Intent intent = new Intent(PlayActivity.this, NowPlayingListTest.class);
+                 intent = new Intent(PlayActivity.this, NowPlayingListTest.class);
                 // intent.putExtra("art",(Serializable)songInfoObj.nowPlayingList);
                 intent.putExtra("position", songInfoObj.currPlayPos);
                 startActivity(intent);
@@ -448,7 +457,7 @@ public class PlayActivity extends AppCompatActivity {
                 break;
 
             case android.R.id.home:
-                onBackPressed();
+                supportFinishAfterTransition();
                 return true;
 
             default:
@@ -463,7 +472,7 @@ public class PlayActivity extends AppCompatActivity {
     protected void onRestart() {
         // TODO Auto-generated method stub
         super.onRestart();
-
+        shouldReveal = true;
     }
 
     @Override
@@ -486,7 +495,7 @@ public class PlayActivity extends AppCompatActivity {
     }
 
     private void setPlayingLayout() {
-        shouldReveal = true;
+        //shouldReveal = true;
         albumArtView = (ImageView) findViewById(R.id.albumArt);
         //albumArtView.requestLayout();
         //albumArtView.getLayoutParams().width = albumArtSize;

@@ -8,7 +8,10 @@ import java.util.List;
 
 import android.app.Activity;
 import android.app.AlertDialog;
+import android.graphics.Color;
 import android.os.Bundle;
+import android.support.v7.app.AppCompatActivity;
+import android.support.v7.widget.SwitchCompat;
 import android.view.*;
 import android.view.View.OnClickListener;
 import android.app.*;
@@ -18,18 +21,18 @@ import android.content.*;
 import android.media.audiofx.*;
 import android.media.audiofx.BassBoost.Settings;
 
-public class EqualizerSettings extends Activity
+public class EqualizerSettings extends AppCompatActivity
     implements SeekBar.OnSeekBarChangeListener,
       OnItemSelectedListener,
-      CompoundButton.OnCheckedChangeListener,
       View.OnClickListener
 {
     TextView bass_boost_label = null;
+    TextView preset_label = null;
     SeekBar bass_boost = null;
-    CheckBox enabled = null;
     Button flat = null;
     List<String> presetNames =null;
     List<String> initialPreset=null;
+    RelativeLayout outerWindows = null;
 
     Equalizer eq = null; 
     BassBoost bb = null;
@@ -40,7 +43,7 @@ public class EqualizerSettings extends Activity
     int min_level = 0;
     int max_level = 100;
     Button saveButton=null;
-    static final int MAX_SLIDERS = 7; // Must match the XML layout
+    static final int MAX_SLIDERS = 5; // Must match the XML layout
     SeekBar sliders[] = new SeekBar[MAX_SLIDERS];
     TextView slider_labels[] = new TextView[MAX_SLIDERS];
     int num_sliders = 0;
@@ -54,6 +57,30 @@ public class EqualizerSettings extends Activity
 /*=============================================================================
     onCreate 
 =============================================================================*/
+
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        // Inflate the menu; this adds items to the action bar if it is present.
+        getMenuInflater().inflate(R.menu.menu_equalizer, menu);
+        final MenuItem item = menu.findItem(R.id.equalizerSwitch);
+        SwitchCompat switchActionbar = (SwitchCompat) item.getActionView().findViewById(R.id.switchForActionBar);
+        if(switchActionbar.isChecked())
+            enableEqualizerAll();
+        else
+            disableEqualizerAll();
+
+        switchActionbar.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+            @Override
+            public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
+                if(isChecked)
+                    enableEqualizerAll();
+                else
+                    disableEqualizerAll();
+            }
+        });
+        return true;
+    }
+
     @Override
     public void onCreate(Bundle savedInstanceState)
         {
@@ -61,18 +88,20 @@ public class EqualizerSettings extends Activity
     	//int audiosessionId=intent.getExtras().getInt("sessionId");
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_equalizer);
-        
 
-        enabled = (CheckBox)findViewById(R.id.enabled);
-        enabled.setOnCheckedChangeListener (this);
 
         flat = (Button)findViewById(R.id.flat);
         flat.setOnClickListener(this);
 
+        outerWindows = (RelativeLayout)findViewById(R.id.outerWindow);
+        outerWindows.setBackgroundColor(ColorUtils.primaryBgColor);
         bass_boost = (SeekBar)findViewById(R.id.bass_boost);
         bass_boost.setOnSeekBarChangeListener(this);
         bass_boost_label = (TextView) findViewById (R.id.bass_boost_label);
+        bass_boost_label.setTextColor(ColorUtils.primaryTextColor);
 
+        preset_label = (TextView)findViewById(R.id.preset_label);
+        preset_label.setTextColor(ColorUtils.primaryTextColor);
         sliders[0] = (SeekBar)findViewById(R.id.slider_1);
         slider_labels[0] = (TextView)findViewById(R.id.slider_label_1);
         sliders[1] = (SeekBar)findViewById(R.id.slider_2);
@@ -83,13 +112,14 @@ public class EqualizerSettings extends Activity
         slider_labels[3] = (TextView)findViewById(R.id.slider_label_4);
         sliders[4] = (SeekBar)findViewById(R.id.slider_5);
         slider_labels[4] = (TextView)findViewById(R.id.slider_label_5);
+            /*
         sliders[5] = (SeekBar)findViewById(R.id.slider_6);
         slider_labels[5] = (TextView)findViewById(R.id.slider_label_6);
         sliders[6] = (SeekBar)findViewById(R.id.slider_7);
         slider_labels[6] = (TextView)findViewById(R.id.slider_label_7);
       //  sliders[7] = (SeekBar)findViewById(R.id.slider_8);
        // slider_labels[7] = (TextView)findViewById(R.id.slider_label_8);
-       
+       */
         eq = new Equalizer (0, 0);
         customPresets= new HashMap<String,ArrayList<Integer>>();
         if (eq != null)
@@ -118,6 +148,7 @@ public class EqualizerSettings extends Activity
 
           min_level = r[0];
           max_level = r[1];
+              /*
           saveButton=(Button)findViewById(R.id.savepreset);
           saveButton.setOnClickListener(new View.OnClickListener() {
         
@@ -130,12 +161,13 @@ public class EqualizerSettings extends Activity
   				
   			}
   		});
-          
+          */
           for (int i = 0; i < num_sliders && i < MAX_SLIDERS; i++)
             {
             int[] freq_range = eq.getBandFreqRange((short)i);
             sliders[i].setOnSeekBarChangeListener(this);
             slider_labels[i].setText (formatBandLabel (freq_range));
+            slider_labels[i].setTextColor(ColorUtils.secondaryTextColor);
            // eq.setBandLevel((short)i,(short) min_level);
             }
           }
@@ -156,6 +188,7 @@ public class EqualizerSettings extends Activity
           }
 
     updateUI();
+    disableEqualizerAll();
     }
 
 /*=============================================================================
@@ -290,15 +323,6 @@ public class EqualizerSettings extends Activity
 /*=============================================================================
     onCheckedChange
 =============================================================================*/
-    @Override
-    public void onCheckedChanged (CompoundButton view, boolean isChecked)
-    {
-      if (view == (View) enabled)
-        {
-        eq.setEnabled (isChecked);
-        
-        }
-    }
 
 /*=============================================================================
     onClick
@@ -319,7 +343,6 @@ public class EqualizerSettings extends Activity
       {
       updateSliders();
       updateBassBoost();
-      enabled.setChecked (eq.getEnabled());
       }
 
 /*=============================================================================
@@ -354,13 +377,11 @@ public class EqualizerSettings extends Activity
       alertDialogBuilder.setTitle("About Simple EQ");
    //   alertDialogBuilder.setMessage(R.string.copyright_message);
       alertDialogBuilder.setCancelable(true);
-      alertDialogBuilder.setPositiveButton ("ok", 
-        new DialogInterface.OnClickListener()
-          { 
-          public void onClick(DialogInterface dialog, int id) 
-            {
-            }
-          });
+      alertDialogBuilder.setPositiveButton("ok",
+              new DialogInterface.OnClickListener() {
+                  public void onClick(DialogInterface dialog, int id) {
+                  }
+              });
       AlertDialog ad = alertDialogBuilder.create();
       ad.show();
       
@@ -409,31 +430,30 @@ public class EqualizerSettings extends Activity
      		// setup a dialog window
      		alertDialogBuilder.setCancelable(false)
      				.setPositiveButton("OK", new DialogInterface.OnClickListener() {
-     					public void onClick(DialogInterface dialog, int id) {
-     						 String newName=editText.getText().toString();
-     						 presetNames.add(newName);
-     						
-     						 bandValues=new ArrayList<Integer>();
-     						 
-     						 for(int i=0;i<eq.getNumberOfBands();i++)
-     						 {
-     							
-     							 bandValues.add(sliders[i].getProgress());
-     							
-     						 }
-     						  customPresets.put(newName, bandValues);
-     						 //updateSliders(eq);
-     						
-     						// spinner.setSe
-     						    
-     					}
-     				})
+                        public void onClick(DialogInterface dialog, int id) {
+                            String newName = editText.getText().toString();
+                            presetNames.add(newName);
+
+                            bandValues = new ArrayList<Integer>();
+
+                            for (int i = 0; i < eq.getNumberOfBands(); i++) {
+
+                                bandValues.add(sliders[i].getProgress());
+
+                            }
+                            customPresets.put(newName, bandValues);
+                            //updateSliders(eq);
+
+                            // spinner.setSe
+
+                        }
+                    })
      				.setNegativeButton("Cancel",
-     						new DialogInterface.OnClickListener() {
-     							public void onClick(DialogInterface dialog, int id) {
-     								dialog.cancel();
-     							}
-     						});
+                            new DialogInterface.OnClickListener() {
+                                public void onClick(DialogInterface dialog, int id) {
+                                    dialog.cancel();
+                                }
+                            });
 
      		// create an alert dialog
      		AlertDialog alert = alertDialogBuilder.create();
@@ -448,20 +468,67 @@ public class EqualizerSettings extends Activity
 		
 	}
 
+    public void disableEqualizerAll(){
+        eq.setEnabled(false);
+        flat.setFocusable(false);
+        flat.setEnabled(false);
+        flat.setClickable(false);
+        flat.setBackgroundColor(Color.parseColor("#AAAAAA"));
+        spinner.setEnabled(false);
+        spinner.setClickable(false);
+        spinner.setFocusable(false);
+        disableSeekbar(bass_boost);
+        for (int i = 0; i < num_sliders && i < MAX_SLIDERS; i++)
+        {
+            disableSeekbar(sliders[i]);
+        }
+    }
+
+    public void enableEqualizerAll(){
+        eq.setEnabled(true);
+        flat.setFocusable(true);
+        flat.setEnabled(true);
+        flat.setClickable(true);
+        flat.setBackgroundColor(Color.parseColor("#be4d56"));
+        spinner.setEnabled(true);
+        spinner.setClickable(true);
+        spinner.setFocusable(true);
+        enableSeekbar(bass_boost);
+        for (int i = 0; i < num_sliders && i < MAX_SLIDERS; i++)
+        {
+            enableSeekbar(sliders[i]);
+        }
+
+    }
+
+    public  void disableSeekbar(SeekBar seek ){
+       seek.setEnabled(false);
+        seek.setFocusable(false);
+        seek.setClickable(false);
+    }
+
+    public void enableSeekbar(SeekBar seek){
+        seek.setEnabled(true);
+        seek.setFocusable(true);
+        seek.setClickable(true);
+    }
+
 /*=============================================================================
     onOptionsItemSelected 
 =============================================================================*/
- /*    @Override
+    /*
+     @Override
      public boolean onOptionsItemSelected(MenuItem item) 
        {
        switch (item.getItemId()) 
          {
-         case R.id.about:
-           showAbout();
+         case R.id.equalizerSwitch:
+
            return true;
          }
        return super.onOptionsItemSelected(item);
-       }*/
+       }
+ */
 }
 
 

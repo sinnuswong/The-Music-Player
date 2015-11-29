@@ -3,6 +3,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:background="#3D3D3D"
+    android:id="@+id/songsUnderOuter"
     android:fitsSystemWindows="true">
     <android.support.design.widget.AppBarLayout
         android:id="@+id/appbar"
@@ -24,6 +25,7 @@
 
                 <ImageView
                     android:id="@+id/header"
+                    android:transitionName="albumArt"
                     android:layout_width="match_parent"
                     android:layout_height="match_parent"
                     android:background="#77000000"
@@ -53,6 +55,14 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         app:layout_behavior="@string/appbar_scrolling_view_behavior" />
+    <!--
+    <xyz.danoz.recyclerviewfastscroller.vertical.VerticalRecyclerViewFastScroller
+        android:id="@+id/songs_under_fast_scroller"
+        android:layout_width="24dp"
+        android:layout_height="match_parent"
+        android:layout_alignParentRight="true"
+        />
+        -->
     <android.support.design.widget.FloatingActionButton
         xmlns:app="http://schemas.android.com/apk/res-auto"
         android:id="@+id/fabButton"

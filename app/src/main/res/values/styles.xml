@@ -33,6 +33,10 @@
         <item name="colorControlNormal">#C1C1C1</item>
     </style>
 
+    <style name="AppBaseTheme.NoActionBar.TranslucentStatus" parent="AppBaseTheme.NoActionBar">
+        <item name="android:windowTranslucentStatus">true</item>
+        <item name="android:windowTranslucentNavigation">true</item>
+    </style>
     <!-- Application theme. -->
     <style name="AppTheme" parent="AppBaseTheme">
         <!-- All customizations that are NOT specific to a particular API-level can go here. -->

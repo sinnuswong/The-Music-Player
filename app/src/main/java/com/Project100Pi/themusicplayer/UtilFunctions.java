@@ -33,6 +33,7 @@ import android.widget.Toast;
 public class UtilFunctions {
 	
 	static Long mGenreId;
+	static boolean isDeleted  = false;
 	
 	public static String convertSecondsToHMmSs(long milliseconds) {
 		int seconds = (int) (milliseconds / 1000) % 60 ;
@@ -54,44 +55,49 @@ public class UtilFunctions {
 	
 	// function to delete the songs when passed with the arrayList containing ID of the songs to be deleted
 	public static void deletePopUp(Context context,final Activity activity,final ArrayList<String> selIdList,String message,final String toastMessage){
+		isDeleted = false;
 		AlertDialog.Builder builder=new AlertDialog.Builder(context);
 		builder.setTitle("Confirm Delete");
 		builder.setMessage(message);
 		builder.setCancelable(true);
-		builder.setPositiveButton("Yes", 
-        new DialogInterface.OnClickListener() {
-            public void onClick(DialogInterface dialog, int id) {
-            	
-            	   ContentResolver resolver=activity.getApplicationContext().getContentResolver();
-            	   int size=selIdList.size();
-            	   for(int i=0;i<size;i++)
-	        		  {            	  
-            	         String selectedId=selIdList.get(i);
-            	         String songName=FirstFragment.idToName.get(Long.parseLong(selectedId));
-            	         int rowsDeleted=resolver.delete(MediaStore.Audio.Media.EXTERNAL_CONTENT_URI, MediaStore.Audio.Media._ID + " LIKE \"" + selectedId + "\"", null);
-            	         File file = new File(FirstFragment.idToPath.get(Long.parseLong(selectedId)));
-            	         boolean deleted = file.delete();
-	        		  }
-            	   Toast.makeText(activity, size+" "+ toastMessage,Toast.LENGTH_SHORT).show();
-                   dialog.cancel();
-            }
-        });
+		builder.setPositiveButton("Yes",
+				new DialogInterface.OnClickListener() {
+					public void onClick(DialogInterface dialog, int id) {
+
+						ContentResolver resolver = activity.getApplicationContext().getContentResolver();
+						int size = selIdList.size();
+						for (int i = 0; i < size; i++) {
+							String selectedId = selIdList.get(i);
+							//String songName = FirstFragment.idToName.get(Long.parseLong(selectedId));
+							File file = new File(MainActivity.idToTrackObj.get(Long.parseLong(selectedId)).getTrackPath());
+							boolean deleted = file.delete();
+							if(deleted)
+								resolver.delete(MediaStore.Audio.Media.EXTERNAL_CONTENT_URI, MediaStore.Audio.Media._ID + " LIKE \"" + selectedId + "\"", null);
+
+						}
+						Toast.makeText(activity, size + " " + toastMessage, Toast.LENGTH_SHORT).show();
+						isDeleted = true;
+						dialog.cancel();
+
+					}
+
+				});
         builder.setNegativeButton("No",
-                new DialogInterface.OnClickListener() {
-            public void onClick(DialogInterface dialog, int id) {
-                dialog.cancel();
-            }
-        });
+				new DialogInterface.OnClickListener() {
+					public void onClick(DialogInterface dialog, int id) {
+						isDeleted =false;
+						dialog.cancel();
+					}
+				});
 
         AlertDialog alert11 = builder.create();
         alert11.show();
-    	
+
 	}
 	
 	//To delete Multiple Songs,Albums,Artists 
 	public static void deleteMultiplePopUp(Context context,final Activity activity,final ArrayList<String> selIdList,String message,final String toastMessage,final String choice){
-		
-		
+		isDeleted = false;
 		AlertDialog.Builder builder=new AlertDialog.Builder(context);
 		builder.setTitle("Confirm Delete");
 		builder.setMessage(message);
@@ -107,19 +113,22 @@ public class UtilFunctions {
             	   Cursor cursor=CursorClass.makeCursorBasedOnChoice(activity, Long.parseLong(selectedId), choice);
             	   while(cursor.moveToNext()){
         	    	   Long songId=cursor.getLong(0);
-            	       String songName=FirstFragment.idToName.get(songId);
-            	       int rowsDeleted	=resolver.delete(MediaStore.Audio.Media.EXTERNAL_CONTENT_URI, MediaStore.Audio.Media._ID + " LIKE \"" + songId + "\"", null);
-            	       File file = new File(FirstFragment.idToPath.get(songId));
-            	       boolean deleted = file.delete();
+					   File file = new File(MainActivity.idToTrackObj.get(songId).getTrackPath());
+					   boolean deleted = file.delete();
+					   if(deleted)
+            	       	resolver.delete(MediaStore.Audio.Media.EXTERNAL_CONTENT_URI, MediaStore.Audio.Media._ID + " LIKE \"" + songId + "\"", null);
+
 	        		    }
 	        		  }
             	   Toast.makeText(activity, size+ " " +toastMessage,Toast.LENGTH_SHORT).show();
+				isDeleted = true;
                    dialog.cancel();
             }
         });
         builder.setNegativeButton("No",
                 new DialogInterface.OnClickListener() {
             public void onClick(DialogInterface dialog, int id) {
+				isDeleted = false;
                 dialog.cancel();
             }
         });
@@ -130,6 +139,7 @@ public class UtilFunctions {
 	
 	// To delete single album,artist,and genre
 	public static void deleteSinglePopUp(Context context,final Activity activity,final String selectedId,String message,final String toastMessage,final String choice){
+		isDeleted = false;
 		  AlertDialog.Builder builder=new AlertDialog.Builder(context);
 	       		builder.setTitle("Confirm Delete");
 	       		builder.setMessage(message);
@@ -141,21 +151,24 @@ public class UtilFunctions {
 	                   	 Cursor cursor=CursorClass.makeCursorBasedOnChoice(activity, Long.parseLong(selectedId), choice);	                   	 
 	                     while(cursor.moveToNext()){
 		        		   Long songId=cursor.getLong(0);
-	                   	  
-	                   	 
-	                   	   String songName=FirstFragment.idToName.get(songId);
-	                   	   int rowsDeleted	=resolver.delete(MediaStore.Audio.Media.EXTERNAL_CONTENT_URI, MediaStore.Audio.Media._ID + " LIKE \"" + songId + "\"", null);
-	                   	   File file = new File(FirstFragment.idToPath.get(songId));
-	                   	   boolean deleted = file.delete();
+
+
+							 File file = new File(MainActivity.idToTrackObj.get(songId).getTrackPath());
+							 boolean deleted = file.delete();
+							 if (deleted)
+	                   	   			resolver.delete(MediaStore.Audio.Media.EXTERNAL_CONTENT_URI, MediaStore.Audio.Media._ID + " LIKE \"" + songId + "\"", null);
+
 	    	        		  }
 	                   	   Toast.makeText(activity, toastMessage,Toast.LENGTH_SHORT).show();
+						   isDeleted = true;
 	                          dialog.cancel();
 	                   }
 	               });
 	               builder.setNegativeButton("No",
 	                       new DialogInterface.OnClickListener() {
 	                   public void onClick(DialogInterface dialog, int id) {
-	                       dialog.cancel();
+	                       isDeleted = false;
+						   dialog.cancel();
 	                   }
 	               });
 

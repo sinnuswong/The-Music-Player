@@ -2,6 +2,7 @@
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
     android:background="#3d3d3d"
+    android:id="@+id/fiftFragOuter"
     android:layout_width="match_parent"
     android:layout_height="match_parent">
 
@@ -10,18 +11,20 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent">
 
-        <TextView
+
+        <Button
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:textAppearance="?android:attr/textAppearanceMedium"
             android:text="Create New Playlist"
             android:id="@+id/create_new_playlist"
-            android:background="#3D3D3D"
+            android:background="#be4d56"
             android:gravity="center"
-            android:textColor="#C1C1C1"
+            android:textColor="#FFF"
             android:textSize="16sp"
-            android:paddingTop="16dp"
-            android:paddingBottom="16dp" />
+            android:layout_marginLeft="16dp"
+            android:layout_marginTop="16dp"
+            android:layout_marginRight="16dp" />
 
         <RelativeLayout
             android:layout_width="match_parent"
@@ -32,6 +35,12 @@
                 android:id="@+id/fifthFragRecycler"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"/>
+            <xyz.danoz.recyclerviewfastscroller.vertical.VerticalRecyclerViewFastScroller
+                android:id="@+id/fifth_frag_fast_scroller"
+                android:layout_width="24dp"
+                android:layout_height="match_parent"
+                android:layout_alignParentRight="true"
+                />
         </RelativeLayout>
 
     </LinearLayout>

@@ -1,18 +1,28 @@
 package com.Project100Pi.themusicplayer;
 
+import android.annotation.TargetApi;
 import android.app.Activity;
+import android.app.AlertDialog;
+import android.content.ContentResolver;
+import android.content.DialogInterface;
 import android.content.Intent;
+import android.database.Cursor;
 import android.graphics.Color;
+import android.os.Build;
+import android.provider.MediaStore;
 import android.support.v7.widget.CardView;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
+import android.widget.PopupMenu;
 import android.widget.TextView;
+import android.widget.Toast;
 
 
-
+import java.io.File;
 import java.util.List;
 
 
@@ -36,19 +46,22 @@ public class AlbumRecyclerAdapter extends SelectableAdapter<AlbumRecyclerAdapter
     @Override
     public void onBindViewHolder(AlbumViewHolder holder, final int position) {
         if(position%2 != 0) {
-           holder.cv.setBackgroundColor(Color.parseColor("#3D3D3D"));
+           holder.cv.setBackgroundColor(ColorUtils.primaryBgColor);
 
         }else{
-            holder.cv.setBackgroundColor(Color.parseColor("#484848"));
+            holder.cv.setBackgroundColor(ColorUtils.secondaryBgColor);
         }
 
         holder.albumName.setText(albums.get(position).getAlbumName());
+        holder.albumName.setTextColor(ColorUtils.primaryTextColor);
         holder.artistName.setText(albums.get(position).getArtistName());
-        holder.noOfSongs.setText(albums.get(position).getNoOfSongs()+" tracks");
+        holder.artistName.setTextColor(ColorUtils.secondaryTextColor);
+        holder.noOfSongs.setText(albums.get(position).getNoOfSongs() + " tracks");
+        holder.noOfSongs.setTextColor(ColorUtils.secondaryTextColor);
         holder.overflowButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                MainActivity.secondOverflowReaction(v,mactivity,albums.get(position));
+               secondOverflowReaction(v,mactivity,albums.get(position));
             }
         });
 
@@ -117,5 +130,107 @@ public class AlbumRecyclerAdapter extends SelectableAdapter<AlbumRecyclerAdapter
         this.albums = albumList;
         this.mactivity = act;
     }
+    void secondOverflowReaction(View v, final Activity act,AlbumInfo selAlbum){
 
+        PopupMenu popupMenu = new PopupMenu(act,v);
+        popupMenu.inflate(R.menu.long_click_actions);
+        final int currPosition = selAlbum.getsNo();
+
+
+        // final String songName=titleList.get(currPosition);
+        final Long selectedAlbumId=selAlbum.getAlbumId();
+        final String selectedAlbumName = selAlbum.getAlbumName();
+        //  Toast.makeText(getActivity(), songName +"and position is" + currPosition, Toast.LENGTH_LONG).show();
+
+        popupMenu.setOnMenuItemClickListener(new PopupMenu.OnMenuItemClickListener() {
+
+            @TargetApi(Build.VERSION_CODES.JELLY_BEAN)
+            @Override
+            public boolean onMenuItemClick(MenuItem item) {
+
+
+                switch(item.getItemId()){
+                    case R.id.cnt_menu_play:
+
+                        UtilFunctions.playSelectedSongsfromChoice(act, selectedAlbumId, "album",false);
+
+                        break;
+
+                    case R.id.cnt_menu_play_next:
+
+                        UtilFunctions.playSongsNextfromChoice(act, selectedAlbumId, "album");
+
+                        break;
+
+                    case R.id.cnt_menu_add_queue:
+                        UtilFunctions.addToQueuefromChoice(act,selectedAlbumId, "album");
+                        break;
+                    case R.id.addToPlaylist:
+
+                        act.startActivity(UtilFunctions.addSongstoPlaylist(act,selectedAlbumId,"album"));
+
+                        break;
+                    case R.id.cnt_mnu_edit:
+
+                        //editAlbumInfo(selectedAlbumName, selectedAlbumId); // NOT WORKING
+
+                        break;
+                    case R.id.cnt_mnu_delete:
+
+                        AlertDialog.Builder builder=new AlertDialog.Builder(act);
+                        builder.setTitle("Confirm Delete");
+                        builder.setMessage("Are you sure you want to delete the selected Album?");
+                        builder.setCancelable(true);
+                        builder.setPositiveButton("Yes",
+                                new DialogInterface.OnClickListener() {
+                                    public void onClick(DialogInterface dialog, int id) {
+                                        ContentResolver resolver=act.getApplicationContext().getContentResolver();
+                                        Cursor cursor=CursorClass.makeCursorBasedOnChoice(act, selectedAlbumId, "album");
+                                        while(cursor.moveToNext()){
+                                            Long songId=cursor.getLong(0);
+
+
+                                            File file = new File(MainActivity.idToTrackObj.get(songId).getTrackPath());
+                                            boolean deleted = file.delete();
+                                            if (deleted)
+                                                resolver.delete(MediaStore.Audio.Media.EXTERNAL_CONTENT_URI, MediaStore.Audio.Media._ID + " LIKE \"" + songId + "\"", null);
+
+                                        }
+                                        Toast.makeText(act, "Album Deleted", Toast.LENGTH_SHORT).show();
+                                        removeAt(currPosition);
+                                        dialog.cancel();
+                                    }
+                                });
+                        builder.setNegativeButton("No",
+                                new DialogInterface.OnClickListener() {
+                                    public void onClick(DialogInterface dialog, int id) {
+                                        dialog.cancel();
+                                    }
+                                });
+
+                        AlertDialog alert11 = builder.create();
+                        alert11.show();
+
+
+                        break;
+                    case R.id.cnt_mnu_share:
+
+
+                        act.startActivity(UtilFunctions.shareSingle(act, selectedAlbumId, "album"));
+
+                        break;
+
+                }
+
+                return true;
+
+            }
+        });
+        popupMenu.show();
+    }
+    public void removeAt(int position) {
+        albums.remove(position);
+        notifyItemRemoved(position);
+        notifyItemRangeChanged(position, albums.size());
+    }
 }

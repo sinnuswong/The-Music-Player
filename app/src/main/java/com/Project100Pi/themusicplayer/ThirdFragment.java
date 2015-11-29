@@ -154,7 +154,7 @@ public class ThirdFragment extends Fragment  {
 				}
     		    	TextView artistTitle = (TextView) v.findViewById(R.id.artist_album_total);
     		    	artistTitle.setText(thisSong.noOfAlbums+" Albums");
-    		    	TextView durSong = (TextView) v.findViewById(R.id.artist_total);
+    		    	TextView durSong = (TextView) v.findViewById(R.id.album_total);
     		    	durSong.setText(thisSong.noOfSongs+" Tracks");
     			    if( convertView != null )
     			        v = convertView;

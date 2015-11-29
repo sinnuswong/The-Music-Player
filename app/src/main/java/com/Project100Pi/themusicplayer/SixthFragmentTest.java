@@ -2,6 +2,9 @@ package com.Project100Pi.themusicplayer;
 
 import android.annotation.TargetApi;
 import android.app.Activity;
+import android.app.AlertDialog;
+import android.content.ContentResolver;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.database.Cursor;
 import android.graphics.Color;
@@ -26,8 +29,11 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.PopupMenu;
+import android.widget.RelativeLayout;
 import android.widget.TextView;
+import android.widget.Toast;
 
+import java.io.File;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
@@ -37,6 +43,7 @@ import java.util.List;
 
 import it.gmariotti.cardslib.library.internal.Card;
 import it.gmariotti.cardslib.library.view.CardListView;
+import xyz.danoz.recyclerviewfastscroller.vertical.VerticalRecyclerViewFastScroller;
 
 /**
  * Created by BalachandranAR on 8/30/2015.
@@ -55,6 +62,7 @@ public class SixthFragmentTest extends Fragment implements  ClickInterface{
      int pathSize = 0;
      int currLevel = 1;
      String currentPath = "/";
+    RelativeLayout outerWindow;
 
     @Nullable
     @Override
@@ -62,6 +70,8 @@ public class SixthFragmentTest extends Fragment implements  ClickInterface{
 
         MainActivity.pathToIdInfo =   new HashMap<String,String>();
         v =inflater.inflate(R.layout.sixh_fragment_test, container, false);
+        outerWindow = (RelativeLayout)v.findViewById(R.id.sixthFragOuter);
+        outerWindow.setBackgroundColor(ColorUtils.primaryBgColor);
         sixthFragRecycler = (RecyclerView)v.findViewById(R.id.sixthFragRecycler);
         sixthFragRecycler.setHasFixedSize(true);
         LinearLayoutManager llm = new LinearLayoutManager(getActivity().getApplicationContext());
@@ -129,8 +139,11 @@ public class SixthFragmentTest extends Fragment implements  ClickInterface{
         gra = new FolderRecyclerAdapter(this,folders,getActivity());
         sixthFragRecycler.setAdapter(gra);
         sixthFragRecycler.setItemAnimator(new DefaultItemAnimator());
-        FastScroller fastScroller=(FastScroller)v.findViewById(R.id.sixthfastscroller);
+        final VerticalRecyclerViewFastScroller fastScroller = (VerticalRecyclerViewFastScroller) v.findViewById(R.id.sixth_frag_fast_scroller);
+        // Connect the recycler to the scroller (to let the scroller scroll the list)
         fastScroller.setRecyclerView(sixthFragRecycler);
+        sixthFragRecycler.setOnScrollListener(fastScroller.getOnScrollListener());
+        fastScroller.setHandleColor(ColorUtils.accentColor);
 
         return v;
     }
@@ -454,7 +467,7 @@ public class SixthFragmentTest extends Fragment implements  ClickInterface{
             MainActivity.mToolbar.getLayoutParams().height = MainActivity.mActionBarSize;
         }
     }
-    public class FolderRecyclerAdapter extends SelectableAdapter<FolderRecyclerAdapter.FolderViewHolder>implements BubbleTextGetter{
+    public class FolderRecyclerAdapter extends SelectableAdapter<FolderRecyclerAdapter.FolderViewHolder>{
          List<FolderInfo> folders;
         Activity mactivity;
         private ClickInterface clickListener;
@@ -529,17 +542,18 @@ public class SixthFragmentTest extends Fragment implements  ClickInterface{
 
         @Override
         public void onBindViewHolder(FolderRecyclerAdapter.FolderViewHolder holder, final int position) {
-            if(position%2 != 0) {
-                holder.cv.setBackgroundColor(Color.parseColor("#3D3D3D"));
+            if(position%2 == 0) {
+                holder.cv.setBackgroundColor(ColorUtils.secondaryBgColor);
 
             }else{
-                holder.cv.setBackgroundColor(Color.parseColor("#484848"));
+                holder.cv.setBackgroundColor(ColorUtils.primaryBgColor);
             }
             holder.folderName.setText(folders.get(position).getFolderName());
+            holder.folderName.setTextColor(ColorUtils.primaryTextColor);
             holder.overflowButton.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
-                    overflowReaction(v,folders.get(position));
+                    overflowReaction(v,folders.get(position),position);
                     //MainActivity.fourthOverflowReaction(v,mactivity,folders.get(position));
                 }
             });
@@ -552,169 +566,196 @@ public class SixthFragmentTest extends Fragment implements  ClickInterface{
             return folders.size();
         }
 
-        @Override
-        public String getTextToShowInBubble(int pos) {
-            return Character.toString(folders.get(pos).getFolderName().charAt(0));
+        public void removeAt(int position) {
+            folders.remove(position);
+            notifyItemRemoved(position);
+            notifyItemRangeChanged(position, folders.size());
         }
-    }
+        private void overflowReaction(View v, final FolderInfo selFolder, final int currPosition){
+            PopupMenu popupMenu = new PopupMenu(getActivity(),v);
+            popupMenu.inflate(R.menu.long_click_actions);
+            View parentRow=(View) v.getParent();
+
+            final String currFolderName=selFolder.getFolderName();
+
+            final String pathTosend;
+            if(!UtilFunctions.checkExtension(currFolderName)){
+                pathTosend= currentPath+currFolderName+"/";
+            }else{
+                pathTosend=currentPath+currFolderName;
+            }
+            // final String songName=titleList.get(currPosition);
+            //  Toast.makeText(getActivity(), songName +"and position is" + currPosition, Toast.LENGTH_LONG).show();
+
+            popupMenu.setOnMenuItemClickListener(new PopupMenu.OnMenuItemClickListener() {
+
+                @TargetApi(Build.VERSION_CODES.JELLY_BEAN)
+                @Override
+                public boolean onMenuItemClick(MenuItem item) {
+                    HashSet<String> sendListHash = getAllSongs(pathTosend);
+                    final ArrayList<String> audioIdList = new ArrayList<>();
+
+                    switch (item.getItemId()) {
+                        case R.id.cnt_menu_play:
+
+                            if (UtilFunctions.checkExtension(currFolderName)) {
+                                UtilFunctions.playSelectedSongs(getActivity(), songList, selFolder.getsNo(), false);
+                            } else {
+                                int len = sendListHash.size();
+                                for (String path : sendListHash) {
+
+                                    audioIdList.add(MainActivity.pathToIdInfo.get(path));
+                                }
+                                UtilFunctions.playSelectedSongs(getActivity(), audioIdList, 0, false);
+                            }
+                            break;
+                        case R.id.cnt_menu_play_next:
+                            ArrayList<String> sendList = new ArrayList<String>();
+
+                            if (UtilFunctions.checkExtension(currFolderName)) {
+                                sendList.add(songList.get(selFolder.getsNo()));
+                                UtilFunctions.playSongsNext(getActivity(), sendList);
+                            } else {
+                                int len = sendListHash.size();
+                                for (String path : sendListHash) {
+
+                                    audioIdList.add(MainActivity.pathToIdInfo.get(path));
+                                }
+                                UtilFunctions.playSongsNext(getActivity(), audioIdList);
+
+                            }
+                            break;
+                        case R.id.cnt_menu_add_queue:
+                            sendList = new ArrayList<String>();
+
+                            if (UtilFunctions.checkExtension(currFolderName)) {
+                                sendList.add(songList.get(selFolder.getsNo()));
+                                UtilFunctions.addToQueueSongs(getActivity(), sendList);
+                            } else {
+                                int len = sendListHash.size();
+                                for (String path : sendListHash) {
+
+                                    audioIdList.add(MainActivity.pathToIdInfo.get(path));
+                                }
+                                UtilFunctions.addToQueueSongs(getActivity(), audioIdList);
+
+                            }
+                            break;
+                        case R.id.addToPlaylist:
 
 
-    private void overflowReaction(View v, final FolderInfo selFolder){
-        PopupMenu popupMenu = new PopupMenu(getActivity(),v);
-        popupMenu.inflate(R.menu.long_click_actions);
-        View parentRow=(View) v.getParent();
-
-        final String currFolderName=selFolder.getFolderName();
-
-        final String pathTosend;
-        if(!UtilFunctions.checkExtension(currFolderName)){
-            pathTosend= currentPath+currFolderName+"/";
-        }else{
-            pathTosend=currentPath+currFolderName;
-        }
-        // final String songName=titleList.get(currPosition);
-        //  Toast.makeText(getActivity(), songName +"and position is" + currPosition, Toast.LENGTH_LONG).show();
-
-        popupMenu.setOnMenuItemClickListener(new PopupMenu.OnMenuItemClickListener() {
-
-            @TargetApi(Build.VERSION_CODES.JELLY_BEAN)
-            @Override
-            public boolean onMenuItemClick(MenuItem item) {
-                HashSet<String> sendListHash = getAllSongs(pathTosend);
-                ArrayList<String> audioIdList=new ArrayList<>();
-
-                switch(item.getItemId()){
-                    case R.id.cnt_menu_play:
-
-                        if(UtilFunctions.checkExtension(currFolderName)){
-                            UtilFunctions.playSelectedSongs(getActivity(), songList,selFolder.getsNo(), false);
-                        }else{
-                            int len=sendListHash.size();
-                            for(String path: sendListHash){
+                            // sendList.addAll(sendListHash);
+                            Intent intent = new Intent(getActivity(), PlayListSelectionTest.class);
+                            int len = sendListHash.size();
+                            for (String path : sendListHash) {
 
                                 audioIdList.add(MainActivity.pathToIdInfo.get(path));
                             }
-                            UtilFunctions.playSelectedSongs(getActivity(), audioIdList,0, false);
-                        }
-                        break;
-                    case R.id.cnt_menu_play_next:
-                        ArrayList<String> sendList = new ArrayList<String>();
+                            intent.putExtra("selectedIdList", audioIdList);
+                            startActivity(intent);
 
-                        if(UtilFunctions.checkExtension(currFolderName)){
-                            sendList.add(songList.get(selFolder.getsNo()));
-                            UtilFunctions.playSongsNext(getActivity(),sendList);
-                        }else{
-                            int len=sendListHash.size();
-                            for(String path: sendListHash){
 
+                            break;
+                        case R.id.cnt_mnu_edit:
+
+                            // changeSongInfo(selectedId);
+
+                            //Toast.makeText(this, "Edit :" , Toast.LENGTH_SHORT).show();
+
+                            break;
+                        case R.id.cnt_mnu_delete:
+
+                            for (String path : sendListHash) {
                                 audioIdList.add(MainActivity.pathToIdInfo.get(path));
                             }
-                            UtilFunctions.playSongsNext(getActivity(), audioIdList);
+                            UtilFunctions.deletePopUp(getActivity(), getActivity(), audioIdList, "Are you sure you want to delete the selected songs?", "songs deleted");
+                            AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
+                            builder.setTitle("Confirm Delete");
+                            builder.setMessage("Are you sure you want to delete the selected songs?");
+                            builder.setCancelable(true);
+                            builder.setPositiveButton("Yes",
+                                    new DialogInterface.OnClickListener() {
+                                        public void onClick(DialogInterface dialog, int id) {
 
-                        }
-                        break;
-                    case R.id.cnt_menu_add_queue:
-                        sendList = new ArrayList<String>();
+                                            ContentResolver resolver = getActivity().getApplicationContext().getContentResolver();
+                                            int size = audioIdList.size();
+                                            for (int i = 0; i < size; i++) {
+                                                String selectedId = audioIdList.get(i);
+                                                //String songName = FirstFragment.idToName.get(Long.parseLong(selectedId));
+                                                File file = new File(MainActivity.idToTrackObj.get(Long.parseLong(selectedId)).getTrackPath());
+                                                boolean deleted = file.delete();
+                                                if (deleted)
+                                                    resolver.delete(MediaStore.Audio.Media.EXTERNAL_CONTENT_URI, MediaStore.Audio.Media._ID + " LIKE \"" + selectedId + "\"", null);
 
-                        if(UtilFunctions.checkExtension(currFolderName)){
-                            sendList.add(songList.get(selFolder.getsNo()));
-                            UtilFunctions.addToQueueSongs(getActivity(), sendList);
-                        }else{
-                            int len=sendListHash.size();
-                            for(String path: sendListHash){
+                                            }
+                                            Toast.makeText(getActivity(), size + " Songs Deleted", Toast.LENGTH_SHORT).show();
+                                            removeAt(currPosition);
+                                            dialog.cancel();
 
-                                audioIdList.add(MainActivity.pathToIdInfo.get(path));
+                                        }
+
+                                    });
+                            builder.setNegativeButton("No",
+                                    new DialogInterface.OnClickListener() {
+                                        public void onClick(DialogInterface dialog, int id) {
+                                            dialog.cancel();
+                                        }
+                                    });
+
+                            AlertDialog alert11 = builder.create();
+                            alert11.show();
+                            break;
+                        case R.id.cnt_mnu_share:
+
+                            Intent sharingIntent = new Intent(Intent.ACTION_SEND_MULTIPLE);
+                            sharingIntent.setType("audio/*");
+                            ArrayList<Uri> uris = new ArrayList<Uri>();
+                            //   String mimetypes[]={"audio/*"};
+                            sendListHash = getAllSongs(pathTosend);
+                            for (String path : sendListHash) {
+                                path = "file://" + path;
+
+                                // Toast.makeText(getContext(),"Hi there", Toast.LENGTH_LONG).show();
+                                Uri uri = Uri.parse(path);
+                                uris.add(uri);
                             }
-                            UtilFunctions.addToQueueSongs(getActivity(), audioIdList);
-
-                        }
-                        break;
-                    case R.id.addToPlaylist:
 
 
-                        // sendList.addAll(sendListHash);
-                        Intent intent=new Intent(getActivity(),PlayListSelectionTest.class);
-                        int len=sendListHash.size();
-                        for(String path: sendListHash){
+                            // Uri uri=Uri.parse(pathList.get(currPosition));
 
-                            audioIdList.add(MainActivity.pathToIdInfo.get(path));
-                        }
-                        intent.putExtra("selectedIdList", audioIdList);
-                        startActivity(intent);
+                            sharingIntent.putParcelableArrayListExtra(Intent.EXTRA_STREAM, uris);
+                            //	 sharingIntent.putExtra(Intent.EXTRA_MIME_TYPES, mimetypes);
+                            // sharingIntent.putExtra(Intent.EXTRA_TEXT, songName);
+                            Intent chooser = new Intent(Intent.ACTION_CHOOSER);
+                            chooser.putExtra(Intent.EXTRA_INTENT, sharingIntent);
+                            chooser.putExtra(Intent.EXTRA_TITLE, "title");
+                            Intent addIntent = new Intent();
+                            // addIntent.setComponent(new ComponentName("com.android.bluetooth","com.android.bluetooth.opp.BluetoothOppLauncherActivity"));
+                            addIntent.putParcelableArrayListExtra(Intent.EXTRA_STREAM, uris);
+                            addIntent.setPackage("com.android.bluetooth");
+                            addIntent.setType("*/*");
+                            addIntent.setAction(Intent.ACTION_SEND_MULTIPLE);
 
-
-
-
-
-
-                        break;
-                    case R.id.cnt_mnu_edit:
-
-                        // changeSongInfo(selectedId);
-
-                        //Toast.makeText(this, "Edit :" , Toast.LENGTH_SHORT).show();
-
-                        break;
-                    case R.id.cnt_mnu_delete:
-
-                        for(String path: sendListHash){
-                            audioIdList.add(MainActivity.pathToIdInfo.get(path));
-                        }
-                        UtilFunctions.deletePopUp(getActivity(), getActivity(), audioIdList,"Are you sure you want to delete the selected songs?", "songs deleted");
-                        break;
-                    case R.id.cnt_mnu_share:
-
-                        Intent sharingIntent=new Intent(Intent.ACTION_SEND_MULTIPLE);
-                        sharingIntent.setType("audio/*");
-                        ArrayList<Uri> uris=new ArrayList<Uri>();
-                        //   String mimetypes[]={"audio/*"};
-                        sendListHash = getAllSongs(pathTosend);
-                        for(String path: sendListHash){
-                            path="file://"+path;
-
-                            // Toast.makeText(getContext(),"Hi there", Toast.LENGTH_LONG).show();
-                            Uri uri=Uri.parse(path);
-                            uris.add(uri);
-                        }
+                            Intent intentarray[] = {addIntent};
+                            chooser.putExtra(Intent.EXTRA_INITIAL_INTENTS, intentarray);
+                            startActivity(chooser);
 
 
+                            break;
 
+                    }
 
-
-
-                        // Uri uri=Uri.parse(pathList.get(currPosition));
-
-                        sharingIntent.putParcelableArrayListExtra(Intent.EXTRA_STREAM, uris);
-                        //	 sharingIntent.putExtra(Intent.EXTRA_MIME_TYPES, mimetypes);
-                        // sharingIntent.putExtra(Intent.EXTRA_TEXT, songName);
-                        Intent chooser=new Intent(Intent.ACTION_CHOOSER);
-                        chooser.putExtra(Intent.EXTRA_INTENT, sharingIntent);
-                        chooser.putExtra(Intent.EXTRA_TITLE, "title");
-                        Intent addIntent=new Intent();
-                        // addIntent.setComponent(new ComponentName("com.android.bluetooth","com.android.bluetooth.opp.BluetoothOppLauncherActivity"));
-                        addIntent.putParcelableArrayListExtra(Intent.EXTRA_STREAM, uris);
-                        addIntent.setPackage("com.android.bluetooth");
-                        addIntent.setType("*/*");
-                        addIntent.setAction(Intent.ACTION_SEND_MULTIPLE);
-
-                        Intent intentarray[]={addIntent};
-                        chooser.putExtra(Intent.EXTRA_INITIAL_INTENTS, intentarray);
-                        startActivity(chooser);
-
-
-
-
-                        break;
+                    return true;
 
                 }
+            });
+            popupMenu.show();
+            //Toast.makeText(MainActivity.this, "It works, pos=" + v.getTag(), Toast.LENGTH_LONG).show();
+        }
 
-                return true;
 
-            }
-        });
-        popupMenu.show();
-        //Toast.makeText(MainActivity.this, "It works, pos=" + v.getTag(), Toast.LENGTH_LONG).show();
     }
+
 
 
 }

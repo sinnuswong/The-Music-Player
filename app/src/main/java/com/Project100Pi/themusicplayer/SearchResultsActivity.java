@@ -37,9 +37,11 @@ import android.view.ViewGroup;
 import android.view.View.OnClickListener;
 import android.widget.AdapterView;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
 import android.widget.ListAdapter;
 import android.widget.PopupMenu;
 
+import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 import android.widget.SearchView.OnQueryTextListener;
@@ -59,6 +61,7 @@ public class SearchResultsActivity extends AppCompatActivity {
 	 static ArrayList<String> pathList=null;
 	   static HashMap<Long, songInfo> idToSongInfo =  null;
 	Toolbar mToolbar;
+	RelativeLayout outerWindow;
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -66,6 +69,8 @@ public class SearchResultsActivity extends AppCompatActivity {
 		mToolbar = (Toolbar) findViewById(R.id.toolbar);
 		//setSupportActionBar(mToolbar);
 		getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+		outerWindow = (RelativeLayout)findViewById(R.id.searchResultOuter);
+		outerWindow.setBackgroundColor(ColorUtils.primaryBgColor);
    idToalbumInfo =  new HashMap<Long,AlbumInfo>();
    idToartistInfo =  new HashMap<Long,ArtistInfo>();
    pathList = new ArrayList<String>();
@@ -119,14 +124,16 @@ public class SearchResultsActivity extends AppCompatActivity {
     	int size = fullSearchRes.size();
         for(int j=0;j<size;j++){
      	   
-        	Card card = new Card(this);
-            
-            //Create a CardHeader
-            CardHeader header = new CardHeader(this);
-            card.setId(""+j);
-            card.addCardHeader(header);
-            header.setTitle(fullSearchRes.get(j));
-            
+        	Card card = new Card(this){
+				@Override
+				public void setupInnerViewElements(ViewGroup parent, View view) {
+					parent.setBackgroundColor(ColorUtils.primaryBgColor);
+					view.setBackgroundColor(ColorUtils.primaryBgColor);
+					super.setupInnerViewElements(parent, view);
+				}
+			};
+
+            card.setId("" + j);
             if(j >= 0  && j < albumRes.size()){
             	card.setInnerLayout(R.layout.album_layout);
             	 
@@ -202,12 +209,16 @@ public class SearchResultsActivity extends AppCompatActivity {
 				    if(albumRes.size()>0 && position >= 0  && position < albumRes.size()){
 				    final Long albumId = Long.parseLong(albumIdRes.get(position));
     			    final AlbumInfo thisSong = idToalbumInfo.get((albumId));
-    			    
+
+					TextView albumTitle = (TextView)v.findViewById(R.id.album_title);
+						albumTitle.setText(thisSong.albumName);
+						albumTitle.setTextColor(ColorUtils.primaryTextColor);
     		    	TextView artistTitle = (TextView) v.findViewById(R.id.album_artist_title);
     		    	artistTitle.setText(thisSong.artistName);
+						artistTitle.setTextColor(ColorUtils.secondaryTextColor);
     		    	TextView durSong = (TextView) v.findViewById(R.id.album_total);
     		    	durSong.setText(thisSong.noOfSongs+" Tracks");
-    			    
+    			    durSong.setTextColor(ColorUtils.secondaryTextColor);
     			    if( convertView != null )
     			        v = convertView;
     			    else{
@@ -237,7 +248,7 @@ public class SearchResultsActivity extends AppCompatActivity {
     			           
     			           // final String songName=titleList.get(currPosition);
     			             final Long selectedAlbumId=Long.parseLong(albumIdRes.get(currPosition));
-    			             final String selectedAlbumName = cards.get(currPosition).getCardHeader().getTitle();
+    			             //final String selectedAlbumName = cards.get(currPosition).getCardHeader().getTitle();
     			          //  Toast.makeText(SearchResultActivity.this, songName +"and position is" + currPosition, Toast.LENGTH_LONG).show();
     			            
     	            	    popupMenu.setOnMenuItemClickListener(new PopupMenu.OnMenuItemClickListener() {
@@ -334,9 +345,14 @@ public class SearchResultsActivity extends AppCompatActivity {
 					position = position-(albumRes.size());
 					Long id = Long.parseLong(artistIdRes.get(position));
     			    ArtistInfo thisSong = idToartistInfo.get((id));
+						TextView artist = (TextView) v.findViewById(R.id.artist_title);
+						artist.setText(thisSong.artistName);
+						artist.setTextColor(ColorUtils.primaryTextColor);
     		    	TextView artistTitle = (TextView) v.findViewById(R.id.artist_album_total);
+						artistTitle.setTextColor(ColorUtils.secondaryTextColor);
     		    	artistTitle.setText(thisSong.noOfAlbums+" Albums");
-    		    	TextView durSong = (TextView) v.findViewById(R.id.artist_total);
+    		    	TextView durSong = (TextView) v.findViewById(R.id.album_total);
+						durSong.setTextColor(ColorUtils.secondaryTextColor);
     		    	durSong.setText(thisSong.noOfSongs+" Tracks");
     			    if( convertView != null )
     			        v = convertView;
@@ -431,10 +447,15 @@ public class SearchResultsActivity extends AppCompatActivity {
 				    songInfo thisSong = idToSongInfo.get((id));
 			    	//TextView albumTitle = (TextView) v.findViewById(R.id.album_title);
 			    	//albumTitle.setText(thisSong.albumName);
+					TextView trackTitle = (TextView)v.findViewById(R.id.track_title);
+						trackTitle.setText(thisSong.songName);
+						trackTitle.setTextColor(ColorUtils.primaryTextColor);
 			    	TextView artistTitle = (TextView) v.findViewById(R.id.artist_title);
 			    	artistTitle.setText(thisSong.artistName);
+						artistTitle.setTextColor(ColorUtils.secondaryTextColor);
 			    	TextView durSong = (TextView) v.findViewById(R.id.artist_noOfSongs);
 			    	durSong.setText(thisSong.songDuration);
+						durSong.setTextColor(ColorUtils.secondaryTextColor);
 
 				    if( convertView != null )
 				        v = convertView;

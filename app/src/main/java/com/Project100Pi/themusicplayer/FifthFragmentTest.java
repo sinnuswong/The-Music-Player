@@ -23,12 +23,16 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Button;
 import android.widget.EditText;
+import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
+
+import xyz.danoz.recyclerviewfastscroller.vertical.VerticalRecyclerViewFastScroller;
 
 /**
  * Created by BalachandranAR on 8/30/2015.
@@ -40,6 +44,7 @@ public class FifthFragmentTest extends Fragment implements  ClickInterface{
     ArrayList<PlaylistInfo> playlists ;
     PlaylistRecyclerAdapter pra;
     RecyclerView fifthFragRecycler;
+    RelativeLayout outerWindow;
     final String[] PROJECTION_PLAYLIST = new String[] {
             MediaStore.Audio.Playlists._ID,
             MediaStore.Audio.Playlists.NAME,
@@ -50,12 +55,14 @@ public class FifthFragmentTest extends Fragment implements  ClickInterface{
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
 
         View v =inflater.inflate(R.layout.fifth_frag_test, container, false);
+        outerWindow = (RelativeLayout)v.findViewById(R.id.fiftFragOuter);
+        outerWindow.setBackgroundColor(ColorUtils.primaryBgColor);
          fifthFragRecycler = (RecyclerView)v.findViewById(R.id.fifthFragRecycler);
         fifthFragRecycler.setHasFixedSize(true);
         LinearLayoutManager llm = new LinearLayoutManager(getActivity().getApplicationContext());
         fifthFragRecycler.setLayoutManager(llm);
 
-        TextView createNewPlaylist = (TextView)v.findViewById(R.id.create_new_playlist);
+        Button createNewPlaylist = (Button)v.findViewById(R.id.create_new_playlist);
         createNewPlaylist.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -63,6 +70,11 @@ public class FifthFragmentTest extends Fragment implements  ClickInterface{
             }
         });
         populateRecyclerList();
+        final VerticalRecyclerViewFastScroller fastScroller = (VerticalRecyclerViewFastScroller) v.findViewById(R.id.fifth_frag_fast_scroller);
+        // Connect the recycler to the scroller (to let the scroller scroll the list)
+        fastScroller.setRecyclerView(fifthFragRecycler);
+        fifthFragRecycler.setOnScrollListener(fastScroller.getOnScrollListener());
+        fastScroller.setHandleColor(ColorUtils.accentColor);
 
        // FastScroller fastScroller=(FastScroller)v.findViewById(R.id.fifthfastscroller);
         //fastScroller.setRecyclerView(fifthFragRecycler);

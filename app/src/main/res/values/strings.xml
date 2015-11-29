@@ -16,7 +16,8 @@
     <string name="title_activity_songs_under_test">SongsUnderTest</string>
     <string name="title_activity_search_result_test">SearchResultTestActivity</string>
     <string name="title_activity_lock_screen_notification">LockScreenNotification</string>
-
+    <string name="drawer_open">Open navigation drawer</string>
+    <string name="drawer_close">Close navigation drawer</string>
 
 
     <string name="title_activity_edit">EditActivity</string>

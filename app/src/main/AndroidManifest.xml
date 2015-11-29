@@ -41,7 +41,7 @@
         <activity
             android:name=".PlayActivity"
             android:label="@string/title_activity_play"
-            android:theme="@style/AppBaseTheme.NoActionBar">
+            android:theme="@style/AppBaseTheme.NoActionBar.TranslucentStatus">
         </activity>
         <activity
             android:name=".NowPlayingListActivity"
@@ -52,7 +52,8 @@
         </activity>
         <activity android:name=".PlaylistSelectionMultiple" >
         </activity>
-        <activity android:name=".EqualizerSettings" >
+        <activity android:name=".EqualizerSettings"
+            android:theme="@style/AppBaseTheme">
         </activity>
         <activity android:name=".SearchResultsActivity">
 

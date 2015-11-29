@@ -19,10 +19,14 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.RelativeLayout;
 
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
+
+import xyz.danoz.recyclerviewfastscroller.sectionindicator.title.SectionTitleIndicator;
+import xyz.danoz.recyclerviewfastscroller.vertical.VerticalRecyclerViewFastScroller;
 
 /**
  * Created by BalachandranAR on 8/30/2015.
@@ -35,6 +39,7 @@ public class SecondFragmentTest extends Fragment implements ClickInterface{
     ArrayList<AlbumInfo> albums ;
     AlbumRecyclerAdapter ara;
     AlbumGridRecyclerAdapter agra;
+    RelativeLayout outerWindow;
 
     RecyclerView secondFragRecycler=null;
     LinearLayoutManager llm=null;
@@ -46,7 +51,7 @@ public class SecondFragmentTest extends Fragment implements ClickInterface{
     int noOfSongs;
     String selection = null;
     String[] selectionArgs = null;
-    String sortOrder = MediaStore.Audio.Albums.DEFAULT_SORT_ORDER;
+    String sortOrder = MediaStore.Audio.AlbumColumns.ALBUM + " COLLATE NOCASE ASC";
     String[] projection = new String[] {BaseColumns._ID, MediaStore.Audio.AlbumColumns.ALBUM, MediaStore.Audio.AlbumColumns.ARTIST, MediaStore.Audio.AlbumColumns.NUMBER_OF_SONGS, MediaStore.Audio.AlbumColumns.ALBUM_ART };
 
     FastScroller fastScroller=null;
@@ -56,6 +61,8 @@ public class SecondFragmentTest extends Fragment implements ClickInterface{
 
         View v =inflater.inflate(R.layout.second_frag_test, container, false);
         setRecyclerView(v);
+        outerWindow = (RelativeLayout)v.findViewById(R.id.secondFragOuter);
+        outerWindow.setBackgroundColor(ColorUtils.primaryBgColor);
         albums = new ArrayList<AlbumInfo>();
         Cursor cursor = getAlbumCursor();
 
@@ -241,8 +248,14 @@ public class SecondFragmentTest extends Fragment implements ClickInterface{
 
     public void setFastScroller(View v)
     {
-        fastScroller=(FastScroller)v.findViewById(R.id.secondfastscroller);
+        final VerticalRecyclerViewFastScroller fastScroller = (VerticalRecyclerViewFastScroller) v.findViewById(R.id.second_frag_fast_scroller);
+        // Connect the recycler to the scroller (to let the scroller scroll the list)
         fastScroller.setRecyclerView(secondFragRecycler);
+        secondFragRecycler.setOnScrollListener(fastScroller.getOnScrollListener());
+        fastScroller.setHandleColor(ColorUtils.accentColor);
+        SectionTitleIndicator sectionTitleIndicator =
+                (SectionTitleIndicator)v.findViewById(R.id.second_frag_fast_scroller_section_title_indicator);
+        fastScroller.setSectionIndicator(sectionTitleIndicator);
     }
 
     public Cursor getAlbumCursor()

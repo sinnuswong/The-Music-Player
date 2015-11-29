@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/sixthFragOuter"
     android:layout_width="match_parent"
     android:layout_height="match_parent">
     <android.support.v7.widget.RecyclerView
@@ -8,13 +9,10 @@
         android:id="@+id/sixthFragRecycler"
         android:layout_width="match_parent"
         android:layout_height="match_parent"/>
-    <com.Project100Pi.themusicplayer.FastScroller
-        android:id="@+id/sixthfastscroller"
-        android:layout_width="wrap_content"
+    <xyz.danoz.recyclerviewfastscroller.vertical.VerticalRecyclerViewFastScroller
+        android:id="@+id/sixth_frag_fast_scroller"
+        android:layout_width="24dp"
         android:layout_height="match_parent"
-        android:layout_alignTop="@id/sixthFragRecycler"
-        android:layout_alignBottom="@id/sixthFragRecycler"
-        android:layout_alignParentEnd="true"
         android:layout_alignParentRight="true"
-        tools:ignore="RtlCompat"/>
+        />
 </RelativeLayout>

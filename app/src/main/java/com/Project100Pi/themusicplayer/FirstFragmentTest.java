@@ -20,6 +20,7 @@ import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.PopupMenu;
+import android.widget.RelativeLayout;
 import android.widget.Toast;
 
 import java.util.ArrayList;
@@ -47,6 +48,7 @@ public class FirstFragmentTest extends Fragment implements ClickInterface{
 
     RecyclerView firstFragRecycler=null;
     LinearLayoutManager llm=null;
+    RelativeLayout outerWindow;
 
     @Nullable
     @Override
@@ -58,13 +60,18 @@ public class FirstFragmentTest extends Fragment implements ClickInterface{
         MainActivity.idList = new ArrayList<String>();
         tracks = new ArrayList<TrackObject>();
         Cursor cursor = getAllSongsCursor();
+        outerWindow = (RelativeLayout)v.findViewById(R.id.firstFragOuter);
+        outerWindow.setBackgroundColor(ColorUtils.primaryBgColor);
         int i = 0;
 
         while(cursor.moveToNext()){
             try{
-
-                getSongInfoFromCursor(cursor);
-                TrackObject currTrack =  new TrackObject(i,id.toString(),title,trackArtist,trackDuration,path);
+                TrackObject trackObject = null;
+                if(getSongInfoFromCursor(cursor))
+                      trackObject = new TrackObject(i, id.toString(), title, trackArtist, trackDuration, path);
+                else
+                    continue;
+                TrackObject currTrack = trackObject;
                 tracks.add(currTrack);
                 MainActivity.idList.add(id.toString());
                 MainActivity.idToTrackObj.put(id,currTrack);
@@ -276,7 +283,7 @@ public class FirstFragmentTest extends Fragment implements ClickInterface{
                 null,
                 null,
                 null,
-                MediaStore.Audio.Media.TITLE + " ASC");
+                MediaStore.Audio.Media.TITLE + " COLLATE NOCASE ASC");
         return cursor;
     }
 
@@ -300,9 +307,13 @@ public class FirstFragmentTest extends Fragment implements ClickInterface{
         // Connect the recycler to the scroller (to let the scroller scroll the list)
         fastScroller.setRecyclerView(firstFragRecycler);
         firstFragRecycler.setOnScrollListener(fastScroller.getOnScrollListener());
+        fastScroller.setHandleColor(ColorUtils.accentColor);
+        SectionTitleIndicator sectionTitleIndicator =
+                (SectionTitleIndicator)v.findViewById(R.id.fast_scroller_section_title_indicator);
+        fastScroller.setSectionIndicator(sectionTitleIndicator);
     }
 
-    public void getSongInfoFromCursor(Cursor cursor)
+    public boolean getSongInfoFromCursor(Cursor cursor)
     {
         title= cursor.getString(cursor.getColumnIndex(MediaStore.Audio.Media.TITLE));
         id=cursor.getLong(cursor.getColumnIndex(MediaStore.Audio.Media._ID));
@@ -310,6 +321,10 @@ public class FirstFragmentTest extends Fragment implements ClickInterface{
         trackAlbum = cursor.getString(cursor.getColumnIndex(MediaStore.Audio.Media.ALBUM));
         trackArtist = cursor.getString(cursor.getColumnIndex(MediaStore.Audio.Media.ARTIST));
         trackDuration = UtilFunctions.convertSecondsToHMmSs(Long.parseLong(cursor.getString(cursor.getColumnIndex(MediaStore.Audio.Media.DURATION))));
+        if(title != null && id != null && path != null && trackAlbum != null && trackArtist!= null && trackDuration != null)
+            return true;
+        else
+            return false;
     }
 
 }

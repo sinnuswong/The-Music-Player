@@ -6,8 +6,10 @@ import android.annotation.TargetApi;
 import android.app.Activity;
 import android.app.AlertDialog;
 import android.content.ContentResolver;
+import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.content.res.Configuration;
 import android.content.res.TypedArray;
 import android.database.Cursor;
 import android.graphics.Color;
@@ -27,6 +29,8 @@ import android.support.v4.app.FragmentActivity;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentPagerAdapter;
 import android.support.v4.view.ViewPager;
+import android.support.v4.widget.DrawerLayout;
+import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
@@ -36,14 +40,17 @@ import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.MotionEvent;
 import android.view.View;
+import android.view.ViewGroup;
 import android.view.animation.DecelerateInterpolator;
 import android.widget.AbsListView;
 import android.widget.AdapterView;
+import android.widget.BaseAdapter;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.ListAdapter;
+import android.widget.ListView;
 import android.widget.PopupMenu;
 import android.widget.RelativeLayout;
 import android.widget.SeekBar;
@@ -58,6 +65,12 @@ import it.gmariotti.cardslib.library.view.CardListView;
 import it.gmariotti.cardslib.library.view.listener.SwipeOnScrollListener;
 
      public class MainActivity extends AppCompatActivity {
+
+         static ColorUtils myColorUtils;
+         private DrawerLayout mDrawerLayout;
+         private ListView mDrawerList;
+         private ActionBarDrawerToggle mDrawerToggle;
+         ArrayList<NavItem> mNavItems = new ArrayList<NavItem>();
 
 
 	String titles[] = {"Tracks","Albums","Artists","Genres","Playlists","Folders"};
@@ -97,6 +110,7 @@ import it.gmariotti.cardslib.library.view.listener.SwipeOnScrollListener;
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main_test);
         CursorClass.mContext = getApplicationContext();
+        myColorUtils = new ColorUtils();
         PlayHelperFunctions.mContext = getApplicationContext();
         setUpToolBar();
 
@@ -171,6 +185,23 @@ import it.gmariotti.cardslib.library.view.listener.SwipeOnScrollListener;
         setUpFloatingActionButton();
 
         PlayHelperFunctions.seekbar = (SeekBar) findViewById(R.id.front_seekbar);
+        mNavItems.add(new NavItem("Recently Added","",R.drawable.music_player_icon));
+        mNavItems.add(new NavItem("Cutter","",R.drawable.music_player_icon));
+        mNavItems.add(new NavItem("Equalizer","",R.drawable.music_player_icon));
+        mNavItems.add(new NavItem("Settings","",R.drawable.music_player_icon));
+        mNavItems.add(new NavItem("Send Feedback","",R.drawable.music_player_icon));
+        mNavItems.add(new NavItem("About Us","",R.drawable.music_player_icon));
+
+        mDrawerLayout = (DrawerLayout) findViewById(R.id.drawerLayout);
+        mDrawerList = (ListView) findViewById(R.id.navList);
+        DrawerListAdapter adapter = new DrawerListAdapter(MainActivity.this, mNavItems);
+
+        // Set the adapter for the list view
+        mDrawerList.setAdapter(adapter);
+        mDrawerList.setOnItemClickListener(new DrawerItemClickListener());
+        setupDrawer();
+        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+        getSupportActionBar().setHomeButtonEnabled(true);
 
 
         /*
@@ -200,6 +231,9 @@ import it.gmariotti.cardslib.library.view.listener.SwipeOnScrollListener;
     @Override
 
     public boolean onOptionsItemSelected(MenuItem item) {
+        if (mDrawerToggle.onOptionsItemSelected(item)) {
+            return true;
+        }
 switch (item.getItemId()) {
 case R.id.action_search:
 	Intent intent=new Intent(MainActivity.this,SearchResultsActivity.class);
@@ -373,315 +407,6 @@ protected void onDestroy() {
 
          }
 
-         public static void secondOverflowReaction(View v, final Activity act,AlbumInfo selAlbum){
-
-             PopupMenu popupMenu = new PopupMenu(act,v);
-             popupMenu.inflate(R.menu.long_click_actions);
-             int currPosition = selAlbum.getsNo();
-
-
-             // final String songName=titleList.get(currPosition);
-             final Long selectedAlbumId=selAlbum.getAlbumId();
-             final String selectedAlbumName = selAlbum.getAlbumName();
-             //  Toast.makeText(getActivity(), songName +"and position is" + currPosition, Toast.LENGTH_LONG).show();
-
-             popupMenu.setOnMenuItemClickListener(new PopupMenu.OnMenuItemClickListener() {
-
-                 @TargetApi(Build.VERSION_CODES.JELLY_BEAN)
-                 @Override
-                 public boolean onMenuItemClick(MenuItem item) {
-
-
-                     switch(item.getItemId()){
-                         case R.id.cnt_menu_play:
-
-                             UtilFunctions.playSelectedSongsfromChoice(act, selectedAlbumId, "album",false);
-
-                             break;
-
-                         case R.id.cnt_menu_play_next:
-
-                             UtilFunctions.playSongsNextfromChoice(act, selectedAlbumId, "album");
-
-                             break;
-
-                         case R.id.cnt_menu_add_queue:
-                             UtilFunctions.addToQueuefromChoice(act,selectedAlbumId, "album");
-                             break;
-                         case R.id.addToPlaylist:
-
-                             act.startActivity(UtilFunctions.addSongstoPlaylist(act,selectedAlbumId,"album"));
-
-                             break;
-                         case R.id.cnt_mnu_edit:
-
-                             //editAlbumInfo(selectedAlbumName, selectedAlbumId); // NOT WORKING
-
-                             break;
-                         case R.id.cnt_mnu_delete:
-
-                             UtilFunctions.deleteSinglePopUp(act, act, selectedAlbumId.toString(),"Are you sure you want to delete the selected Album?"," 1 Album Deleted","album");
-
-
-                             break;
-                         case R.id.cnt_mnu_share:
-
-
-                             act.startActivity(UtilFunctions.shareSingle(act, selectedAlbumId, "album"));
-
-                             break;
-
-                     }
-
-                     return true;
-
-                 }
-             });
-             popupMenu.show();
-         }
-
-         public static void thirdOverflowReaction(View v, final Activity act,ArtistInfo selArtist){
-
-             PopupMenu popupMenu = new PopupMenu(act,v);
-             popupMenu.inflate(R.menu.long_click_actions);
-             int currPosition = selArtist.getsNo();
-
-
-             // final String songName=titleList.get(currPosition);
-             final Long selectedArtistId=selArtist.getArtistId();
-             final String selectedAlbumName = selArtist.getArtistName();
-             //  Toast.makeText(getActivity(), songName +"and position is" + currPosition, Toast.LENGTH_LONG).show();
-
-             popupMenu.setOnMenuItemClickListener(new PopupMenu.OnMenuItemClickListener() {
-
-                 @TargetApi(Build.VERSION_CODES.JELLY_BEAN)
-                 @Override
-                 public boolean onMenuItemClick(MenuItem item) {
-
-
-                     switch(item.getItemId()){
-                         case R.id.cnt_menu_play:
-
-                             UtilFunctions.playSelectedSongsfromChoice(act, selectedArtistId, "artist",false);
-
-                             break;
-                         case R.id.cnt_menu_play_next:
-
-                             UtilFunctions.playSongsNextfromChoice(act, selectedArtistId, "artist");
-
-                             break;
-
-                         case R.id.cnt_menu_add_queue:
-                             UtilFunctions.addToQueuefromChoice(act,selectedArtistId, "artist");
-                             break;
-                         case R.id.addToPlaylist:
-                             act.startActivity(UtilFunctions.addSongstoPlaylist(act, selectedArtistId, "artist"));
-
-
-                             break;
-                         case R.id.cnt_mnu_edit:
-
-                             break;
-                         case R.id.cnt_mnu_delete:
-
-                             UtilFunctions.deleteSinglePopUp(act, act, selectedArtistId.toString(),"Are you sure you want to delete the selected Artist?"," 1 Artist Deleted","artist");
-                             break;
-                         case R.id.cnt_mnu_share:
-
-
-                             act.startActivity(UtilFunctions.shareSingle(act, selectedArtistId, "artist"));
-
-
-                             break;
-
-                     }
-
-                     return true;
-
-                 }
-             });
-             popupMenu.show();
-         }
-
-         public static void fourthOverflowReaction(View v, final Activity act,GenreInfo selGenre){
-
-             PopupMenu popupMenu = new PopupMenu(act,v);
-             popupMenu.inflate(R.menu.long_click_actions);
-             int currPosition = selGenre.getsNo();
-
-
-             // final String songName=titleList.get(currPosition);
-             final Long selectedGenreId=selGenre.getGenreId();
-             //  Toast.makeText(getActivity(), songName +"and position is" + currPosition, Toast.LENGTH_LONG).show();
-
-             popupMenu.setOnMenuItemClickListener(new PopupMenu.OnMenuItemClickListener() {
-
-                 @TargetApi(Build.VERSION_CODES.JELLY_BEAN)
-                 @Override
-                 public boolean onMenuItemClick(MenuItem item) {
-
-
-                     switch (item.getItemId()) {
-                         case R.id.cnt_menu_play:
-
-                             UtilFunctions.playSelectedSongsfromChoice(act, selectedGenreId, "genre", false);
-
-                             break;
-                         case R.id.cnt_menu_play_next:
-
-                             UtilFunctions.playSongsNextfromChoice(act, selectedGenreId, "genre");
-
-                             break;
-
-                         case R.id.cnt_menu_add_queue:
-                             UtilFunctions.addToQueuefromChoice(act, selectedGenreId, "genre");
-                             break;
-                         case R.id.addToPlaylist:
-                             act.startActivity(UtilFunctions.addSongstoPlaylist(act, selectedGenreId, "genre"));
-
-
-                             break;
-
-                         case R.id.cnt_mnu_edit:
-
-
-                             break;
-                         case R.id.cnt_mnu_delete:
-                             UtilFunctions.deleteSinglePopUp(act, act, selectedGenreId.toString(), "Are you sure you want to delete the selected Genre?", " 1 Genre Deleted", "genre");
-
-                             break;
-                         case R.id.cnt_mnu_share:
-
-                             act.startActivity(UtilFunctions.shareSingle(act, selectedGenreId, "genre"));
-
-
-                             break;
-
-                     }
-
-                     return true;
-
-                 }
-             });
-             popupMenu.show();
-         }
-
-
-         public static void fifthOverflowReaction(View v, final Activity act, final PlaylistInfo selPlaylist){
-
-             PopupMenu popupMenu = new PopupMenu(act,v);
-             popupMenu.inflate(R.menu.long_click_actions);
-             int currPosition = selPlaylist.getsNo();
-
-
-             // final String songName=titleList.get(currPosition);
-             final Long selectedId=selPlaylist.getPlaylistId();
-             //  Toast.makeText(getActivity(), songName +"and position is" + currPosition, Toast.LENGTH_LONG).show();
-
-             popupMenu.setOnMenuItemClickListener(new PopupMenu.OnMenuItemClickListener() {
-
-                 @TargetApi(Build.VERSION_CODES.JELLY_BEAN)
-                 @Override
-                 public boolean onMenuItemClick(MenuItem item) {
-
-
-                     switch (item.getItemId()) {
-
-                         case R.id.cnt_menu_play:
-
-                             UtilFunctions.playSelectedSongsfromChoice(act, selectedId, "playlist", false);
-
-                             break;
-                         case R.id.cnt_menu_play_next:
-
-                             UtilFunctions.playSongsNextfromChoice(act, selectedId, "playlist");
-
-                             break;
-
-                         case R.id.cnt_menu_add_queue:
-                             UtilFunctions.addToQueuefromChoice(act, selectedId, "playlist");
-                             break;
-                         case R.id.cnt_mnu_edit:
-
-
-                             LayoutInflater layoutInflater = LayoutInflater.from(act);
-                             View promptView = layoutInflater.inflate(R.layout.dialog_box, null);
-                             AlertDialog.Builder alertDialogBuilder = new AlertDialog.Builder(act);
-                             alertDialogBuilder.setView(promptView);
-                             //	Toast.makeText(activity,"Id is "+id,Toast.LENGTH_SHORT).show();
-                             TextView textView = (TextView) promptView.findViewById(R.id.textView);
-                             textView.setText("Edit PlayList Name");
-                             final EditText editTitleText = (EditText) promptView.findViewById(R.id.edittext);
-                             editTitleText.setText(selPlaylist.getPlaylistName());
-
-                             //final EditText editAlbumText=(EditText) promptView.findViewById(R.id.edittext);
-                             // setup a dialog window
-                             alertDialogBuilder.setCancelable(false)
-                                     .setPositiveButton("OK", new DialogInterface.OnClickListener() {
-                                         public void onClick(DialogInterface dialog, int id) {
-
-                                             ContentResolver thisContentResolver = act.getContentResolver();
-                                             UtilFunctions.renamePlaylist(thisContentResolver, selectedId, editTitleText.getText().toString());
-                                             Toast.makeText(act, "PlayList Renamed", Toast.LENGTH_LONG).show();
-
-                                             // populateCards();
-                                         }
-                                     })
-                                     .setNegativeButton("Cancel",
-                                             new DialogInterface.OnClickListener() {
-                                                 public void onClick(DialogInterface dialog, int id) {
-                                                     dialog.cancel();
-                                                 }
-                                             });
-
-                             // create an alert dialog
-                             AlertDialog alert = alertDialogBuilder.create();
-                             alert.show();
-
-
-                             //Toast.makeText(this, "Edit :" , Toast.LENGTH_SHORT).show();
-
-                             break;
-                         case R.id.cnt_mnu_delete:
-
-                             AlertDialog.Builder builder = new AlertDialog.Builder(act);
-                             builder.setTitle("Confirm Delete");
-                             builder.setMessage("Are you sure you want to delete the Playlist?");
-                             builder.setCancelable(true);
-                             builder.setPositiveButton("Yes",
-                                     new DialogInterface.OnClickListener() {
-                                         public void onClick(DialogInterface dialog, int thisid) {
-                                             ContentResolver resolver = act.getApplicationContext().getContentResolver();
-                                             UtilFunctions.deletePlaylist(resolver, selectedId);
-                                             dialog.cancel();
-                                         }
-                                     });
-                             builder.setNegativeButton("No",
-                                     new DialogInterface.OnClickListener() {
-                                         public void onClick(DialogInterface dialog, int id) {
-                                             dialog.cancel();
-                                         }
-                                     });
-
-                             AlertDialog alert11 = builder.create();
-                             alert11.show();
-
-
-                             break;
-                         case R.id.cnt_mnu_share:
-
-                             act.startActivity(UtilFunctions.shareSingle(act, selectedId, "playlist"));
-                             break;
-
-                     }
-
-                     return true;
-
-                 }
-             });
-             popupMenu.show();
-         }
-
 
          @Override
          protected void onResume() {
@@ -724,6 +449,7 @@ protected void onDestroy() {
          {
              pager = (ViewPager) findViewById(R.id.viewPager);
              pager.setAdapter(new MyPagerAdapter(getSupportFragmentManager()));
+             pager.setBackgroundColor(ColorUtils.primaryBgColor);
              pager.setOnPageChangeListener(new ViewPager.OnPageChangeListener() {
                  @Override
                  public void onPageScrolled(int position, float positionOffset, int positionOffsetPixels) {
@@ -732,7 +458,7 @@ protected void onDestroy() {
 
                  @Override
                  public void onPageSelected(int position) {
-                     if(position < 4){
+                     if (position < 4) {
                          fab.show();
                      } else {
                          fab.hide();
@@ -755,9 +481,8 @@ protected void onDestroy() {
 
          }
 
-         public void setUpFloatingActionButton()
-         {
-              fab = (FloatingActionButton) findViewById(R.id.fabButton);
+         public void setUpFloatingActionButton() {
+             fab = (FloatingActionButton) findViewById(R.id.fabButton);
              fab.setOnClickListener(new View.OnClickListener() {
                  @Override
                  public void onClick(View v) {
@@ -767,5 +492,130 @@ protected void onDestroy() {
 
          }
 
+         class NavItem {
+             String mTitle;
+             String mSubtitle;
+             int mIcon;
+
+             public NavItem(String title, String subtitle,int icon) {
+                 mTitle = title;
+                 mSubtitle = subtitle;
+                 mIcon = icon;
+             }
+
+
+         }
+         class DrawerListAdapter extends BaseAdapter {
+
+             Context mContext;
+             ArrayList<NavItem> mNavItems;
+
+             public DrawerListAdapter(Context context, ArrayList<NavItem> navItems) {
+                 mContext = context;
+                 mNavItems = navItems;
+             }
+
+             @Override
+             public int getCount() {
+                 return mNavItems.size();
+             }
+
+             @Override
+             public Object getItem(int position) {
+                 return mNavItems.get(position);
+             }
+
+             @Override
+             public long getItemId(int position) {
+                 return 0;
+             }
+
+             @Override
+             public View getView(int position, View convertView, ViewGroup parent) {
+                 View view;
+
+                 if (convertView == null) {
+                     LayoutInflater inflater = (LayoutInflater) mContext.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
+                     view = inflater.inflate(R.layout.activity_drawer_item, null);
+                 }
+                 else {
+                     view = convertView;
+                 }
+
+                 TextView titleView = (TextView) view.findViewById(R.id.title);
+                 //  TextView subtitleView = (TextView) view.findViewById(R.id.subTitle);
+                 ImageView iconView = (ImageView) view.findViewById(R.id.icon);
+                 iconView.setImageResource(mNavItems.get(position).mIcon);
+
+                 titleView.setText(mNavItems.get(position).mTitle);
+                 // subtitleView.setText( mNavItems.get(position).mSubtitle );
+                 //iconView.setImageResource(mNavItems.get(position).mIcon);
+
+                 return view;
+             }
+
+
+
+         }
+         private void setupDrawer() {
+
+             mDrawerToggle = new ActionBarDrawerToggle(MainActivity.this, mDrawerLayout,
+                     R.string.drawer_open, R.string.drawer_close){
+                 /** Called when a drawer has settled in a completely open state. */
+                 // @SuppressLint("NewApi")
+                 public void onDrawerOpened(View drawerView) {
+                     super.onDrawerOpened(drawerView);
+                     supportInvalidateOptionsMenu();
+                 }
+
+                 /** Called when a drawer has settled in a completely closed state. */
+                 //  @SuppressLint("NewApi")
+                 public void onDrawerClosed(View view) {
+
+                     super.onDrawerClosed(view);
+                     supportInvalidateOptionsMenu();
+                 }
+             };
+
+
+             mDrawerToggle.setDrawerIndicatorEnabled(true);
+             mDrawerLayout.setDrawerListener(mDrawerToggle);
+         }
+         private class DrawerItemClickListener implements ListView.OnItemClickListener {
+
+             @Override
+             public void onItemClick(AdapterView parent, View view, int position,long id) {
+
+                 // Highlight the selected item, update the title, and close the drawer
+                 // update selected item and title, then close the drawer
+                 mDrawerList.setItemChecked(position, true);
+                 if(position == 0){
+                     Intent intent = new Intent(MainActivity.this, SongsUnderTest.class);
+                     intent.putExtra("X", "RecentlyAdded");
+                     intent.putExtra("title","Recently Added");
+                     startActivity(intent);
+                 }
+
+
+                 //  mDrawer.closeDrawer(mDrawerList);
+
+             }
+
+
+         }
+
+         @Override
+         protected void onPostCreate(Bundle savedInstanceState) {
+             super.onPostCreate(savedInstanceState);
+             // Sync the toggle state after onRestoreInstanceState has occurred.
+             mDrawerToggle.syncState();
+         }
+
+         @Override
+         public void onConfigurationChanged(Configuration newConfig) {
+             super.onConfigurationChanged(newConfig);
+             // Pass any configuration change to the drawer toggls
+             mDrawerToggle.onConfigurationChanged(newConfig);
+         }
 
      }

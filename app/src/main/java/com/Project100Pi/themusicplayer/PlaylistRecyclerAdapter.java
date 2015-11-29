@@ -1,14 +1,22 @@
 package com.Project100Pi.themusicplayer;
 
+import android.annotation.TargetApi;
 import android.app.Activity;
+import android.app.AlertDialog;
+import android.content.ContentResolver;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.graphics.Color;
+import android.os.Build;
 import android.support.v7.widget.CardView;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.EditText;
 import android.widget.ImageView;
+import android.widget.PopupMenu;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -106,17 +114,18 @@ public class PlaylistRecyclerAdapter extends SelectableAdapter<PlaylistRecyclerA
     @Override
     public void onBindViewHolder(PlaylistRecyclerAdapter.PlaylistViewHolder holder, final int position) {
         if(position%2 == 0) {
-            holder.cv.setBackgroundColor(Color.parseColor("#484848"));
+            holder.cv.setBackgroundColor(ColorUtils.secondaryBgColor);
 
         }else{
-            holder.cv.setBackgroundColor(Color.parseColor("#3D3D3D"));
+            holder.cv.setBackgroundColor(ColorUtils.primaryBgColor);
         }
         holder.playlistName.setText(playlists.get(position).getPlaylistName());
+        holder.playlistName.setTextColor(ColorUtils.primaryTextColor);
         if(!isSelect) {
             holder.overflowButton.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
-                    MainActivity.fifthOverflowReaction(v, mactivity, playlists.get(position));
+                   fifthOverflowReaction(v, mactivity, playlists.get(position));
                 }
             });
         }
@@ -128,5 +137,125 @@ public class PlaylistRecyclerAdapter extends SelectableAdapter<PlaylistRecyclerA
         return playlists.size();
     }
 
+    void fifthOverflowReaction(View v, final Activity act, final PlaylistInfo selPlaylist){
 
+        PopupMenu popupMenu = new PopupMenu(act,v);
+        popupMenu.inflate(R.menu.menu_playlist_popup);
+        final int currPosition = selPlaylist.getsNo();
+
+
+        // final String songName=titleList.get(currPosition);
+        final Long selectedId=selPlaylist.getPlaylistId();
+        //  Toast.makeText(getActivity(), songName +"and position is" + currPosition, Toast.LENGTH_LONG).show();
+
+        popupMenu.setOnMenuItemClickListener(new PopupMenu.OnMenuItemClickListener() {
+
+            @TargetApi(Build.VERSION_CODES.JELLY_BEAN)
+            @Override
+            public boolean onMenuItemClick(MenuItem item) {
+
+
+                switch (item.getItemId()) {
+
+                    case R.id.cnt_menu_play:
+
+                        UtilFunctions.playSelectedSongsfromChoice(act, selectedId, "playlist", false);
+
+                        break;
+                    case R.id.cnt_menu_play_next:
+
+                        UtilFunctions.playSongsNextfromChoice(act, selectedId, "playlist");
+
+                        break;
+
+                    case R.id.cnt_menu_add_queue:
+                        UtilFunctions.addToQueuefromChoice(act, selectedId, "playlist");
+                        break;
+                    case R.id.cnt_mnu_edit:
+
+
+                        LayoutInflater layoutInflater = LayoutInflater.from(act);
+                        View promptView = layoutInflater.inflate(R.layout.dialog_box, null);
+                        AlertDialog.Builder alertDialogBuilder = new AlertDialog.Builder(act);
+                        alertDialogBuilder.setView(promptView);
+                        //	Toast.makeText(activity,"Id is "+id,Toast.LENGTH_SHORT).show();
+                        TextView textView = (TextView) promptView.findViewById(R.id.textView);
+                        textView.setText("Edit PlayList Name");
+                        final EditText editTitleText = (EditText) promptView.findViewById(R.id.edittext);
+                        editTitleText.setText(selPlaylist.getPlaylistName());
+
+                        //final EditText editAlbumText=(EditText) promptView.findViewById(R.id.edittext);
+                        // setup a dialog window
+                        alertDialogBuilder.setCancelable(false)
+                                .setPositiveButton("OK", new DialogInterface.OnClickListener() {
+                                    public void onClick(DialogInterface dialog, int id) {
+
+                                        ContentResolver thisContentResolver = act.getContentResolver();
+                                        UtilFunctions.renamePlaylist(thisContentResolver, selectedId, editTitleText.getText().toString());
+                                        Toast.makeText(act, "PlayList Renamed", Toast.LENGTH_LONG).show();
+
+                                        // populateCards();
+                                    }
+                                })
+                                .setNegativeButton("Cancel",
+                                        new DialogInterface.OnClickListener() {
+                                            public void onClick(DialogInterface dialog, int id) {
+                                                dialog.cancel();
+                                            }
+                                        });
+
+                        // create an alert dialog
+                        AlertDialog alert = alertDialogBuilder.create();
+                        alert.show();
+
+
+                        //Toast.makeText(this, "Edit :" , Toast.LENGTH_SHORT).show();
+
+                        break;
+                    case R.id.cnt_mnu_delete:
+
+                        AlertDialog.Builder builder = new AlertDialog.Builder(act);
+                        builder.setTitle("Confirm Delete");
+                        builder.setMessage("Are you sure you want to delete the Playlist?");
+                        builder.setCancelable(true);
+                        builder.setPositiveButton("Yes",
+                                new DialogInterface.OnClickListener() {
+                                    public void onClick(DialogInterface dialog, int thisid) {
+                                        ContentResolver resolver = act.getApplicationContext().getContentResolver();
+                                        UtilFunctions.deletePlaylist(resolver, selectedId);
+                                        removeAt(currPosition);
+                                        dialog.cancel();
+                                    }
+                                });
+                        builder.setNegativeButton("No",
+                                new DialogInterface.OnClickListener() {
+                                    public void onClick(DialogInterface dialog, int id) {
+                                        dialog.cancel();
+                                    }
+                                });
+
+                        AlertDialog alert11 = builder.create();
+                        alert11.show();
+
+
+                        break;
+                    case R.id.cnt_mnu_share:
+
+                        act.startActivity(UtilFunctions.shareSingle(act, selectedId, "playlist"));
+                        break;
+
+                }
+
+                return true;
+
+            }
+        });
+        popupMenu.show();
+    }
+
+    public void removeAt(int position) {
+        playlists.remove(position);
+        notifyItemRemoved(position);
+        notifyItemRangeChanged(position, playlists.size());
+    }
 }

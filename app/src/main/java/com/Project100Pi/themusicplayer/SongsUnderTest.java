@@ -8,6 +8,7 @@ import android.net.Uri;
 import android.provider.BaseColumns;
 import android.provider.MediaStore;
 import android.support.design.widget.CollapsingToolbarLayout;
+import android.support.design.widget.CoordinatorLayout;
 import android.support.design.widget.FloatingActionButton;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.ActionBarActivity;
@@ -25,6 +26,7 @@ import android.view.View;
 import android.view.ViewTreeObserver;
 import android.view.animation.AccelerateDecelerateInterpolator;
 import android.widget.ImageView;
+import android.widget.RelativeLayout;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -33,6 +35,7 @@ import java.util.Random;
 
 import io.codetail.animation.SupportAnimator;
 import io.codetail.animation.ViewAnimationUtils;
+import xyz.danoz.recyclerviewfastscroller.vertical.VerticalRecyclerViewFastScroller;
 
 
 public class SongsUnderTest extends AppCompatActivity  implements ClickInterface,NowPlayingRecyclerAdapter.OnDragStartListener{
@@ -53,6 +56,7 @@ public class SongsUnderTest extends AppCompatActivity  implements ClickInterface
     RecyclerView firstFragRecycler;
     FloatingActionButton fab;
     boolean shouldReveal = true;
+    CoordinatorLayout outerWindow;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -68,12 +72,19 @@ public class SongsUnderTest extends AppCompatActivity  implements ClickInterface
         firstFragRecycler.setHasFixedSize(true);
         LinearLayoutManager llm = new LinearLayoutManager(this);
         firstFragRecycler.setLayoutManager(llm);
+        outerWindow = (CoordinatorLayout) findViewById(R.id.songsUnderOuter);
+        outerWindow.setBackgroundColor(ColorUtils.primaryBgColor);
         Intent intent = getIntent();
          X = intent.getStringExtra("X");
          id = intent.getLongExtra("id", 0L);
         toolbarTitle = intent.getStringExtra("title");
         collapsingToolbar.setTitle(toolbarTitle);
         populateRecyclerList();
+       // final VerticalRecyclerViewFastScroller fastScroller = (VerticalRecyclerViewFastScroller) findViewById(R.id.songs_under_fast_scroller);
+        // Connect the recycler to the scroller (to let the scroller scroll the list)
+        //fastScroller.setRecyclerView(firstFragRecycler);
+        //firstFragRecycler.setOnScrollListener(fastScroller.getOnScrollListener());
+        //fastScroller.setHandleColor(ColorUtils.accentColor);
         actionBarImage.getViewTreeObserver().addOnGlobalLayoutListener(new ViewTreeObserver.OnGlobalLayoutListener() {
             @Override
             public void onGlobalLayout() {
@@ -104,73 +115,81 @@ public class SongsUnderTest extends AppCompatActivity  implements ClickInterface
         String trackDuration  = "";
         Long trackId=null;
 
-        if(X.equals("Album")){
-            cursor = makeAlbumSongCursor(id);
-        }else if(X.equals("Artist")){
-            cursor = makeArtistSongCursor(id);
-        }else if(X.equals("Genre")){
-
-            String[] proj2={MediaStore.Audio.Genres.Members.AUDIO_ID,
-                    MediaStore.Audio.Genres.Members.TITLE,
-                    MediaStore.Audio.Genres.Members.ALBUM,
-                    MediaStore.Audio.Genres.Members.ARTIST,
-                    MediaStore.Audio.Genres.Members.DATA,
-                    MediaStore.Audio.Genres.Members.DURATION};
-            Uri uri = MediaStore.Audio.Genres.Members.getContentUri("external", id);
-            cursor = getContentResolver().query(uri, proj2, null,null,null);
-        }else if(X.equals("PlayList")){
-
-            String[] projection1 = {
-                    MediaStore.Audio.Playlists.Members.AUDIO_ID,
-                    MediaStore.Audio.Playlists.Members.TITLE,
-                    MediaStore.Audio.Playlists.Members.ALBUM,
-                    MediaStore.Audio.Playlists.Members.ARTIST,
-                    MediaStore.Audio.Playlists.Members.DATA,
-                    MediaStore.Audio.Playlists.Members.DURATION,
-                    MediaStore.Audio.Playlists.Members.DEFAULT_SORT_ORDER
-            };
-            Uri uri = MediaStore.Audio.Playlists.Members.getContentUri("external", id);
-            cursor =SongsUnderTest.this.getApplicationContext().getContentResolver().query(
-                    uri,
-                    projection1,
-                    MediaStore.Audio.Playlists.Members.PLAYLIST_ID+ " = "+id+"",
-                    null,
-                    MediaStore.Audio.Playlists.Members.DEFAULT_SORT_ORDER );
-
-
-        }
-        int i = 0;
-
-        while(cursor.moveToNext()){
-            try{
-                trackId=cursor.getLong(0);
-                title= cursor.getString(1);
-                trackAlbum = cursor.getString(2);
-                trackArtist = cursor.getString(3);
-                path=cursor.getString(4);
-                trackDuration = UtilFunctions.convertSecondsToHMmSs(Long.parseLong(cursor.getString(5)));
-                TrackObject currTrack =  new TrackObject(i,trackId.toString(),title,trackArtist,trackDuration,path);
-                tracks.add(currTrack);
-                currIdList.add(trackId.toString());
-                i++;
-            }catch(Exception e){
-                continue;
-            }
-        }
-        if(X.equals("PlayList")){
-            ptra = new NowPlayingRecyclerAdapter(tracks,currIdList,SongsUnderTest.this,SongsUnderTest.this,id);
-            firstFragRecycler.setAdapter(ptra);
-            firstFragRecycler.setItemAnimator(new DefaultItemAnimator());
-
-            ItemTouchHelper.Callback callback = new SimpleItemTouchHelperCallback(ptra,false,true);
-            mItemTouchHelper = new ItemTouchHelper(callback);
-            mItemTouchHelper.attachToRecyclerView(firstFragRecycler);
-
-
-        }else {
+        if(X.equals("RecentlyAdded")){
+            recentlyAddedFunction();
             tra = new trackRecyclerAdapter(this, tracks, currIdList, SongsUnderTest.this);
             firstFragRecycler.setAdapter(tra);
             firstFragRecycler.setItemAnimator(new DefaultItemAnimator());
+        }
+        else {
+            if (X.equals("Album")) {
+                cursor = makeAlbumSongCursor(id);
+            } else if (X.equals("Artist")) {
+                cursor = makeArtistSongCursor(id);
+            } else if (X.equals("Genre")) {
+
+                String[] proj2 = {MediaStore.Audio.Genres.Members.AUDIO_ID,
+                        MediaStore.Audio.Genres.Members.TITLE,
+                        MediaStore.Audio.Genres.Members.ALBUM,
+                        MediaStore.Audio.Genres.Members.ARTIST,
+                        MediaStore.Audio.Genres.Members.DATA,
+                        MediaStore.Audio.Genres.Members.DURATION};
+                Uri uri = MediaStore.Audio.Genres.Members.getContentUri("external", id);
+                cursor = getContentResolver().query(uri, proj2, null, null, null);
+            } else if (X.equals("PlayList")) {
+
+                String[] projection1 = {
+                        MediaStore.Audio.Playlists.Members.AUDIO_ID,
+                        MediaStore.Audio.Playlists.Members.TITLE,
+                        MediaStore.Audio.Playlists.Members.ALBUM,
+                        MediaStore.Audio.Playlists.Members.ARTIST,
+                        MediaStore.Audio.Playlists.Members.DATA,
+                        MediaStore.Audio.Playlists.Members.DURATION,
+                        MediaStore.Audio.Playlists.Members.DEFAULT_SORT_ORDER
+                };
+                Uri uri = MediaStore.Audio.Playlists.Members.getContentUri("external", id);
+                cursor = SongsUnderTest.this.getApplicationContext().getContentResolver().query(
+                        uri,
+                        projection1,
+                        MediaStore.Audio.Playlists.Members.PLAYLIST_ID + " = " + id + "",
+                        null,
+                        MediaStore.Audio.Playlists.Members.DEFAULT_SORT_ORDER);
+
+
+            }
+            int i = 0;
+
+            while (cursor.moveToNext()) {
+                try {
+                    trackId = cursor.getLong(0);
+                    title = cursor.getString(1);
+                    trackAlbum = cursor.getString(2);
+                    trackArtist = cursor.getString(3);
+                    path = cursor.getString(4);
+                    trackDuration = UtilFunctions.convertSecondsToHMmSs(Long.parseLong(cursor.getString(5)));
+                    TrackObject currTrack = new TrackObject(i, trackId.toString(), title, trackArtist, trackDuration, path);
+                    tracks.add(currTrack);
+                    currIdList.add(trackId.toString());
+                    i++;
+                } catch (Exception e) {
+                    continue;
+                }
+            }
+            if (X.equals("PlayList")) {
+                ptra = new NowPlayingRecyclerAdapter(tracks, currIdList, SongsUnderTest.this, SongsUnderTest.this, id);
+                firstFragRecycler.setAdapter(ptra);
+                firstFragRecycler.setItemAnimator(new DefaultItemAnimator());
+
+                ItemTouchHelper.Callback callback = new SimpleItemTouchHelperCallback(ptra, false, true);
+                mItemTouchHelper = new ItemTouchHelper(callback);
+                mItemTouchHelper.attachToRecyclerView(firstFragRecycler);
+
+
+            } else {
+                tra = new trackRecyclerAdapter(this, tracks, currIdList, SongsUnderTest.this);
+                firstFragRecycler.setAdapter(tra);
+                firstFragRecycler.setItemAnimator(new DefaultItemAnimator());
+            }
         }
         fab.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -493,5 +512,45 @@ public class SongsUnderTest extends AppCompatActivity  implements ClickInterface
         super.onResume();
         shouldReveal = true;
         populateRecyclerList();
+    }
+    public void recentlyAddedFunction(){
+        String title="";
+        String path="";
+        String trackAlbum = "";
+        String trackArtist = "";
+        String trackDuration  = "";
+        Long id=null;
+        Cursor cursor = SongsUnderTest.this.getApplicationContext().getContentResolver().query(
+                MediaStore.Audio.Media.EXTERNAL_CONTENT_URI,
+                null,
+                null,
+                null,
+                MediaStore.Audio.Media.DATE_ADDED + " COLLATE NOCASE DESC");
+        int i = 0;
+
+        while(cursor.moveToNext()){
+            try{
+                TrackObject trackObject = null;
+                title= cursor.getString(cursor.getColumnIndex(MediaStore.Audio.Media.TITLE));
+                id=cursor.getLong(cursor.getColumnIndex(MediaStore.Audio.Media._ID));
+                path=cursor.getString(cursor.getColumnIndex(MediaStore.Audio.Media.DATA));
+                trackAlbum = cursor.getString(cursor.getColumnIndex(MediaStore.Audio.Media.ALBUM));
+                trackArtist = cursor.getString(cursor.getColumnIndex(MediaStore.Audio.Media.ARTIST));
+                trackDuration = UtilFunctions.convertSecondsToHMmSs(Long.parseLong(cursor.getString(cursor.getColumnIndex(MediaStore.Audio.Media.DURATION))));
+                if(title != null && id != null && path != null && trackAlbum != null && trackArtist!= null && trackDuration != null)
+                    trackObject = new TrackObject(i, id.toString(), title, trackArtist, trackDuration, path);
+                else
+                    continue;
+                TrackObject currTrack = trackObject;
+                tracks.add(currTrack);
+                currIdList.add(id.toString());
+                i++;
+                if(i>30)
+                    break;
+            }catch(Exception e){
+                continue;
+            }
+        }
+
     }
 }

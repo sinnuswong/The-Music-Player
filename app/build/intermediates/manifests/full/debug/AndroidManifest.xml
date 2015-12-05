@@ -1,0 +1,135 @@
+<?xml version="1.0" encoding="utf-8"?>
+<manifest xmlns:android="http://schemas.android.com/apk/res/android"
+    package="com.Project100Pi.themusicplayer"
+    android:versionCode="1"
+    android:versionName="1.0" >
+
+    <uses-sdk
+        android:minSdkVersion="16"
+        android:targetSdkVersion="23" />
+
+    <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" />
+
+    <user-permission android:name="android.permission.READ_INTERNAL_STORAGE" />
+
+    <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
+    <uses-permission android:name="android.permission.MODIFY_AUDIO_SETTINGS" />
+    <uses-permission android:name="android.permission.READ_PHONE_STATE" />
+
+    <application
+        android:allowBackup="true"
+        android:hardwareAccelerated="true"
+        android:icon="@drawable/music_player_icon"
+        android:label="@string/app_name"
+        android:launchMode="singleInstance"
+        android:theme="@style/AppBaseTheme" >
+        <activity
+            android:name="com.Project100Pi.themusicplayer.MainActivity"
+            android:label="@string/app_name"
+            android:theme="@style/AppBaseTheme.NoActionBar" >
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN" />
+
+                <category android:name="android.intent.category.LAUNCHER" />
+            </intent-filter>
+        </activity>
+        <activity
+            android:name="com.Project100Pi.themusicplayer.DisplayAlbArt"
+            android:label="@string/title_activity_display_alb_art" >
+        </activity>
+        <activity
+            android:name="com.Project100Pi.themusicplayer.PlayActivity"
+            android:label="@string/title_activity_play"
+            android:theme="@style/AppBaseTheme.NoActionBar.TranslucentStatus" >
+        </activity>
+        <activity
+            android:name="com.Project100Pi.themusicplayer.NowPlayingListActivity"
+            android:label="@string/title_activity_now_playing_list"
+            android:windowSoftInputMode="stateHidden|adjustPan" >
+        </activity>
+        <activity android:name="com.Project100Pi.themusicplayer.PlaylistSelection" >
+        </activity>
+        <activity android:name="com.Project100Pi.themusicplayer.PlaylistSelectionMultiple" >
+        </activity>
+        <activity
+            android:name="com.Project100Pi.themusicplayer.EqualizerSettings"
+            android:theme="@style/AppBaseTheme" >
+        </activity>
+        <activity android:name="com.Project100Pi.themusicplayer.SearchResultsActivity" >
+            <meta-data
+                android:name="android.app.searchable"
+                android:resource="@xml/searchable" />
+        </activity>
+        <activity
+            android:name="com.Project100Pi.themusicplayer.SongsUnder"
+            android:label="@string/title_activity_songs_under" >
+        </activity>
+        <activity
+            android:name="com.Project100Pi.themusicplayer.PlaylistUnder"
+            android:label="@string/title_activity_playlist_under" >
+        </activity>
+        <activity
+            android:name="com.Project100Pi.themusicplayer.SongsUnderTest"
+            android:label="@string/title_activity_songs_under_test"
+            android:theme="@style/AppBaseTheme.NoActionBar" >
+        </activity>
+        <activity
+            android:name="com.Project100Pi.themusicplayer.NowPlayingListTest"
+            android:label="Now Playing" >
+        </activity>
+        <activity
+            android:name="com.Project100Pi.themusicplayer.PlayListSelectionTest"
+            android:label="Select PlayList" >
+        </activity>
+        <activity
+            android:name="com.Project100Pi.themusicplayer.RingdroidEditActivity"
+            android:label="Edit Activity" >
+        </activity>
+        <activity
+            android:name="com.Project100Pi.themusicplayer.SearchResultTestActivity"
+            android:label="@string/title_activity_search_result_test" >
+            <meta-data
+                android:name="android.app.searchable"
+                android:resource="@xml/searchable" />
+        </activity>
+
+        <service
+            android:name="com.Project100Pi.themusicplayer.LockScreenNotification"
+            android:enabled="true"
+            android:exported="true" />
+        <service
+            android:name="com.Project100Pi.themusicplayer.PlayHelperFunctions"
+            android:enabled="true"
+            android:exported="true" />
+        <service
+            android:name="com.Project100Pi.themusicplayer.CheckForegroundService"
+            android:enabled="true"
+            android:exported="true" />
+        <service
+            android:name="com.Project100Pi.themusicplayer.UpdateWidgetService"
+            android:enabled="true"
+            android:exported="true"
+            android:permission="android.permission.BIND_REMOTEVIEWS" />
+
+        <receiver android:name="com.Project100Pi.themusicplayer.NotificationBroadcast" >
+            <intent-filter>
+                <action android:name="com.tutorialsface.audioplayer.delete" />
+                <action android:name="com.tutorialsface.audioplayer.pause" />
+                <action android:name="com.tutorialsface.audioplayer.next" />
+                <action android:name="com.tutorialsface.audioplayer.play" />
+                <action android:name="com.tutorialsface.audioplayer.previous" />
+                <action android:name="android.intent.action.MEDIA_BUTTON" />
+            </intent-filter>
+        </receiver>
+        <receiver android:name="com.Project100Pi.themusicplayer.MyWidgetProvider" >
+            <intent-filter>
+                <action android:name="android.appwidget.action.APPWIDGET_UPDATE" />
+            </intent-filter>
+
+            <meta-data
+                android:name="android.appwidget.provider"
+                android:resource="@xml/widget_info" />
+        </receiver>
+    </application>
+
+</manifest>

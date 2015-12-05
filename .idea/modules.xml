@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="ProjectModuleManager">
+    <modules>
+      <module fileurl="file://$PROJECT_DIR$/libs/RecyclerViewFastScroller-master/RecyclerViewFastScroller-master.iml" filepath="$PROJECT_DIR$/libs/RecyclerViewFastScroller-master/RecyclerViewFastScroller-master.iml" />
+      <module fileurl="file://$PROJECT_DIR$/The-Music-Player.iml" filepath="$PROJECT_DIR$/The-Music-Player.iml" />
+      <module fileurl="file://$PROJECT_DIR$/app/app.iml" filepath="$PROJECT_DIR$/app/app.iml" />
+      <module fileurl="file://$PROJECT_DIR$/libs/cardslib-core/cardslib-core.iml" filepath="$PROJECT_DIR$/libs/cardslib-core/cardslib-core.iml" />
+      <module fileurl="file://$PROJECT_DIR$/libs/cardslib-extra-dragdrop/cardslib-extra-dragdrop.iml" filepath="$PROJECT_DIR$/libs/cardslib-extra-dragdrop/cardslib-extra-dragdrop.iml" />
+      <module fileurl="file://$PROJECT_DIR$/libs/circualreveal/circualreveal.iml" filepath="$PROJECT_DIR$/libs/circualreveal/circualreveal.iml" />
+      <module fileurl="file://$PROJECT_DIR$/libs/libs.iml" filepath="$PROJECT_DIR$/libs/libs.iml" />
+    </modules>
+  </component>
+</project>

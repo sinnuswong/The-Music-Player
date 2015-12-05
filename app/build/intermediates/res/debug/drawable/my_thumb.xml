@@ -1,0 +1,3 @@
+<selector xmlns:android="http://schemas.android.com/apk/res/android">
+    <item android:drawable="@drawable/thumb_mine" />
+</selector><!-- From: file:/C:/Users/sinnus/Android/The-Music-Player/app/src/main/res/drawable/my_thumb.xml -->

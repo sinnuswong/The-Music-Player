@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+
+<it.gmariotti.cardslib.library.view.CardView 
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/list_cardId"
+    android:layout_width="match_parent"
+    
+    android:clickable="true"  android:layout_height="wrap_content"/>
+
+    
+<!-- From: file:/C:/Users/sinnus/Android/The-Music-Player/app/src/main/res/layout/card_list_item.xml -->

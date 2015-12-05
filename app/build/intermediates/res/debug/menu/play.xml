@@ -1,0 +1,15 @@
+<menu xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    tools:context="com.Project100Pi.themusicplayer.PlayActivity">
+
+    <item android:id="@+id/nowPlayingListImage" app:showAsAction="always" android:icon="@drawable/now_play_list" android:title="Now Playing List"></item>
+    <item android:id="@+id/equalizerImage" app:showAsAction="always" android:icon="@drawable/equalizer_icon" android:title="Equalizer"></item>
+    <item android:id="@+id/timerImage" app:showAsAction="never" android:icon="@drawable/timer" android:title="Sleep Timer"></item>
+    <item
+        android:id="@+id/action_search"
+        app:showAsAction="never"
+        android:title="Search" android:icon="@drawable/ic_action_search"/>
+    <item android:id="@+id/addToPlaylist" app:showAsAction="never"  android:title="Add to Playlist"></item>
+</menu>
+<!-- From: file:/C:/Users/sinnus/Android/The-Music-Player/app/src/main/res/menu/play.xml -->

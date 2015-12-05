@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    xmlns:recyclerviewfastscroller="http://schemas.android.com/apk/res-auto"
+    android:background="#3D3D3D"
+    android:layout_width="match_parent"
+    android:id="@+id/firstFragOuter"
+    android:layout_height="match_parent">
+<android.support.v7.widget.RecyclerView
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/firstFragRecycler"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"/>
+    <xyz.danoz.recyclerviewfastscroller.vertical.VerticalRecyclerViewFastScroller
+        android:id="@+id/first_frag_fast_scroller"
+        android:layout_width="24dp"
+        android:layout_height="match_parent"
+        android:layout_alignParentRight="true"
+        />
+    <com.Project100Pi.themusicplayer.MySectionTitleIndicator
+        android:id="@+id/fast_scroller_section_title_indicator"
+        android:fitsSystemWindows="true"
+        android:layout_width="wrap_content"
+        android:layout_marginRight="24dp"
+        android:layout_height="@dimen/list_item_height"
+        android:layout_toLeftOf="@id/first_frag_fast_scroller"
+        android:layout_toStartOf="@id/first_frag_fast_scroller"
+
+        recyclerviewfastscroller:rfs_backgroundColor="#be4d56"
+        recyclerviewfastscroller:rfs_textColor="@android:color/white" />
+</RelativeLayout><!-- From: file:/C:/Users/sinnus/Android/The-Music-Player/app/src/main/res/layout/first_frag_test.xml -->

@@ -1,0 +1,5 @@
+int attr seekBarRotation 0x7f010000
+int id CW270 0x7f020000
+int id CW90 0x7f020001
+int[] styleable VerticalSeekBar { 0x7f010000 }
+int styleable VerticalSeekBar_seekBarRotation 0

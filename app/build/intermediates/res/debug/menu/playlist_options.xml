@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android" >
+ <item android:id="@+id/playlist_play" android:title="Play"></item><item android:id="@+id/playlist_play_next" android:title="Play Next"></item><item android:id="@+id/playlist_add_to_queue" android:title="Add To Queue"></item><item android:id="@+id/playlist_add_playlist" android:title="Add To PlayList"></item>
+    <item android:id="@+id/playlist_edit" android:title="Edit"></item>
+    
+    
+    
+    <item android:id="@+id/playlist_share" android:title="Share"></item><item android:id="@+id/playlist_delete" android:title="Delete"></item><item android:id="@+id/playlist_remove_from_playlist"  android:title="Remove from PlayList"></item>
+    
+    
+    
+    
+
+</menu>
+<!-- From: file:/C:/Users/sinnus/Android/The-Music-Player/app/src/main/res/menu/playlist_options.xml -->

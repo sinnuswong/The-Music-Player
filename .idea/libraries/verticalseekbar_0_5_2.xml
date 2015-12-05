@@ -1,0 +1,12 @@
+<component name="libraryTable">
+  <library name="verticalseekbar-0.5.2">
+    <CLASSES>
+      <root url="jar://$PROJECT_DIR$/app/build/intermediates/exploded-aar/com.h6ah4i.android.widget.verticalseekbar/verticalseekbar/0.5.2/jars/classes.jar!/" />
+      <root url="file://$PROJECT_DIR$/app/build/intermediates/exploded-aar/com.h6ah4i.android.widget.verticalseekbar/verticalseekbar/0.5.2/res" />
+    </CLASSES>
+    <JAVADOC />
+    <SOURCES>
+      <root url="jar://$USER_HOME$/.gradle/caches/modules-2/files-2.1/com.h6ah4i.android.widget.verticalseekbar/verticalseekbar/0.5.2/40e168b5e0361c05e0cf8b5e4f193da6574b99b1/verticalseekbar-0.5.2-sources.jar!/" />
+    </SOURCES>
+  </library>
+</component>

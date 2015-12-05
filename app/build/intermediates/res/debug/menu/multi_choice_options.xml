@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android" >
+    <item android:id="@+id/itemPlay" android:showAsAction="never" android:title="Play"></item>
+    <item android:id="@+id/itemToPlaylist" android:showAsAction="never" android:title="Add to PlayList"></item>
+    <item android:id="@+id/itemShare" android:showAsAction="never" android:title="Share"></item>
+    <item android:id="@+id/itemDelete" android:showAsAction="never" android:title="Delete"></item>
+    <item android:id="@+id/itemShuffle" android:showAsAction="never" android:title="Shuffle"></item>
+    <item android:id="@+id/itemPlayNext" android:title="Play Next" android:showAsAction="never"></item>
+    <item android:id="@+id/itemAddQueue" android:title="Add To Queue" android:showAsAction="never"></item>
+    
+
+</menu>
+<!-- From: file:/C:/Users/sinnus/Android/The-Music-Player/app/src/main/res/menu/multi_choice_options.xml -->

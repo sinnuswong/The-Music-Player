@@ -1,0 +1,295 @@
+-- Merging decision tree log ---
+manifest
+ADDED from AndroidManifest.xml:2:1
+	xmlns:android
+		ADDED from AndroidManifest.xml:2:11
+	package
+		ADDED from AndroidManifest.xml:3:5
+		INJECTED from AndroidManifest.xml:0:0
+		INJECTED from AndroidManifest.xml:0:0
+	android:versionName
+		ADDED from AndroidManifest.xml:5:5
+		INJECTED from AndroidManifest.xml:0:0
+		INJECTED from AndroidManifest.xml:0:0
+	android:versionCode
+		ADDED from AndroidManifest.xml:4:5
+		INJECTED from AndroidManifest.xml:0:0
+		INJECTED from AndroidManifest.xml:0:0
+uses-sdk
+ADDED from AndroidManifest.xml:7:5
+MERGED from com.android.support:appcompat-v7:23.1.0:20:5
+MERGED from com.android.support:support-v4:23.1.0:20:5
+MERGED from com.android.support:design:23.1.0:20:5
+MERGED from com.android.support:appcompat-v7:23.1.0:20:5
+MERGED from com.android.support:support-v4:23.1.0:20:5
+MERGED from com.android.support:recyclerview-v7:23.1.0:20:5
+MERGED from com.android.support:support-v4:23.1.0:20:5
+MERGED from com.android.support:support-v4:23.1.0:20:5
+MERGED from org.michaelevans.colorart:library:0.0.3:7:5
+MERGED from com.github.gabrielemariotti.cards:cardslib-core:2.1.0:24:5
+MERGED from com.android.support:support-v4:23.1.0:20:5
+MERGED from com.android.support:cardview-v7:22.1.1:20:5
+MERGED from com.github.gabrielemariotti.cards:cardslib-extra-dragdrop:2.1.0:24:5
+MERGED from com.github.gabrielemariotti.cards:cardslib-core:2.1.0:24:5
+MERGED from com.android.support:support-v4:23.1.0:20:5
+MERGED from com.android.support:cardview-v7:22.1.1:20:5
+MERGED from com.android.support:recyclerview-v7:23.1.0:20:5
+MERGED from com.android.support:support-v4:23.1.0:20:5
+MERGED from pl.droidsonroids.gif:android-gif-drawable:1.1.7:6:5
+MERGED from com.h6ah4i.android.widget.verticalseekbar:verticalseekbar:0.5.2:23:5
+MERGED from com.android.support:support-v4:23.1.0:20:5
+MERGED from The-Music-Player.libs:circualreveal:unspecified:6:5
+MERGED from xyz.danoz:recyclerviewfastscroller:0.1.3:7:5
+MERGED from com.android.support:support-v4:23.1.0:20:5
+MERGED from com.android.support:recyclerview-v7:23.1.0:20:5
+MERGED from com.android.support:support-v4:23.1.0:20:5
+	android:targetSdkVersion
+		ADDED from AndroidManifest.xml:9:9
+		INJECTED from AndroidManifest.xml:0:0
+		INJECTED from AndroidManifest.xml:0:0
+	android:minSdkVersion
+		ADDED from AndroidManifest.xml:8:9
+		INJECTED from AndroidManifest.xml:0:0
+		INJECTED from AndroidManifest.xml:0:0
+uses-permission#android.permission.READ_EXTERNAL_STORAGE
+ADDED from AndroidManifest.xml:11:5
+	android:name
+		ADDED from AndroidManifest.xml:11:22
+user-permission
+ADDED from AndroidManifest.xml:13:5
+	android:name
+		ADDED from AndroidManifest.xml:13:22
+uses-permission#android.permission.WRITE_EXTERNAL_STORAGE
+ADDED from AndroidManifest.xml:15:5
+	android:name
+		ADDED from AndroidManifest.xml:15:22
+uses-permission#android.permission.MODIFY_AUDIO_SETTINGS
+ADDED from AndroidManifest.xml:16:5
+	android:name
+		ADDED from AndroidManifest.xml:16:22
+uses-permission#android.permission.READ_PHONE_STATE
+ADDED from AndroidManifest.xml:18:5
+	android:name
+		ADDED from AndroidManifest.xml:18:22
+application
+ADDED from AndroidManifest.xml:20:5
+MERGED from com.android.support:appcompat-v7:23.1.0:22:5
+MERGED from com.android.support:support-v4:23.1.0:22:5
+MERGED from com.android.support:design:23.1.0:22:5
+MERGED from com.android.support:appcompat-v7:23.1.0:22:5
+MERGED from com.android.support:support-v4:23.1.0:22:5
+MERGED from com.android.support:support-v4:23.1.0:22:5
+MERGED from com.android.support:support-v4:23.1.0:22:5
+MERGED from org.michaelevans.colorart:library:0.0.3:11:5
+MERGED from com.github.gabrielemariotti.cards:cardslib-core:2.1.0:28:5
+MERGED from com.android.support:support-v4:23.1.0:22:5
+MERGED from com.android.support:cardview-v7:22.1.1:22:5
+MERGED from com.github.gabrielemariotti.cards:cardslib-extra-dragdrop:2.1.0:28:5
+MERGED from com.github.gabrielemariotti.cards:cardslib-core:2.1.0:28:5
+MERGED from com.android.support:support-v4:23.1.0:22:5
+MERGED from com.android.support:cardview-v7:22.1.1:22:5
+MERGED from com.android.support:support-v4:23.1.0:22:5
+MERGED from com.android.support:support-v4:23.1.0:22:5
+MERGED from The-Music-Player.libs:circualreveal:unspecified:10:5
+MERGED from com.android.support:support-v4:23.1.0:22:5
+MERGED from com.android.support:support-v4:23.1.0:22:5
+	android:label
+		ADDED from AndroidManifest.xml:24:9
+	android:allowBackup
+		ADDED from AndroidManifest.xml:21:9
+	android:icon
+		ADDED from AndroidManifest.xml:22:9
+	android:theme
+		ADDED from AndroidManifest.xml:26:9
+	android:hardwareAccelerated
+		ADDED from AndroidManifest.xml:23:9
+	android:launchMode
+		ADDED from AndroidManifest.xml:25:9
+activity#com.Project100Pi.themusicplayer.MainActivity
+ADDED from AndroidManifest.xml:27:9
+	android:label
+		ADDED from AndroidManifest.xml:29:13
+	android:theme
+		ADDED from AndroidManifest.xml:30:13
+	android:name
+		ADDED from AndroidManifest.xml:28:13
+intent-filter#android.intent.action.MAIN+android.intent.category.LAUNCHER
+ADDED from AndroidManifest.xml:31:13
+action#android.intent.action.MAIN
+ADDED from AndroidManifest.xml:32:17
+	android:name
+		ADDED from AndroidManifest.xml:32:25
+category#android.intent.category.LAUNCHER
+ADDED from AndroidManifest.xml:34:17
+	android:name
+		ADDED from AndroidManifest.xml:34:27
+activity#com.Project100Pi.themusicplayer.DisplayAlbArt
+ADDED from AndroidManifest.xml:37:9
+	android:label
+		ADDED from AndroidManifest.xml:39:13
+	android:name
+		ADDED from AndroidManifest.xml:38:13
+activity#com.Project100Pi.themusicplayer.PlayActivity
+ADDED from AndroidManifest.xml:41:9
+	android:label
+		ADDED from AndroidManifest.xml:43:13
+	android:theme
+		ADDED from AndroidManifest.xml:44:13
+	android:name
+		ADDED from AndroidManifest.xml:42:13
+activity#com.Project100Pi.themusicplayer.NowPlayingListActivity
+ADDED from AndroidManifest.xml:46:9
+	android:windowSoftInputMode
+		ADDED from AndroidManifest.xml:49:13
+	android:label
+		ADDED from AndroidManifest.xml:48:13
+	android:name
+		ADDED from AndroidManifest.xml:47:13
+activity#com.Project100Pi.themusicplayer.PlaylistSelection
+ADDED from AndroidManifest.xml:51:9
+	android:name
+		ADDED from AndroidManifest.xml:51:19
+activity#com.Project100Pi.themusicplayer.PlaylistSelectionMultiple
+ADDED from AndroidManifest.xml:53:9
+	android:name
+		ADDED from AndroidManifest.xml:53:19
+activity#com.Project100Pi.themusicplayer.EqualizerSettings
+ADDED from AndroidManifest.xml:55:9
+	android:theme
+		ADDED from AndroidManifest.xml:56:13
+	android:name
+		ADDED from AndroidManifest.xml:55:19
+activity#com.Project100Pi.themusicplayer.SearchResultsActivity
+ADDED from AndroidManifest.xml:58:9
+	android:name
+		ADDED from AndroidManifest.xml:58:19
+meta-data#android.app.searchable
+ADDED from AndroidManifest.xml:60:13
+	android:resource
+		ADDED from AndroidManifest.xml:62:17
+	android:name
+		ADDED from AndroidManifest.xml:61:17
+activity#com.Project100Pi.themusicplayer.SongsUnder
+ADDED from AndroidManifest.xml:64:9
+	android:label
+		ADDED from AndroidManifest.xml:66:13
+	android:name
+		ADDED from AndroidManifest.xml:65:13
+activity#com.Project100Pi.themusicplayer.PlaylistUnder
+ADDED from AndroidManifest.xml:68:9
+	android:label
+		ADDED from AndroidManifest.xml:70:13
+	android:name
+		ADDED from AndroidManifest.xml:69:13
+activity#com.Project100Pi.themusicplayer.SongsUnderTest
+ADDED from AndroidManifest.xml:72:9
+	android:label
+		ADDED from AndroidManifest.xml:74:13
+	android:theme
+		ADDED from AndroidManifest.xml:75:13
+	android:name
+		ADDED from AndroidManifest.xml:73:13
+activity#com.Project100Pi.themusicplayer.NowPlayingListTest
+ADDED from AndroidManifest.xml:77:9
+	android:label
+		ADDED from AndroidManifest.xml:79:13
+	android:name
+		ADDED from AndroidManifest.xml:78:13
+activity#com.Project100Pi.themusicplayer.PlayListSelectionTest
+ADDED from AndroidManifest.xml:82:9
+	android:label
+		ADDED from AndroidManifest.xml:84:13
+	android:name
+		ADDED from AndroidManifest.xml:83:13
+activity#com.Project100Pi.themusicplayer.RingdroidEditActivity
+ADDED from AndroidManifest.xml:88:9
+	android:label
+		ADDED from AndroidManifest.xml:90:13
+	android:name
+		ADDED from AndroidManifest.xml:89:13
+activity#com.Project100Pi.themusicplayer.SearchResultTestActivity
+ADDED from AndroidManifest.xml:93:9
+	android:label
+		ADDED from AndroidManifest.xml:95:13
+	android:name
+		ADDED from AndroidManifest.xml:94:13
+service#com.Project100Pi.themusicplayer.LockScreenNotification
+ADDED from AndroidManifest.xml:100:9
+	android:exported
+		ADDED from AndroidManifest.xml:102:13
+	android:enabled
+		ADDED from AndroidManifest.xml:103:13
+	android:name
+		ADDED from AndroidManifest.xml:101:13
+service#com.Project100Pi.themusicplayer.PlayHelperFunctions
+ADDED from AndroidManifest.xml:105:9
+	android:exported
+		ADDED from AndroidManifest.xml:107:13
+	android:enabled
+		ADDED from AndroidManifest.xml:108:13
+	android:name
+		ADDED from AndroidManifest.xml:106:13
+service#com.Project100Pi.themusicplayer.CheckForegroundService
+ADDED from AndroidManifest.xml:110:9
+	android:exported
+		ADDED from AndroidManifest.xml:112:13
+	android:enabled
+		ADDED from AndroidManifest.xml:113:13
+	android:name
+		ADDED from AndroidManifest.xml:111:13
+service#com.Project100Pi.themusicplayer.UpdateWidgetService
+ADDED from AndroidManifest.xml:114:9
+	android:exported
+		ADDED from AndroidManifest.xml:117:13
+	android:enabled
+		ADDED from AndroidManifest.xml:118:13
+	android:permission
+		ADDED from AndroidManifest.xml:116:13
+	android:name
+		ADDED from AndroidManifest.xml:115:13
+receiver#com.Project100Pi.themusicplayer.NotificationBroadcast
+ADDED from AndroidManifest.xml:120:9
+	android:name
+		ADDED from AndroidManifest.xml:120:19
+intent-filter#android.intent.action.MEDIA_BUTTON+com.tutorialsface.audioplayer.delete+com.tutorialsface.audioplayer.next+com.tutorialsface.audioplayer.pause+com.tutorialsface.audioplayer.play+com.tutorialsface.audioplayer.previous
+ADDED from AndroidManifest.xml:121:13
+action#com.tutorialsface.audioplayer.delete
+ADDED from AndroidManifest.xml:122:17
+	android:name
+		ADDED from AndroidManifest.xml:122:25
+action#com.tutorialsface.audioplayer.pause
+ADDED from AndroidManifest.xml:123:17
+	android:name
+		ADDED from AndroidManifest.xml:123:25
+action#com.tutorialsface.audioplayer.next
+ADDED from AndroidManifest.xml:124:17
+	android:name
+		ADDED from AndroidManifest.xml:124:25
+action#com.tutorialsface.audioplayer.play
+ADDED from AndroidManifest.xml:125:17
+	android:name
+		ADDED from AndroidManifest.xml:125:25
+action#com.tutorialsface.audioplayer.previous
+ADDED from AndroidManifest.xml:126:17
+	android:name
+		ADDED from AndroidManifest.xml:126:25
+action#android.intent.action.MEDIA_BUTTON
+ADDED from AndroidManifest.xml:127:17
+	android:name
+		ADDED from AndroidManifest.xml:127:25
+receiver#com.Project100Pi.themusicplayer.MyWidgetProvider
+ADDED from AndroidManifest.xml:131:9
+	android:name
+		ADDED from AndroidManifest.xml:131:19
+intent-filter#android.appwidget.action.APPWIDGET_UPDATE
+ADDED from AndroidManifest.xml:132:13
+action#android.appwidget.action.APPWIDGET_UPDATE
+ADDED from AndroidManifest.xml:133:17
+	android:name
+		ADDED from AndroidManifest.xml:134:21
+meta-data#android.appwidget.provider
+ADDED from AndroidManifest.xml:137:13
+	android:resource
+		ADDED from AndroidManifest.xml:139:17
+	android:name
+		ADDED from AndroidManifest.xml:138:17

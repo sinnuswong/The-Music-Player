@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:layout_marginRight="10dp" >
+
+        <!-- Use same ID to use built-in features -->
+
+        <TextView
+            android:id="@+id/genre_total"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignBottom="@+id/artist_album_total"
+            android:layout_alignParentRight="true"
+            android:layout_marginRight="10dp"
+            android:text="0 TRACKS"
+            android:textColor="#C1C1C1" />
+
+    </RelativeLayout><!-- From: file:/C:/Users/sinnus/Android/The-Music-Player/app/src/main/res/layout/genre_layout.xml -->

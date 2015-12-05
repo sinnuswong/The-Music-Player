@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android" >
+    <item android:id="@+id/now_play_play" android:title="Play"></item><item android:id="@+id/now_play_add_playlist" android:title="Add To PlayList"></item>
+    <item android:id="@+id/now_play_edit" android:title="Edit"></item>
+    
+    
+    
+    <item android:id="@+id/now_play_share" android:title="Share"></item><item android:id="@+id/now_play_delete" android:title="Delete"></item><item android:id="@+id/now_play_remove_from_queue" android:title="Remove from Queue"></item>
+    
+
+</menu>
+<!-- From: file:/C:/Users/sinnus/Android/The-Music-Player/app/src/main/res/menu/now_playing_options.xml -->

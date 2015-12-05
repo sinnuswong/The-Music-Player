@@ -1,0 +1,121 @@
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:background="#273238"
+    android:orientation="vertical"
+    android:id="@+id/front_now_playing_container"
+    app:layout_scrollFlags="scroll|enterAlways">
+    <!--
+    <SeekBar
+        android:layout_width="match_parent"
+        android:layout_height="3dp"
+        android:id="@+id/front_seekbar"
+        android:max="100"
+        android:progressTint="#be4d56"
+        android:background="#FFF"
+        android:progressBackgroundTint="#be4d56" />
+
+        -->
+
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="?android:attr/actionBarSize">
+
+        <ImageView
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent"
+            android:id="@+id/imageView"
+            android:layout_weight="5"
+            android:layout_alignParentRight="true"
+            android:src="@drawable/ic_action_search"
+            android:layout_marginRight="10dp" />
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:textAppearance="?android:attr/textAppearanceLarge"
+            android:text="MY MUSIC"
+            android:id="@+id/textView2"
+            android:gravity="center"
+            android:textColor="#FFF"
+            android:layout_weight="1" />
+
+    </RelativeLayout>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:orientation="horizontal">
+        <ImageView
+            android:layout_width="57dp"
+            android:layout_height="match_parent"
+            android:id="@+id/front_album_art"
+            android:src="@drawable/appicns"
+            android:scaleType="centerCrop"
+            android:paddingTop="3dp"
+            android:paddingBottom="3dp"
+            android:layout_weight="0.2"
+            android:layout_marginLeft="3dp" />
+
+        <RelativeLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_weight="8">
+
+            <LinearLayout
+                android:orientation="vertical"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_centerVertical="true"
+                android:layout_marginLeft="10dp">
+
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:textAppearance="?android:attr/textAppearanceMedium"
+                    android:text="NowPlayingSongName"
+                    android:maxLines="1"
+                    android:id="@+id/front_title"
+                    android:textSize="15sp"
+                    android:textColor="#FFF"
+                    android:layout_centerVertical="true"
+                    android:ellipsize="end" />
+
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:textAppearance="?android:attr/textAppearanceMedium"
+                    android:text="NowPlayingAlbumName"
+                    android:id="@+id/front_album"
+                    android:textSize="12sp"
+                    android:textColor="#FFF"
+                    android:maxLines="1"
+                    android:layout_alignParentLeft="true"
+                    android:layout_alignParentStart="true"
+                    android:layout_marginTop="2dp"
+                    android:ellipsize="end" />
+            </LinearLayout>
+        </RelativeLayout>
+
+        <RelativeLayout
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content">
+
+            <com.Project100Pi.themusicplayer.PlayPauseView
+                android:id="@+id/front_play_Pause"
+                android:layout_width="57dp"
+                android:layout_height="57dp"
+                android:layout_centerHorizontal="true"
+                android:layout_centerInParent="true"
+                android:clickable="true"
+                android:foreground="?android:selectableItemBackground"
+                android:stateListAnimator="@anim/button_elevation"
+                android:layout_weight="0.5"
+                android:layout_margin="5dp">
+            </com.Project100Pi.themusicplayer.PlayPauseView>
+        </RelativeLayout>
+    </LinearLayout>
+
+</LinearLayout>
+<!-- From: file:/C:/Users/sinnus/Android/The-Music-Player/app/src/main/res/layout/main_custom_toolbar.xml -->
